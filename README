@@ -1,0 +1,16 @@
+About
+============================================================================
+Pyggs is python script for generating geocaching statistics and uploading
+them to users's profile at geocaching.com.
+
+Pyggs can is easily extensible via plugin and templating system.
+
+Author:
+    Petr Morávek [Xificurk]
+    jabber id: xificurk [at] jabber.cz
+    email: xificurk [at] centrum.cz
+
+Requirements
+============================================================================
+* Python 3.1 or newer
+* GCparser lib

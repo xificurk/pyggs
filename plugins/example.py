@@ -50,7 +50,7 @@ class base(object):
 
         # Setup default values of some options.
         config.defaults[NS] = {}
-        config.defaults["optionName"] = "value"
+        config.defaults[NS]["optionName"] = "value"
 
         # Now interact with user, and update values of some options.
         # You can add validate argument - if it is a list, value has to be from

@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, os
+import logging, os, sqlite3
 from ColorConsole import ColorConsole
 from optparse import OptionParser
 
@@ -39,7 +39,7 @@ gettext.install("pyggs", localedir = os.path.dirname(__file__) + "/translations"
 class Pyggs(GCparser):
     def __init__(self):
         # Setup console output logging
-        console = ColorConsole(fmt="%(levelname)-8s %(name)-20s %(message)s")
+        console = ColorConsole(fmt="%(levelname)-8s %(name)-25s %(message)s")
         rootlog = logging.getLogger("")
         rootlog.addHandler(console)
         rootlog.setLevel(logging.WARN)
@@ -55,7 +55,7 @@ class Pyggs(GCparser):
         self.opts,args = optp.parse_args()
 
         rootlog.setLevel(self.opts.loglevel)
-        self.log     = logging.getLogger("Pyggs")
+        self.log = logging.getLogger("Pyggs")
 
         if self.opts.profile is None:
             self.log.error(_("You have to select a profile."))
@@ -148,26 +148,37 @@ class Pyggs(GCparser):
         # Setup working directory structure
         parserDir = self.workDir + "/parser"
         pyggsDir = self.workDir + "/pyggs"
-        if not os.path.isdir(self.workDir) or not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
+        profileDir = "%s/%s" %(pyggsDir, self.opts.profile)
+        if not os.path.isdir(self.workDir) or not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir) or not os.path.isdir(profileDir):
             self.log.critical(_("Working directory '%s' is not set up properly, please run setup.py script.") % self.workDir)
             self.die()
 
         self.log.info(_("Working directory is '%s'.") % self.workDir)
 
-        configFile = "%s/%s/config.cfg" %(pyggsDir, self.opts.profile)
+        configFile = "%s/config.cfg" % profileDir
         if not os.path.isfile(configFile):
             self.log.critical(_("Configuration file not found for profile '%s', please run setup.py script.") % self.opts.profile)
             self.die()
         self.config = config = Configurator.Profile(configFile)
 
+        # Init GCparser, and redefine again self.log
         GCparser.__init__(self, username = config.get("geocaching.com", "username"), password = config.get("geocaching.com", "password"), dataDir = parserDir)
+        self.log = logging.getLogger("Pyggs")
+
+        self.globalStorage  = Storage("%s/storage.db" % pyggsDir)
+        self.profileStorage = Storage("%s/storage.db" % profileDir)
 
         self.handlers = {}
         self.loadPlugins()
+        self.makeDepTree()
 
         # Prepare plugins
         for plugin in self.plugins:
             self.plugins[plugin].prepare()
+
+        # Run plugins
+        for plugin in self.plugins:
+            self.plugins[plugin].run()
 
 
     def registerHandler(self, parsername, handler):
@@ -178,6 +189,7 @@ class Pyggs(GCparser):
             self.handlers[parsername] = []
             self.handlers[parsername].append(handler)
 
+
     def parse(self, name, *args, **kwargs):
         """Create parser and return it to every registered handler"""
         handlers = self.handlers.get(name)
@@ -185,6 +197,7 @@ class Pyggs(GCparser):
             parser = GCparser.parse(self, name, *args, **kwargs)
             for handler in handlers:
                 handler(parser)
+
 
     def loadPlugin(self, name):
         """ Load a plugin - name is the file and class name"""
@@ -218,6 +231,136 @@ class Pyggs(GCparser):
             if dep not in self.plugins:
                 self.log.warn(_("'%s' plugin pulled in as dependency by '%s'.") % (dep, name))
                 self.loadWithDeps(dep)
+
+
+    def makeDepTree(self):
+        """Rearragne the order of self.plugins according to dependencies"""
+        plugins = {}
+
+        fs = 0
+        while len(self.plugins):
+            fs = fs +1
+            if fs > 100:
+                self.log.warn(_("Cannot make plugin depedency tree for %s. Possible circular dependencies.") % ",".join(list(self.plugins.keys())))
+                for plugin in list(self.plugins.keys()):
+                    plugins[plugin] = self.plugins.pop(plugin)
+
+            for plugin in list(self.plugins.keys()):
+                if self.pluginDepsLoaded(list(plugins.keys()), self.plugins[plugin].dependencies):
+                    plugins[plugin] = self.plugins.pop(plugin)
+
+        self.plugins = plugins
+
+
+    def pluginDepsLoaded(self, loaded, dependencies):
+        """Are all required dependencies of plugin in loaded?"""
+        ret = True
+        for dep in dependencies:
+            if dep not in loaded:
+                ret = False
+                break
+        return ret
+
+
+
+class Storage(object):
+    def __init__(self, filename):
+        self.log = logging.getLogger("Pyggs.Storage")
+        self.filename = filename
+        self.createEnvironment()
+
+
+    def getDb(self):
+        """Return a new DB connection"""
+        con = sqlite3.connect(self.filename)
+        con.row_factory = sqlite3.Row
+        return con
+
+    def fetchAssoc(self, cursor, format = "#"):
+        """Fetch result to a dictionary"""
+        if format == "":
+            format = "#"
+        format = format.split(",")
+
+        row = cursor.fetchone()
+        if row is None:
+            return []
+
+        for field in format:
+            if field != "#" and field not in row.keys():
+                self.log.error(_("There is no field '%s' in the result set.") % field)
+                return []
+
+        # make associative tree
+        data = {"result":None}
+        while row:
+            x = data
+            i = "result"
+            for field in format:
+                if field == "#":
+                    if x[i] is None:
+                        x[i] = []
+                    x[i].append(None)
+                    x = x[i]
+                    i = len(x)-1
+                else:
+                    if x[i] is None:
+                        x[i] = {}
+                    try:
+                        foo = x[i][row[field]]
+                    except:
+                        x[i][row[field]] = None
+                    x = x[i]
+                    i = row[field]
+            x[i] = {}
+            for k in row.keys():
+                x[i][k] = row[k]
+            row = cursor.fetchone()
+        return data["result"]
+
+
+    def createEnvironment(self):
+        """If Environment table doesn't exist, create it"""
+        db = self.getDb()
+        db.execute("CREATE TABLE IF NOT EXISTS environment (variable VARCHAR(256) PRIMARY KEY, value VARCHAR(256))")
+        db.close()
+
+
+    def setE(self, variable, value):
+        """insert or update env variale"""
+        db = self.getDb()
+        cur = db.cursor()
+        cur.execute("SELECT * FROM environment WHERE variable=?", (variable,))
+        if (len(cur.fetchall()) > 0):
+            cur.execute("UPDATE environment SET value=? WHERE variable=?", (value, variable))
+        else:
+            cur.execute("INSERT INTO environment(variable, value) VALUES(?,?)", (variable, value))
+        db.commit()
+        db.close()
+
+
+    def getE(self, variable):
+        """get env variable"""
+        db = self.getDb()
+        cur = db.cursor()
+        cur.execute("SELECT value FROM environment WHERE variable=? LIMIT 1", (variable,))
+        value = cur.fetchone()
+        db.close()
+        if value is not None:
+            value = value[0]
+        return value
+
+
+    def delE(self, variable):
+        """delete env variale"""
+        db = self.getDb()
+        cur = db.cursor()
+        cur.execute("DELETE FROM environment WHERE variable=? LIMIT 1", (variable,))
+        db.commit()
+        db.close()
+
+
+
 
 if __name__ == '__main__':
     pyggs = Pyggs()

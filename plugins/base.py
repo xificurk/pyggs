@@ -24,10 +24,20 @@ import logging
 
 class base(object):
     def __init__(self, master):
-        self.log = logging.getLogger("Pyggs.plugin.base")
+        self.log = logging.getLogger("Pyggs.plugin.%s" % self.__class__.__name__)
         self.master = master
 
         self.dependencies = []
+        self.templateData = {}
 
-    def setup(self, config):
+    def setup(self):
         """Setup script"""
+
+    def prepare(self):
+        """Setup everything needed before actual run"""
+        self.log.info(_("Preparing plugin '%s'.") % self.__class__.__name__)
+
+    def run(self):
+        """Run the plugin's code"""
+        pass
+

@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, os, sys
+import logging, os
 from ColorConsole import ColorConsole
 from optparse import OptionParser
 
@@ -34,10 +34,9 @@ import gettext
 langs = {}
 langs["cs"] = gettext.translation("pyggs", localedir = os.path.dirname(__file__) + "/translations", codeset="utf-8", languages = ["cs"])
 langs["en"] = gettext.translation("pyggs", localedir = os.path.dirname(__file__) + "/translations", codeset="utf-8", languages = ["en"])
-langs["en"].install()
+gettext.install("pyggs", localedir = os.path.dirname(__file__) + "/translations", codeset="utf-8")
 
-
-class Pyggs(object):
+class Pyggs(GCparser):
     def __init__(self):
         # Setup console output logging
         console = ColorConsole(fmt="%(levelname)-8s %(name)-20s %(message)s")
@@ -47,26 +46,23 @@ class Pyggs(object):
 
         # Parse command line arguements
         optp = OptionParser()
-
         optp.add_option("-q","--quiet", help=_("set logging to ERROR"), action="store_const", dest="loglevel", const=logging.ERROR, default=logging.WARN)
         optp.add_option("-v","--verbose", help=_("set logging to INFO"), action="store_const", dest="loglevel", const=logging.INFO)
         optp.add_option("-d","--debug", help=_("set logging to DEBUG"), action="store_const", dest="loglevel", const=logging.DEBUG)
         optp.add_option("-D","--Debug", help=_("set logging to ALL"), action="store_const", dest="loglevel", const=0)
-
         optp.add_option("-w","--workdir", dest="workdir", default="~/.geocaching", help=_("set working directory, default is ~/.geocaching"))
         optp.add_option("-p","--profile", dest="profile", help=_("choose profile"))
+        self.opts,args = optp.parse_args()
 
-        opts,args = optp.parse_args()
-
-        rootlog.setLevel(opts.loglevel)
+        rootlog.setLevel(self.opts.loglevel)
         self.log     = logging.getLogger("Pyggs")
-        self.opts    = opts
-        self.workDir = os.path.expanduser(opts.workdir)
-        self.plugins = {}
 
         if self.opts.profile is None:
             self.log.error(_("You have to select a profile."))
-            sys.exit()
+            self.die()
+
+        self.workDir = os.path.expanduser(self.opts.workdir)
+        self.plugins = {}
 
 
     def setup(self):
@@ -76,7 +72,7 @@ class Pyggs(object):
             os.mkdir(self.workDir)
         if not os.path.isdir(self.workDir):
             self.log.critical(_("Unable to create working directory '%s'.") % self.workDir)
-            sys.exit()
+            self.die()
 
         parserDir = self.workDir + "/parser"
         if not os.path.isdir(parserDir):
@@ -86,7 +82,7 @@ class Pyggs(object):
             os.mkdir(pyggsDir)
         if not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
             self.log.critical(_("Unable to set up base directory structure in working directory write to working directory '%s'.") % self.workDir)
-            sys.exit()
+            self.die()
 
         self.log.info(_("Working directory is '%s'.") % self.workDir)
 
@@ -95,17 +91,18 @@ class Pyggs(object):
             os.mkdir(profileDir)
         if not os.path.isdir(profileDir):
             self.log.critical(_("Unable to create profile directory '%s'.") % profileDir)
-            sys.exit()
+            self.die()
 
         # Let's ask some questions and create config
         configFile = "%s/config.cfg" % profileDir
         self.config = config = Configurator.Profile(configFile)
 
         config.assertSection("global")
-        globals()["langs"][config.get("global", "language")].install()
+        langs = globals()["langs"]
+        langs[config.get("global", "language")].install()
         print()
-        config.update("global", "language", _("Please, select user interface language - %s.") % "/".join(globals()["langs"].keys()), validate = globals()["langs"].keys())
-        globals()["langs"][config.get("global", "language")].install()
+        config.update("global", "language", _("Please, select user interface language"), validate = list(langs.keys()))
+        langs[config.get("global", "language")].install()
 
         gconfigFile = "%s/config.cfg" % pyggsDir
         gconfig = Configurator.Global(gconfigFile)
@@ -139,7 +136,7 @@ class Pyggs(object):
 
         for plugin in self.plugins:
             print("  %s:" % _("Configuration of '%s' plugin") % plugin)
-            self.plugins[plugin].setup(config)
+            self.plugins[plugin].setup()
 
         config.save()
         print()
@@ -149,28 +146,45 @@ class Pyggs(object):
     def run(self):
         """Run pyggs"""
         # Setup working directory structure
-        if not os.path.isdir(self.workDir):
-            self.log.critical(_("Working directory '%s' does not exist, please run setup.py script.") % self.workDir)
-            sys.exit()
-
         parserDir = self.workDir + "/parser"
         pyggsDir = self.workDir + "/pyggs"
-        if not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
+        if not os.path.isdir(self.workDir) or not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
             self.log.critical(_("Working directory '%s' is not set up properly, please run setup.py script.") % self.workDir)
-            sys.exit()
+            self.die()
 
         self.log.info(_("Working directory is '%s'.") % self.workDir)
 
         configFile = "%s/%s/config.cfg" %(pyggsDir, self.opts.profile)
         if not os.path.isfile(configFile):
             self.log.critical(_("Configuration file not found for profile '%s', please run setup.py script.") % self.opts.profile)
-            sys.exit()
+            self.die()
         self.config = config = Configurator.Profile(configFile)
 
-        self.GCparser = GCparser(username = config.get("geocaching.com", "username"), password = config.get("geocaching.com", "password"), dataDir = parserDir)
+        GCparser.__init__(self, username = config.get("geocaching.com", "username"), password = config.get("geocaching.com", "password"), dataDir = parserDir)
 
-        self.checkPlugins()
+        self.handlers = {}
+        self.loadPlugins()
 
+        # Prepare plugins
+        for plugin in self.plugins:
+            self.plugins[plugin].prepare()
+
+
+    def registerHandler(self, parsername, handler):
+        """Register handler that gets Parser object, when parse() method is called"""
+        try:
+            self.handlers[parsername].append(handler)
+        except KeyError:
+            self.handlers[parsername] = []
+            self.handlers[parsername].append(handler)
+
+    def parse(self, name, *args, **kwargs):
+        """Create parser and return it to every registered handler"""
+        handlers = self.handlers.get(name)
+        if handlers is not None:
+            parser = GCparser.parse(self, name, *args, **kwargs)
+            for handler in handlers:
+                handler(parser)
 
     def loadPlugin(self, name):
         """ Load a plugin - name is the file and class name"""

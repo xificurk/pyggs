@@ -59,7 +59,10 @@ class BaseConfig(configparser.RawConfigParser):
     def update(self, section, option, prompt, validate = None):
         """Update option via user input"""
         default = self.get(section, option)
-        value = input("    %s [%s]: " % (prompt, default))
+        choice = ""
+        if type(validate) is list:
+            choice = " (%s)" % ", ".join(validate)
+        value = input("    %s%s [%s]: " % (prompt, choice, default))
         if len(value) == 0:
             value = default
 

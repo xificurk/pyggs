@@ -1,0 +1,65 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2009-09-06 02:05+CEST\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: Configurator.py:67
+msgid "ERROR: You have to input a value from %s."
+msgstr ""
+
+#: Configurator.py:70
+msgid "ERROR: You have to input a non-empty string."
+msgstr ""
+
+#: setup.py:96
+msgid "Please, select user interface language - %s."
+msgstr ""
+
+#: setup.py:104
+msgid "Check if these are all installed plugins. You can enable/disable each of them for your profile later."
+msgstr ""
+
+#: setup.py:105
+msgid "Please, use comma separated list."
+msgstr ""
+
+#: setup.py:106
+msgid "Installed plugins"
+msgstr ""
+
+#: setup.py:110
+msgid "Now, we're going to setup your profile named '%s'."
+msgstr ""
+
+#: setup.py:113
+msgid "Plugins"
+msgstr ""
+
+#: setup.py:115
+msgid "Enable %s"
+msgstr ""
+
+#: setup.py:119
+msgid "Username"
+msgstr ""
+
+#: setup.py:120
+msgid "Password"
+msgstr ""
+
+#: setup.py:124
+msgid "Note: You can always edit these setings by re-running setup.py script, or by hand in file %s."
+msgstr ""
+

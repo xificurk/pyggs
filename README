@@ -3,7 +3,7 @@ About
 Pyggs is python script for generating geocaching statistics and uploading
 them to users's profile at geocaching.com.
 
-Pyggs can is easily extensible via plugin and templating system.
+Pyggs is easily extensible via plugin and templating system.
 
 Author:
     Petr Morávek [Xificurk]
@@ -13,4 +13,4 @@ Author:
 Requirements
 ============================================================================
 * Python 3.1 or newer
-* GCparser lib
+* GCparser lib v0.1.1 or newer

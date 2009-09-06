@@ -31,10 +31,13 @@ import Configurator
 import plugins
 
 import gettext
+# Autodetect translations
+localeDir = os.path.dirname(__file__) + "/translations"
 langs = {}
-langs["cs"] = gettext.translation("pyggs", localedir = os.path.dirname(__file__) + "/translations", codeset="utf-8", languages = ["cs"])
-langs["en"] = gettext.translation("pyggs", localedir = os.path.dirname(__file__) + "/translations", codeset="utf-8", languages = ["en"])
-gettext.install("pyggs", localedir = os.path.dirname(__file__) + "/translations", codeset="utf-8")
+for lang in os.listdir(localeDir):
+    if os.path.isdir("%s/%s" % (localeDir, lang)):
+        langs[lang] = gettext.translation("pyggs", localedir = localeDir, codeset="utf-8", languages = [lang])
+gettext.install("pyggs", localedir = localeDir, codeset="utf-8")
 
 class Pyggs(GCparser):
     def __init__(self):
@@ -50,7 +53,7 @@ class Pyggs(GCparser):
         optp.add_option("-v","--verbose", help=_("set logging to INFO"), action="store_const", dest="loglevel", const=logging.INFO)
         optp.add_option("-d","--debug", help=_("set logging to DEBUG"), action="store_const", dest="loglevel", const=logging.DEBUG)
         optp.add_option("-D","--Debug", help=_("set logging to ALL"), action="store_const", dest="loglevel", const=0)
-        optp.add_option("-w","--workdir", dest="workdir", default="~/.geocaching", help=_("set working directory, default is ~/.geocaching"))
+        optp.add_option("-w","--workdir", dest="workdir", default="~/.geocaching", help=_("set working directory, default is %s") % "~/.geocaching")
         optp.add_option("-p","--profile", dest="profile", help=_("choose profile"))
         self.opts,args = optp.parse_args()
 
@@ -81,10 +84,10 @@ class Pyggs(GCparser):
         if not os.path.isdir(pyggsDir):
             os.mkdir(pyggsDir)
         if not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
-            self.log.critical(_("Unable to set up base directory structure in working directory write to working directory '%s'.") % self.workDir)
+            self.log.critical(_("Unable to set up base directory structure in working directory '%s'.") % self.workDir)
             self.die()
 
-        self.log.info(_("Working directory is '%s'.") % self.workDir)
+        self.log.info("Working directory is '%s'." % self.workDir)
 
         profileDir = "%s/%s" %(pyggsDir, self.opts.profile)
         if not os.path.isdir(profileDir):
@@ -96,45 +99,61 @@ class Pyggs(GCparser):
         # Let's ask some questions and create config
         configFile = "%s/config.cfg" % profileDir
         self.config = config = Configurator.Profile(configFile)
-
-        config.assertSection("global")
         langs = globals()["langs"]
-        langs[config.get("global", "language")].install()
-        print()
-        config.update("global", "language", _("Please, select user interface language"), validate = list(langs.keys()))
-        langs[config.get("global", "language")].install()
-
-        gconfigFile = "%s/config.cfg" % pyggsDir
-        gconfig = Configurator.Global(gconfigFile)
-
-        gconfig.assertSection("plugins")
-        print()
-        print(_("Check if these are all installed plugins. You can enable/disable each of them for your profile later."))
-        print(_("Please, use comma separated list."))
-        gconfig.update("plugins", "list", _("Installed plugins"), validate = True)
-        gconfig.save()
-        gplugins = gconfig.getPlugins()
+        lang = config.get("general", "language")
+        if lang:
+            langs[lang].install()
 
         print()
         print(_("Now, we're going to setup your profile named '%s'.") % self.opts.profile)
 
+        config.assertSection("general")
+        print()
+        print("  %s:" % _("General options"))
+        config.update("general", "language", _("Please, select user interface language"), validate = list(langs.keys()))
+        langs[config.get("general", "language")].install()
+
+        installedPlugins = []
+        for plugin in os.listdir(os.path.dirname(__file__) + "/plugins"):
+            if plugin[-3:] == ".py" and not plugin.startswith("__init__") and not plugin.startswith("example"):
+                installedPlugins.append(plugin[:-3])
+
         config.assertSection("plugins")
+        print()
         print("  %s:" % _("Plugins"))
-        for plugin in gplugins:
+        for plugin in installedPlugins:
             config.update("plugins", plugin, _("Enable '%s' plugin") % plugin, validate = ["y", "n"])
         for plugin in config.options("plugins"):
-            if plugin not in gplugins:
+            if plugin not in installedPlugins:
                 config.remove_option("plugins", plugin)
 
         config.assertSection("geocaching.com")
+        print()
         print("  Geocaching.com:")
         config.update("geocaching.com", "username", _("Username"), validate = True)
         config.update("geocaching.com", "password", _("Password"), validate = True)
 
+        templates = []
+        if os.path.isdir(pyggsDir + "/templates"):
+            for template in os.listdir(pyggsDir + "/templates"):
+                if os.path.isdir(pyggsDir + "/templates/" + template):
+                    templates.append(template)
+        for template in os.listdir(os.path.dirname(__file__) + "/templates"):
+            if os.path.isdir(os.path.dirname(__file__) + "/templates/" + template):
+                templates.append(template)
+        config.assertSection("output")
+        print()
+        print("  %s:" % _("Output"))
+        print("    %s:\n      * %s\n      * %s" % (_("Templates are looked up in these directories (consecutively)"), pyggsDir + "/templates", os.path.dirname(__file__) + "/templates"))
+        config.update("output", "template", _("Template"), validate = templates)
+        config.update("output", "directory", _("Directory"), validate = True)
+
+        print()
         print("  Checking plugins dependency tree...")
         self.loadPlugins()
 
         for plugin in self.plugins:
+            print()
             print("  %s:" % _("Configuration of '%s' plugin") % plugin)
             self.plugins[plugin].setup()
 
@@ -153,7 +172,7 @@ class Pyggs(GCparser):
             self.log.critical(_("Working directory '%s' is not set up properly, please run setup.py script.") % self.workDir)
             self.die()
 
-        self.log.info(_("Working directory is '%s'.") % self.workDir)
+        self.log.info("Working directory is '%s'." % self.workDir)
 
         configFile = "%s/config.cfg" % profileDir
         if not os.path.isfile(configFile):
@@ -202,7 +221,7 @@ class Pyggs(GCparser):
     def loadPlugin(self, name):
         """ Load a plugin - name is the file and class name"""
         if name not in globals()['plugins'].__dict__:
-            self.log.info(_("Loading plugin '%s'.") % name)
+            self.log.info("Loading plugin '%s'." % name)
             __import__(self.pluginModule(name))
         self.plugins[name] = getattr(globals()['plugins'].__dict__[name], name)(self)
         return True
@@ -229,7 +248,7 @@ class Pyggs(GCparser):
             self.config.set("plugins", name, "y")
         for dep in self.plugins[name].dependencies:
             if dep not in self.plugins:
-                self.log.warn(_("'%s' plugin pulled in as dependency by '%s'.") % (dep, name))
+                self.log.warn("'%s' plugin pulled in as dependency by '%s'." % (dep, name))
                 self.loadWithDeps(dep)
 
 
@@ -241,7 +260,7 @@ class Pyggs(GCparser):
         while len(self.plugins):
             fs = fs +1
             if fs > 100:
-                self.log.warn(_("Cannot make plugin depedency tree for %s. Possible circular dependencies.") % ",".join(list(self.plugins.keys())))
+                self.log.warn("Cannot make plugin depedency tree for %s. Possible circular dependencies." % ",".join(list(self.plugins.keys())))
                 for plugin in list(self.plugins.keys()):
                     plugins[plugin] = self.plugins.pop(plugin)
 
@@ -288,7 +307,7 @@ class Storage(object):
 
         for field in format:
             if field != "#" and field not in row.keys():
-                self.log.error(_("There is no field '%s' in the result set.") % field)
+                self.log.error("There is no field '%s' in the result set." % field)
                 return []
 
         # make associative tree

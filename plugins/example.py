@@ -61,7 +61,7 @@ class base(object):
     def prepare(self):
         """Setup everything needed before actual run"""
         # Log this
-        self.log.info(_("Preparing plugin '%s'.") % self.__class__.__name__)
+        self.log.info("Preparing plugin '%s'." % self.__class__.__name__)
 
         # Register custom parsers
         self.master.registerParser("myParserName", MyParserClass)

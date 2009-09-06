@@ -84,24 +84,7 @@ class Profile(BaseConfig):
         BaseConfig.__init__(self, configFile)
 
         # set default values
-        self.defaults["global"] = {}
-        self.defaults["global"]["language"] = "en"
+        self.defaults["output"] = {}
+        self.defaults["output"]["template"] = "default.en"
         self.defaults["plugins"] = {}
         self.defaults["plugins"]["base"] = "y"
-
-
-
-class Global(BaseConfig):
-    def __init__(self, configFile):
-        BaseConfig.__init__(self, configFile)
-        # set default values
-        self.defaults["plugins"] = {}
-        self.defaults["plugins"]["list"] = "base"
-
-
-    def getPlugins(self):
-        """Returns stripped list of plugins"""
-        plugins = []
-        for plugin in self.get("plugins", "list").split(","):
-            plugins.append(plugin.strip())
-        return plugins

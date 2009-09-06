@@ -44,7 +44,7 @@ class base(object):
 
     def prepare(self):
         """Setup everything needed before actual run"""
-        self.log.info(_("Preparing plugin '%s'.") % self.__class__.__name__)
+        self.log.info("Preparing plugin '%s'." % self.__class__.__name__)
 
         self.master.registerHandler("myFinds", self.parseMyFinds)
         self.master.registerHandler("cache", self.parseCache)
@@ -56,21 +56,21 @@ class base(object):
 
     def run(self):
         """Run the plugin's code"""
-        self.log.info(_("Running plugin '%s'.") % self.__class__.__name__)
+        self.log.info("Running plugin '%s'." % self.__class__.__name__)
         self.templateData['overall']    = self.storage["myFinds"].getAverages()
 
 
     def parseMyFinds(self, myFinds):
         """Update MyFinds database"""
-        self.log.debug(_("Updating MyFinds database."))
+        self.log.debug("Updating MyFinds database.")
         myFinds = myFinds.getList()
         #TODO: user corrections
         self.storage["myFinds"].update(myFinds)
 
 
-    def parseCache(self, myFinds):
+    def parseCache(self, cache):
         """Update Cache database"""
-        self.log.debug(_("Updating Cache database."))
+        self.log.debug("Updating Cache database.")
 
 
 
@@ -105,7 +105,7 @@ class myFindsDatabase(object):
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
         else:
-            self.log.info(_("MyFinds database out of date, initiating refresh."))
+            self.log.info("MyFinds database out of date, initiating refresh.")
             self.plugin.master.parse("myFinds")
 
         return self.valid

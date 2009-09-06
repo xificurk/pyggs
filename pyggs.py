@@ -23,52 +23,145 @@
 
 import logging, os, sys
 from ColorConsole import ColorConsole
-from GCparser.GCparser import GCparser
 from optparse import OptionParser
+
+from GCparser.GCparser import GCparser
+
 import Configurator
+import plugins
+
+import gettext
+langs = {}
+langs["cs"] = gettext.translation("pyggs", localedir = os.path.dirname(__file__) + "/translations", codeset="utf-8", languages = ["cs"])
+langs["en"] = gettext.translation("pyggs", localedir = os.path.dirname(__file__) + "/translations", codeset="utf-8", languages = ["en"])
+langs["en"].install()
+
+
+class Pyggs(object):
+    def __init__(self):
+        # Setup console output logging
+        console = ColorConsole(fmt="%(levelname)-8s %(name)-20s %(message)s")
+        rootlog = logging.getLogger("")
+        rootlog.addHandler(console)
+        rootlog.setLevel(logging.WARN)
+
+        # Parse command line arguements
+        optp = OptionParser()
+
+        optp.add_option('-q','--quiet', help='set logging to ERROR', action='store_const', dest='loglevel', const=logging.ERROR, default=logging.WARN)
+        optp.add_option('-v','--verbose', help='set logging to INFO', action='store_const', dest='loglevel', const=logging.INFO)
+        optp.add_option('-d','--debug', help='set logging to DEBUG', action='store_const', dest='loglevel', const=logging.DEBUG)
+        optp.add_option('-D','--Debug', help='set logging to ALL', action='store_const', dest='loglevel', const=0)
+
+        optp.add_option("-w","--workdir", dest="workdir", default="~/.geocaching", help="set working directory, default is ~/.geocaching")
+        optp.add_option("-p","--profile", dest="profile", help="choose profile")
+
+        opts,args = optp.parse_args()
+
+        rootlog.setLevel(opts.loglevel)
+        self.log     = logging.getLogger("Pyggs")
+        self.opts    = opts
+        self.workDir = os.path.expanduser(opts.workdir)
+
+        if self.opts.profile is None:
+            log.error("You have to select a profile.")
+            sys.exit()
+
+    def setup(self):
+        """Setup script"""
+        # Setup working directory structure
+        if not os.path.isdir(self.workDir):
+            os.mkdir(self.workDir)
+        if not os.path.isdir(self.workDir):
+            self.log.critical("Unable to create working directory '%s'." % self.workDir)
+            sys.exit()
+
+        parserDir = self.workDir + "/parser"
+        if not os.path.isdir(parserDir):
+            os.mkdir(parserDir)
+        pyggsDir = self.workDir + "/pyggs"
+        if not os.path.isdir(pyggsDir):
+            os.mkdir(pyggsDir)
+        if not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
+            self.log.critical("Unable to set up base directory structure in working directory write to working directory '%s'." % self.workDir)
+            sys.exit()
+
+        self.log.info("Working directory is '%s'." % self.workDir)
+
+        profileDir = "%s/%s" %(pyggsDir, self.opts.profile)
+        if not os.path.isdir(profileDir):
+            os.mkdir(profileDir)
+        if not os.path.isdir(profileDir):
+            self.log.critical("Unable to create profile directory '%s'." % profileDir)
+            sys.exit()
+
+        # Let's ask some questions and create config
+        configFile = "%s/config.cfg" % profileDir
+        self.config = config = Configurator.Profile(configFile)
+
+        config.assertSection("global")
+        globals()["langs"][config.get("global", "language")].install()
+        print()
+        config.update("global", "language", _("Please, select user interface language - %s.") % "/".join(globals()["langs"].keys()), validate = globals()["langs"].keys())
+        globals()["langs"][config.get("global", "language")].install()
+
+        gconfigFile = "%s/config.cfg" % pyggsDir
+        gconfig = Configurator.Global(gconfigFile)
+
+        gconfig.assertSection("plugins")
+        print()
+        print(_("Check if these are all installed plugins. You can enable/disable each of them for your profile later."))
+        print(_("Please, use comma separated list."))
+        gconfig.update("plugins", "list", _("Installed plugins"), validate = True)
+        gconfig.save()
+        gplugins = gconfig.getPlugins()
+
+        print()
+        print(_("Now, we're going to setup your profile named '%s'.") % self.opts.profile)
+
+        config.assertSection("plugins")
+        print("  %s:" % _("Plugins"))
+        for plugin in gplugins:
+            config.update("plugins", plugin, _("Enable '%s' plugin") % plugin, validate = ["y", "n"])
+        for plugin in config.options("plugins"):
+            if plugin not in gplugins:
+                config.remove_option("plugins", plugin)
+
+        config.assertSection("geocaching.com")
+        print("  Geocaching.com:")
+        config.update("geocaching.com", "username", _("Username"), validate = True)
+        config.update("geocaching.com", "password", _("Password"), validate = True)
+
+        for plugin in config.options("plugins"):
+            config.assertSection("plugin-%s" % plugin)
+            print("  %s:" % _("Configuration of '%s' plugin") % plugin)
+
+        config.save()
+        print()
+        print(_("Note: You can always edit these setings by re-running setup.py script, or by hand in file %s.") % configFile)
+
+    def run(self):
+        """Run pyggs"""
+        # Setup working directory structure
+        if not os.path.isdir(self.workDir):
+            self.log.critical("Working directory '%s' does not exist, please run setup.py script." % self.workDir)
+            sys.exit()
+
+        parserDir = self.workDir + "/parser"
+        pyggsDir = self.workDir + "/pyggs"
+        if not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
+            self.log.critical("Working directory '%s' is not set up properly, please run setup.py script." % self.workDir)
+            sys.exit()
+
+        self.log.info("Working directory is '%s'." % self.workDir)
+
+        configFile = "%s/%s/config.xml" %(pyggsDir, self.opts.profile)
+        if not os.path.isfile(configFile):
+            self.log.critical("Configuration file not found for profile '%s', please run setup.py script." % opts.profile)
+            sys.exit()
+        self.config = config = Configurator.Profile(configFile)
+
 
 if __name__ == '__main__':
-    # Setup console output logging
-    console = ColorConsole(fmt="%(levelname)-8s %(name)-20s %(message)s")
-    rootlog = logging.getLogger("")
-    rootlog.addHandler(console)
-    rootlog.setLevel(logging.WARN)
-
-    # Parse command line arguements
-    optp = OptionParser()
-
-    optp.add_option('-q','--quiet', help='set logging to ERROR', action='store_const', dest='loglevel', const=logging.ERROR, default=logging.WARN)
-    optp.add_option('-v','--verbose', help='set logging to INFO', action='store_const', dest='loglevel', const=logging.INFO)
-    optp.add_option('-d','--debug', help='set logging to DEBUG', action='store_const', dest='loglevel', const=logging.DEBUG)
-    optp.add_option('-D','--Debug', help='set logging to ALL', action='store_const', dest='loglevel', const=0)
-
-    optp.add_option("-w","--workdir", dest="workdir", default="~/.geocaching", help="set work dir, default is ~/.geocaching")
-    optp.add_option("-p","--profile", dest="profile", help="choose profile")
-
-    opts,args = optp.parse_args()
-
-    rootlog.setLevel(opts.loglevel)
-    log = logging.getLogger("Pyggs")
-
-    # Setup working directory structure
-    workDir = os.path.expanduser(opts.workdir)
-    if not os.path.isdir(workDir):
-        log.critical("Working directory '%s' does not exist, please run setup.py script." % workDir)
-        sys.exit()
-
-    parserDir = workDir + "/parser"
-    pyggsDir = workDir + "/pyggs"
-    if not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
-        log.critical("Working directory '%s' is not set up properly, please run setup.py script." % workDir)
-        sys.exit()
-
-    log.info("Working directory is '%s'." % workDir)
-
-    if opts.profile is None:
-        log.error("You have to select a profile.")
-        sys.exit()
-
-    configFile = "%s/%s/config.xml" %(pyggsDir, opts.profile)
-    if not os.path.isfile(configFile):
-        log.critical("Configuration file not found for profile '%s', please run setup.py script." % opts.profile)
-        sys.exit()
+    pyggs = Pyggs()
+    pyggs.run()

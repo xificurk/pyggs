@@ -20,9 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
-import platform
-import sys
+import logging, platform, sys
 if platform.system() == "Windows":
     from ctypes import windll
 

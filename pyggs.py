@@ -62,10 +62,12 @@ class Pyggs(object):
         self.log     = logging.getLogger("Pyggs")
         self.opts    = opts
         self.workDir = os.path.expanduser(opts.workdir)
+        self.plugins = {}
 
         if self.opts.profile is None:
             log.error("You have to select a profile.")
             sys.exit()
+
 
     def setup(self):
         """Setup script"""
@@ -133,12 +135,14 @@ class Pyggs(object):
         config.update("geocaching.com", "password", _("Password"), validate = True)
 
         for plugin in config.options("plugins"):
-            config.assertSection("plugin-%s" % plugin)
             print("  %s:" % _("Configuration of '%s' plugin") % plugin)
+            self.loadPlugin(plugin)
+            self.plugins[plugin].setup(config)
 
         config.save()
         print()
         print(_("Note: You can always edit these setings by re-running setup.py script, or by hand in file %s.") % configFile)
+
 
     def run(self):
         """Run pyggs"""
@@ -160,6 +164,19 @@ class Pyggs(object):
             self.log.critical("Configuration file not found for profile '%s', please run setup.py script." % opts.profile)
             sys.exit()
         self.config = config = Configurator.Profile(configFile)
+
+
+    def loadPlugin(self, name):
+        """ Load a plugin - name is the file and class name"""
+        if name not in globals()['plugins'].__dict__:
+            __import__(self.pluginModule(name))
+        self.plugins[name] = getattr(globals()['plugins'].__dict__[name], name)(self)
+        return True
+
+
+    def pluginModule(self, name):
+        return "%s.%s" % (globals()['plugins'].__name__, name)
+
 
 
 if __name__ == '__main__':

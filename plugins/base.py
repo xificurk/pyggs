@@ -25,8 +25,9 @@ import logging
 class base(object):
     def __init__(self, master):
         self.log = logging.getLogger("Pyggs.plugin.base")
-
         self.master = master
+
+        self.dependencies = []
 
     def setup(self, config):
         """Setup script"""

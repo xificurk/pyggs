@@ -48,13 +48,13 @@ class Pyggs(object):
         # Parse command line arguements
         optp = OptionParser()
 
-        optp.add_option('-q','--quiet', help='set logging to ERROR', action='store_const', dest='loglevel', const=logging.ERROR, default=logging.WARN)
-        optp.add_option('-v','--verbose', help='set logging to INFO', action='store_const', dest='loglevel', const=logging.INFO)
-        optp.add_option('-d','--debug', help='set logging to DEBUG', action='store_const', dest='loglevel', const=logging.DEBUG)
-        optp.add_option('-D','--Debug', help='set logging to ALL', action='store_const', dest='loglevel', const=0)
+        optp.add_option("-q","--quiet", help=_("set logging to ERROR"), action="store_const", dest="loglevel", const=logging.ERROR, default=logging.WARN)
+        optp.add_option("-v","--verbose", help=_("set logging to INFO"), action="store_const", dest="loglevel", const=logging.INFO)
+        optp.add_option("-d","--debug", help=_("set logging to DEBUG"), action="store_const", dest="loglevel", const=logging.DEBUG)
+        optp.add_option("-D","--Debug", help=_("set logging to ALL"), action="store_const", dest="loglevel", const=0)
 
-        optp.add_option("-w","--workdir", dest="workdir", default="~/.geocaching", help="set working directory, default is ~/.geocaching")
-        optp.add_option("-p","--profile", dest="profile", help="choose profile")
+        optp.add_option("-w","--workdir", dest="workdir", default="~/.geocaching", help=_("set working directory, default is ~/.geocaching"))
+        optp.add_option("-p","--profile", dest="profile", help=_("choose profile"))
 
         opts,args = optp.parse_args()
 
@@ -65,7 +65,7 @@ class Pyggs(object):
         self.plugins = {}
 
         if self.opts.profile is None:
-            log.error("You have to select a profile.")
+            self.log.error(_("You have to select a profile."))
             sys.exit()
 
 
@@ -75,7 +75,7 @@ class Pyggs(object):
         if not os.path.isdir(self.workDir):
             os.mkdir(self.workDir)
         if not os.path.isdir(self.workDir):
-            self.log.critical("Unable to create working directory '%s'." % self.workDir)
+            self.log.critical(_("Unable to create working directory '%s'.") % self.workDir)
             sys.exit()
 
         parserDir = self.workDir + "/parser"
@@ -85,16 +85,16 @@ class Pyggs(object):
         if not os.path.isdir(pyggsDir):
             os.mkdir(pyggsDir)
         if not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
-            self.log.critical("Unable to set up base directory structure in working directory write to working directory '%s'." % self.workDir)
+            self.log.critical(_("Unable to set up base directory structure in working directory write to working directory '%s'.") % self.workDir)
             sys.exit()
 
-        self.log.info("Working directory is '%s'." % self.workDir)
+        self.log.info(_("Working directory is '%s'.") % self.workDir)
 
         profileDir = "%s/%s" %(pyggsDir, self.opts.profile)
         if not os.path.isdir(profileDir):
             os.mkdir(profileDir)
         if not os.path.isdir(profileDir):
-            self.log.critical("Unable to create profile directory '%s'." % profileDir)
+            self.log.critical(_("Unable to create profile directory '%s'.") % profileDir)
             sys.exit()
 
         # Let's ask some questions and create config
@@ -134,9 +134,11 @@ class Pyggs(object):
         config.update("geocaching.com", "username", _("Username"), validate = True)
         config.update("geocaching.com", "password", _("Password"), validate = True)
 
-        for plugin in config.options("plugins"):
+        print("  Checking plugins dependency tree...")
+        self.loadPlugins()
+
+        for plugin in self.plugins:
             print("  %s:" % _("Configuration of '%s' plugin") % plugin)
-            self.loadPlugin(plugin)
             self.plugins[plugin].setup(config)
 
         config.save()
@@ -148,27 +150,32 @@ class Pyggs(object):
         """Run pyggs"""
         # Setup working directory structure
         if not os.path.isdir(self.workDir):
-            self.log.critical("Working directory '%s' does not exist, please run setup.py script." % self.workDir)
+            self.log.critical(_("Working directory '%s' does not exist, please run setup.py script.") % self.workDir)
             sys.exit()
 
         parserDir = self.workDir + "/parser"
         pyggsDir = self.workDir + "/pyggs"
         if not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir):
-            self.log.critical("Working directory '%s' is not set up properly, please run setup.py script." % self.workDir)
+            self.log.critical(_("Working directory '%s' is not set up properly, please run setup.py script.") % self.workDir)
             sys.exit()
 
-        self.log.info("Working directory is '%s'." % self.workDir)
+        self.log.info(_("Working directory is '%s'.") % self.workDir)
 
-        configFile = "%s/%s/config.xml" %(pyggsDir, self.opts.profile)
+        configFile = "%s/%s/config.cfg" %(pyggsDir, self.opts.profile)
         if not os.path.isfile(configFile):
-            self.log.critical("Configuration file not found for profile '%s', please run setup.py script." % opts.profile)
+            self.log.critical(_("Configuration file not found for profile '%s', please run setup.py script.") % self.opts.profile)
             sys.exit()
         self.config = config = Configurator.Profile(configFile)
+
+        self.GCparser = GCparser(username = config.get("geocaching.com", "username"), password = config.get("geocaching.com", "password"), dataDir = parserDir)
+
+        self.checkPlugins()
 
 
     def loadPlugin(self, name):
         """ Load a plugin - name is the file and class name"""
         if name not in globals()['plugins'].__dict__:
+            self.log.info(_("Loading plugin '%s'.") % name)
             __import__(self.pluginModule(name))
         self.plugins[name] = getattr(globals()['plugins'].__dict__[name], name)(self)
         return True
@@ -178,6 +185,25 @@ class Pyggs(object):
         return "%s.%s" % (globals()['plugins'].__name__, name)
 
 
+    def loadPlugins(self):
+        """Loads all plugins and their dependencies"""
+        for plugin in self.config.options("plugins"):
+            if self.config.get("plugins", plugin) == "y":
+                self.loadPlugin(plugin)
+
+        for plugin in self.plugins:
+            self.loadWithDeps(plugin)
+
+
+    def loadWithDeps(self, name):
+        """Load plugin and its dependencies"""
+        if name not in self.plugins:
+            self.loadPlugin(name)
+            self.config.set("plugins", name, "y")
+        for dep in self.plugins[name].dependencies:
+            if dep not in self.plugins:
+                self.log.warn(_("'%s' plugin pulled in as dependency by '%s'.") % (dep, name))
+                self.loadWithDeps(dep)
 
 if __name__ == '__main__':
     pyggs = Pyggs()

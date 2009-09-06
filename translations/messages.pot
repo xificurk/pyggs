@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2009-09-06 11:52+CEST\n"
+"POT-Creation-Date: 2009-09-06 23:43+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,119 +15,115 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: Configurator.py:67
+#: Configurator.py:70
 msgid "ERROR: You have to input a value from %s."
 msgstr ""
 
-#: Configurator.py:70
+#: Configurator.py:73
 msgid "ERROR: You have to input a non-empty string."
 msgstr ""
 
-#: pyggs.py:51
-msgid "set logging to ERROR"
+#: plugins/base.py:43
+msgid "'My Finds' data timeout in hours"
 msgstr ""
 
 #: pyggs.py:52
-msgid "set logging to INFO"
+msgid "set logging to ERROR"
 msgstr ""
 
 #: pyggs.py:53
-msgid "set logging to DEBUG"
+msgid "set logging to INFO"
 msgstr ""
 
 #: pyggs.py:54
+msgid "set logging to DEBUG"
+msgstr ""
+
+#: pyggs.py:55
 msgid "set logging to ALL"
 msgstr ""
 
 #: pyggs.py:56
-msgid "set working directory, default is ~/.geocaching"
+msgid "set working directory, default is %s"
 msgstr ""
 
 #: pyggs.py:57
 msgid "choose profile"
 msgstr ""
 
-#: pyggs.py:68
+#: pyggs.py:64
 msgid "You have to select a profile."
 msgstr ""
 
-#: pyggs.py:78
+#: pyggs.py:77
 msgid "Unable to create working directory '%s'."
 msgstr ""
 
-#: pyggs.py:88
-msgid "Unable to set up base directory structure in working directory write to working directory '%s'."
+#: pyggs.py:87
+msgid "Unable to set up base directory structure in working directory '%s'."
 msgstr ""
 
-#: pyggs.py:91 pyggs.py:162
-msgid "Working directory is '%s'."
-msgstr ""
-
-#: pyggs.py:97
+#: pyggs.py:96
 msgid "Unable to create profile directory '%s'."
 msgstr ""
 
-#: pyggs.py:107
-msgid "Please, select user interface language - %s."
-msgstr ""
-
-#: pyggs.py:115
-msgid "Check if these are all installed plugins. You can enable/disable each of them for your profile later."
-msgstr ""
-
-#: pyggs.py:116
-msgid "Please, use comma separated list."
-msgstr ""
-
-#: pyggs.py:117
-msgid "Installed plugins"
-msgstr ""
-
-#: pyggs.py:122
+#: pyggs.py:108
 msgid "Now, we're going to setup your profile named '%s'."
 msgstr ""
 
-#: pyggs.py:125
+#: pyggs.py:112
+msgid "General options"
+msgstr ""
+
+#: pyggs.py:113
+msgid "Please, select user interface language"
+msgstr ""
+
+#: pyggs.py:123
 msgid "Plugins"
 msgstr ""
 
-#: pyggs.py:127
+#: pyggs.py:125
 msgid "Enable '%s' plugin"
 msgstr ""
 
-#: pyggs.py:134
+#: pyggs.py:133
 msgid "Username"
 msgstr ""
 
-#: pyggs.py:135
+#: pyggs.py:134
 msgid "Password"
 msgstr ""
 
-#: pyggs.py:141
+#: pyggs.py:146
+msgid "Output"
+msgstr ""
+
+#: pyggs.py:147
+msgid "Templates are looked up in these directories (consecutively)"
+msgstr ""
+
+#: pyggs.py:148
+msgid "Template"
+msgstr ""
+
+#: pyggs.py:149
+msgid "Directory"
+msgstr ""
+
+#: pyggs.py:157
 msgid "Configuration of '%s' plugin"
 msgstr ""
 
-#: pyggs.py:146
+#: pyggs.py:162
 msgid "Note: You can always edit these setings by re-running setup.py script, or by hand in file %s."
 msgstr ""
 
-#: pyggs.py:153
-msgid "Working directory '%s' does not exist, please run setup.py script."
-msgstr ""
-
-#: pyggs.py:159
+#: pyggs.py:172
 msgid "Working directory '%s' is not set up properly, please run setup.py script."
 msgstr ""
 
-#: pyggs.py:166
+#: pyggs.py:179
 msgid "Configuration file not found for profile '%s', please run setup.py script."
-msgstr ""
-
-#: pyggs.py:178
-msgid "Loading plugin '%s'."
-msgstr ""
-
-#: pyggs.py:205
-msgid "'%s' plugin pulled in as dependency by '%s'."
 msgstr ""
 

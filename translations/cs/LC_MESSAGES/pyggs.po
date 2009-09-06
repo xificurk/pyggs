@@ -1,12 +1,11 @@
 # Pyggs Czech translation.
 # Copyright (C) 2009
-# Petr Morávek <xificurk@centrum.cz>, 20009.
+# Petr Morávek <xificurk@centrum.cz>, 2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2009-09-06 01:14+CEST\n"
-"PO-Revision-Date: 2009-09-06 01:17+CEST\n"
+"POT-Creation-Date: 2009-09-06 23:43+CEST\n"
+"PO-Revision-Date: 2009-09-06 23:55+CEST\n"
 "Last-Translator: Petr Morávek <xificurk@centrum.cz>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -14,15 +13,115 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: Configurator.py:72
+#: Configurator.py:70
 msgid "ERROR: You have to input a value from %s."
 msgstr "CHYBA: Musíte zadat jednu z hodnot %s."
 
-#: Configurator.py:75
+#: Configurator.py:73
 msgid "ERROR: You have to input a non-empty string."
 msgstr "CHYBA: Musíte zadat neprázdný řetězec."
 
-#: setup.py:95
-msgid "Please, select user interface language - %s."
-msgstr "Vyberte prosím jazyk uživatelského rozhraní - %s."
+#: plugins/base.py:43
+msgid "'My Finds' data timeout in hours"
+msgstr "Platnost pro 'My Finds' data v hodinách"
+
+#: pyggs.py:52
+msgid "set logging to ERROR"
+msgstr "nastavit logování na ERROR"
+
+#: pyggs.py:53
+msgid "set logging to INFO"
+msgstr "nastavit logování na INFO"
+
+#: pyggs.py:54
+msgid "set logging to DEBUG"
+msgstr "nastavit logování na DEBUG"
+
+#: pyggs.py:55
+msgid "set logging to ALL"
+msgstr "nastavit logování na ALL"
+
+#: pyggs.py:56
+msgid "set working directory, default is %s"
+msgstr "nastavení pracovního adresáře, výchozí je %s"
+
+#: pyggs.py:57
+msgid "choose profile"
+msgstr "nastavit profil"
+
+#: pyggs.py:64
+msgid "You have to select a profile."
+msgstr "Musíte nastavit profil."
+
+#: pyggs.py:77
+msgid "Unable to create working directory '%s'."
+msgstr "Nepodařilo se vytvořit pracovní adresář '%s'."
+
+#: pyggs.py:87
+msgid "Unable to set up base directory structure in working directory '%s'."
+msgstr "Nepodařilo se vytvořit základní adresářovou strukturu v pracovním adresáři '%s'."
+
+#: pyggs.py:96
+msgid "Unable to create profile directory '%s'."
+msgstr "Nepodařilo se vytvořit adresář profilu '%s'."
+
+#: pyggs.py:108
+msgid "Now, we're going to setup your profile named '%s'."
+msgstr "Teď nastavíme váš profil '%s'."
+
+#: pyggs.py:112
+msgid "General options"
+msgstr "Obecná nastavení"
+
+#: pyggs.py:113
+msgid "Please, select user interface language"
+msgstr "Vyberte prosím jazyk uživatelského rozhraní"
+
+#: pyggs.py:123
+msgid "Plugins"
+msgstr "Pluginy"
+
+#: pyggs.py:125
+msgid "Enable '%s' plugin"
+msgstr "Zapnout plugin '%s'"
+
+#: pyggs.py:133
+msgid "Username"
+msgstr "Uživatelské jméno"
+
+#: pyggs.py:134
+msgid "Password"
+msgstr "Heslo"
+
+#: pyggs.py:146
+msgid "Output"
+msgstr "Výstup"
+
+#: pyggs.py:147
+msgid "Templates are looked up in these directories (consecutively)"
+msgstr "Šablony se hledají v těchto adresářích (postupně)"
+
+#: pyggs.py:148
+msgid "Template"
+msgstr "Šablona"
+
+#: pyggs.py:149
+msgid "Directory"
+msgstr "Adresář"
+
+#: pyggs.py:157
+msgid "Configuration of '%s' plugin"
+msgstr "Nastavení pluginu '%s'"
+
+#: pyggs.py:162
+msgid "Note: You can always edit these setings by re-running setup.py script, or by hand in file %s."
+msgstr "Poznámka: Tato nastavení můžete kdykoliv změnit znovuspuštěním setup.py skriptu, nebo ručně v souboru %s."
+
+#: pyggs.py:172
+msgid "Working directory '%s' is not set up properly, please run setup.py script."
+msgstr "Pracovní adresář '%s' není připraven, spusťte prosím setup.py skript."
+
+#: pyggs.py:179
+msgid "Configuration file not found for profile '%s', please run setup.py script."
+msgstr "Konfigurační soubor profilu '%s' nenalezen, spusťte prosím setup.py skript."
 

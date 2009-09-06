@@ -82,6 +82,7 @@ class BaseConfig(configparser.RawConfigParser):
 class Profile(BaseConfig):
     def __init__(self, configFile):
         BaseConfig.__init__(self, configFile)
+        self.log = logging.getLogger("Pyggs.Config.Profile")
 
         # set default values
         self.defaults["output"] = {}

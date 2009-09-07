@@ -1,7 +1,141 @@
+################################################################################
+#
+#  themes/default.theme - default theme for generated pages.
+#  Copyright (C) 2009 Petr Morávek
+#
+#  This file is part of Pyggs.
+#
+#  Pyggs is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  Pyggs is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+################################################################################
+
+
+# Styles that will be generated in head - remember, geocaching.com profile page
+# requires styles in body, so this is just for local viewing
 [@screen]
 
+
+# Define some colors, we can use later via gradient helper
 [@colors]
+lightmax = rgb(255, 0, 0)
+lightmin = rgb(255, 240, 0)
+darkmax = rgb(225, 0, 0)
+darkmin = rgb(225, 204, 0)
+bordermax = rgb(179, 0, 0)
+bordermin = rgb(179, 168, 0)
+
+
+# The rest is definition of all other available classes through css helper
+
+# Global wrapper
+[gcstats]
+font-size = 9pt
+font-family = Verdana,'Geneva CE',lucida,sans-serif
+color = black
+background = white
+
+# Some basic classes, that should be used on every element of that kind
+[caption]
+font-weight = bold
+font-size = 1.2em
+text-align = left
+padding = 0.2em 0.5em
+background = black
+color = white
 
 [table]
+width = 100%
+margin = 0 auto 0.5em auto
+
+[td]
+background = rgb(220,220,220)
+padding = 0.2em 0.5em
+
+[th]
+background = rgb(190,190,190)
+padding = 0.2em 0.5em
+font-weight = normal
+text-align = center
+
+[small]
+font-size = 0.75em
+
+# Separator for table section used in :general
+[endsection]
+border-bottom = 1px rgb(100,100,100) solid
 
 
+
+
+[fixedtable]
+table-layout = fixed
+
+[layouttable]
+border-spacing = 0
+margin = 0
+
+[td-layouttable]
+background = inherit
+padding = NULL
+vertical-align = top
+
+[td-icon]
+padding = NULL
+vertical-align = middle
+
+[endsection-bold-v]
+border-right = 4px white solid
+
+[right]
+text-align = right
+
+[center]
+text-align = center
+
+[graph]
+border-spacing = 1px
+
+[graph-cell]
+vertical-align = bottom
+text-align = center
+padding = 0
+padding-top = 5px
+
+[graph-header]
+padding = 1px 0
+
+[graph-leftheader]
+text-align = left
+padding = 0 3px
+
+[graph-bar]
+font-size = 0
+border = 1px solid black
+border-bottom = none
+
+[col-graph-header]
+width = 80px
+
+[col-graph]
+width = 20px
+
+[col-history-header]
+width = 140px
+
+[col-history-numbers]
+width = 50px
+
+[col-matrix]
+width = 60px

@@ -43,7 +43,7 @@ gettext.install("pyggs", localedir = localeDir, codeset="utf-8")
 class Pyggs(GCparser):
     def __init__(self):
         # Setup console output logging
-        console = ColorConsole(fmt="%(levelname)-8s %(name)-25s %(message)s")
+        console = ColorConsole(fmt="%(levelname)-8s %(name)-30s %(message)s")
         rootlog = logging.getLogger("")
         rootlog.addHandler(console)
         rootlog.setLevel(logging.WARN)
@@ -205,11 +205,11 @@ class Pyggs(GCparser):
         self.makeDepTree()
 
         # Prepare plugins
-        for plugin in self.plugins:
+        for plugin in self.depTree:
             self.plugins[plugin].prepare()
 
         # Run plugins
-        for plugin in self.plugins:
+        for plugin in self.depTree:
             self.plugins[plugin].run()
 
         # Render output
@@ -276,21 +276,21 @@ class Pyggs(GCparser):
 
     def makeDepTree(self):
         """Rearragne the order of self.plugins according to dependencies"""
-        plugins = {}
+        self.depTree = []
+        plugins = list(self.plugins.keys())
 
         fs = 0
-        while len(self.plugins):
+        while len(plugins):
             fs = fs +1
             if fs > 100:
-                self.log.warn("Cannot make plugin depedency tree for %s. Possible circular dependencies." % ",".join(list(self.plugins.keys())))
-                for plugin in list(self.plugins.keys()):
-                    plugins[plugin] = self.plugins.pop(plugin)
+                self.log.warn("Cannot make plugin depedency tree for %s. Possible circular dependencies." % ",".join(plugins))
+                self.depTree.extend(plugins)
 
-            for plugin in list(self.plugins.keys()):
-                if self.pluginDepsLoaded(list(plugins.keys()), self.plugins[plugin].dependencies):
-                    plugins[plugin] = self.plugins.pop(plugin)
-
-        self.plugins = plugins
+            for plugin in list(plugins):
+                if self.pluginDepsLoaded(self.depTree, self.plugins[plugin].dependencies):
+                    self.log.debug("Adding plugin '%s' to the deptree." % plugin)
+                    plugins.remove(plugin)
+                    self.depTree.append(plugin)
 
 
     def pluginDepsLoaded(self, loaded, dependencies):

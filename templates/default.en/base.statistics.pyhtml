@@ -1,5 +1,19 @@
-<?py _context["title"] = "Statistics" ?>
-
+<?py
+_context["title"] = "Statistics"
+try:
+    locale.setlocale(locale.LC_ALL, ("en", "UTF-8"))
+#
+except:
+    echo("prvni")
+    try:
+        locale.setlocale(locale.LC_ALL, ("en", ""))
+    #
+    except:
+        echo("druhy")
+        locale.setlocale(locale.LC_ALL, "")
+    #
+#
+?>
 
 <div#{css("gcstats")}>
 <?py

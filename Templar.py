@@ -20,13 +20,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, os.path, sys, re
-from datetime import datetime
+import logging, os.path, sys, re, datetime, locale
 
 import Configurator
 
 import tenjin
 from tenjin.helpers import *
+
 
 class Templar(tenjin.Engine):
     def __init__(self, master):
@@ -70,7 +70,7 @@ class Templar(tenjin.Engine):
     def outputPages(self, pages):
         """Render and save all pages"""
         for output in pages:
-            globals = {"escape":escape, "to_str":to_str, "echo":echo, "css_header":self.theme.cssHeader, "css":self.theme.css, "gradient":self.theme.cssGradient, "date":self.formatDate, "dateRange":self.dateRange}
+            globals = {"escape":escape, "to_str":to_str, "echo":echo, "css_header":self.theme.cssHeader, "css":self.theme.css, "gradient":self.theme.cssGradient, "datetime":datetime, "date":self.formatDate, "dateRange":self.dateRange, "locale":locale}
             context = pages[output]["context"]
             context["pages"] = pages
             result = self.render(pages[output]["template"], context, globals = globals, layout = pages[output]["layout"])
@@ -82,30 +82,35 @@ class Templar(tenjin.Engine):
     def formatDate(self, value = None, format = "%(day)d.&nbsp;%(month)d.&nbsp;%(year)d"):
         """Return date in string fromat"""
         if type(value) is str:
-            value = datetime.strptime(value, "%Y-%m-%d")
+            value = datetime.datetime.strptime(value, "%Y-%m-%d")
         elif type(value) is int:
-            value = datetime.fromtimestamp(value)
+            value = datetime.datetime.fromtimestamp(value)
         elif value is None:
-            value = datetime.today()
+            value = datetime.datetime.today()
 
-        return format % {"year":value.year, "month":value.month, "day":value.day, "hour":value.hour, "minute":value.minute}
+        return format % {"year":value.year, "month":value.month, "day":value.day, "hour":value.hour, "minute":value.minute, "monthname":value.strftime("%B")}
 
 
     def dateRange(self, start, end = None):
         """Returns date range in string format"""
         if type(start) is str:
-            start = datetime.strptime(start, "%Y-%m-%d")
+            start = datetime.datetime.strptime(start, "%Y-%m-%d")
         elif type(start) is int:
-            start = datetime.fromtimestamp(start)
+            start = datetime.datetime.fromtimestamp(start)
         elif start is None:
-            start = datetime.today()
+            start = datetime.datetime.today()
 
         if end is None:
             return self.formatDate(start, "%(day)d.&nbsp;%(month)d.&nbsp;%(year)d")
+        elif type(end) is datetime.timedelta:
+            end = start + end
         elif type(end) is str:
-            end = datetime.strptime(end, "%Y-%m-%d")
+            end = datetime.datetime.strptime(end, "%Y-%m-%d")
         elif type(end) is int:
-            end = datetime.fromtimestamp(end)
+            end = datetime.datetime.fromtimestamp(end)
+
+        if start > end:
+            (start,end) = (end,start)
 
         if self.formatDate(start, "%(year)d-%(month)d") == self.formatDate(end, "%(year)d-%(month)d"):
             string = self.formatDate(start, "%(day)d.");

@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, os.path, sys, re
+import logging, os.path, sys, re, datetime
 
 import Configurator
 
@@ -70,7 +70,7 @@ class Templar(tenjin.Engine):
     def outputPages(self, pages):
         """Render and save all pages"""
         for output in pages:
-            globals = {"escape":escape, "to_str":to_str, "echo":echo, "css_header":self.theme.cssHeader, "css":self.theme.css, "gradient":self.theme.cssGradient}
+            globals = {"escape":escape, "to_str":to_str, "echo":echo, "css_header":self.theme.cssHeader, "css":self.theme.css, "gradient":self.theme.cssGradient, "time":datetime.datetime.today}
             context = pages[output]["context"]
             context["pages"] = pages
             result = self.render(pages[output]["template"], context, globals = globals, layout = pages[output]["layout"])

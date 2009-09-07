@@ -57,9 +57,8 @@ class myFindsAverages(object):
 
         db = myFindsDB.database.getDb()
         cur = db.cursor()
-        result = cur.execute("SELECT * FROM myFinds WHERE %s ORDER BY date ASC, sequence ASC" % where)
+        result = cur.execute("SELECT * FROM myFinds WHERE %s ORDER BY date ASC, sequence ASC" % where).fetchall()
         all    = myFindsDB.database.fetchAssoc(result)
-        result = cur.execute("SELECT * FROM myFinds WHERE %s ORDER BY date ASC, sequence ASC" % where)
         days   = myFindsDB.database.fetchAssoc(result, "date")
         db.close()
 

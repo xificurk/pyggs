@@ -316,25 +316,25 @@ class Storage(object):
         con.row_factory = sqlite3.Row
         return con
 
-    def fetchAssoc(self, cursor, format = "#"):
+
+    def fetchAssoc(self, result, format = "#"):
         """Fetch result to a dictionary"""
+        if len(result) == 0:
+            return []
+
         if format == "":
             format = "#"
         format = format.split(",")
 
-        row = cursor.fetchone()
-        if row is None:
-            return []
-
         for field in format:
-            if field != "#" and field not in row.keys():
+            if field != "#" and field not in result[0].keys():
                 self.log.error("There is no field '%s' in the result set." % field)
                 return []
 
         # make associative tree
         data = OrderedDict()
         data["result"] = None
-        while row:
+        for row in result:
             x = data
             i = "result"
             for field in format:
@@ -356,7 +356,7 @@ class Storage(object):
             x[i] = {}
             for k in row.keys():
                 x[i][k] = row[k]
-            row = cursor.fetchone()
+
         return data["result"]
 
 

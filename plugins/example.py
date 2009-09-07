@@ -24,8 +24,11 @@ import logging
 
 class base(object):
     def __init__(self, master):
+        # For convinience, define namespace used by this plugin (logger, config etc.)
+        self.NS  = "plugin.base"
+
         # Let's define logging facility in Pyggs way.
-        self.log = logging.getLogger("Pyggs.plugin.%s" % self.__class__.__name__)
+        self.log = logging.getLogger("Pyggs.%s" % self.NS)
 
         # Save reference to the Pyggs object.
         self.master = master
@@ -36,6 +39,7 @@ class base(object):
         # Prepare place for template data
         self.templateData = {}
 
+
     def setup(self):
         """Setup script"""
         # This part will be called from setup.py script, you can interact with
@@ -45,23 +49,23 @@ class base(object):
         config = self.master.config
 
         # You should use only your plugin's namespace section.
-        NS = "pluginNS"
-        config.assertSection(NS)
+        config.assertSection(self.NS)
 
         # Setup default values of some options.
-        config.defaults[NS] = {}
-        config.defaults[NS]["optionName"] = "value"
+        config.defaults[self.NS] = {}
+        config.defaults[self.NS]["optionName"] = "value"
 
         # Now interact with user, and update values of some options.
         # You can add validate argument - if it is a list, value has to be from
         #   that list; if it is anything else then None, value has to be
         #   non-empty string
-        config.update(NS, "optionName", "Text shown to user: ")
+        config.update(self.NS, "optionName", "Text shown to user: ")
+
 
     def prepare(self):
         """Setup everything needed before actual run"""
         # Log this
-        self.log.info("Preparing plugin '%s'." % self.__class__.__name__)
+        self.log.debug("Preparing...")
 
         # Register custom parsers
         self.master.registerParser("myParserName", MyParserClass)
@@ -73,10 +77,16 @@ class base(object):
         # If your plugin needs some special storage facility, initialize it here
         self.storage = MyStorage()
 
+        # Register pages you want to render to output directory
+        self.master.registerPage("page.html", ":page_template", ":page_menu_template", self.templateData, layout = False):
+
         # You can also interact with other plugins via self.master.plugins[name]
+
 
     def run(self):
         """Run the plugin's code"""
+        # Log this
+        self.log.info("Running...")
+
         # Do whatever you need to prepare data for rendering
         # You can also interact with other plugins via self.master.plugins[name]
-        pass

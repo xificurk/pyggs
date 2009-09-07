@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/base.py - base plugin for statistics rendering.
+    plugins/general.py - Prepare place to pug general statistics.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -22,13 +22,13 @@
 
 import logging
 
-class base(object):
+class general(object):
     def __init__(self, master):
-        self.NS  = "plugin.base"
+        self.NS  = "plugin.general"
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = []
+        self.dependencies = ["base"]
         self.templateData = {"templates":{}}
 
 
@@ -41,14 +41,14 @@ class base(object):
         """Setup everything needed before actual run"""
         self.log.debug("Preparing...")
 
-        self.master.registerPage("index.html", ":base.statistics", ":menu.base.statistics", self.templateData)
-        self.master.registerPage("export.html", ":base.statistics", ":menu.base.export", self.templateData, layout = False)
+        self.master.plugins["base"].registerTemplate(":general", self.templateData)
 
 
     def run(self):
         """Run the plugin's code"""
         self.log.info("Running...")
 
+
     def registerTemplate(self, template, context):
-        """Register template for rendering in GC statistics"""
+        """Register template for rendering in General stats section"""
         self.templateData["templates"][template] = context

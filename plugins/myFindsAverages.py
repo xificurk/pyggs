@@ -46,6 +46,7 @@ class myFindsAverages(object):
         """Run the plugin's code"""
         self.log.info("Running...")
         self.templateData["overall"] = self.getAverages()
+        self.templateData["last365"] = self.getAverages("date > DATE('now', '-365 days')", 365);
         self.master.plugins["general"].registerTemplate(":myFindsAverages", self.templateData)
 
 

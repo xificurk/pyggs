@@ -100,6 +100,7 @@ class myFindsDatabase(object):
 
         return self.valid
 
+
     def update(self, data):
         """Update MyFinds database by data"""
         db = self.database.getDb()
@@ -110,3 +111,12 @@ class myFindsDatabase(object):
         db.commit()
         db.close()
         self.database.setE("%s.lastcheck" % self.NS, time.time())
+
+
+    def select(self, query):
+        """Selects data from database, performs update if neccessary"""
+        self.checkValidity()
+        db     = self.database.getDb()
+        result = db.cursor().execute(query).fetchall()
+        db.close()
+        return result

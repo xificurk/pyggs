@@ -53,14 +53,9 @@ class myFindsAverages(object):
     def getAverages(self, where = "1", period = None):
         """return averages stats"""
         myFindsDB = self.master.plugins["myFinds"].storage
-        myFindsDB.checkValidity()
-
-        db = myFindsDB.database.getDb()
-        cur = db.cursor()
-        result = cur.execute("SELECT * FROM myFinds WHERE %s ORDER BY date ASC, sequence ASC" % where).fetchall()
+        result = myFindsDB.select("SELECT * FROM myFinds WHERE %s ORDER BY date ASC, sequence ASC" % where)
         all    = myFindsDB.database.fetchAssoc(result)
         days   = myFindsDB.database.fetchAssoc(result, "date")
-        db.close()
 
         ret = {}
         ret["finds"] = len(all);

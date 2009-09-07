@@ -1,0 +1,9 @@
+<tr>
+<td#{css("td")}>Overall: Found caches</td>
+<td#{css("td")}><strong>${overall["finds"]}</strong> finds in <strong>${overall["gcdays"]}</strong> caching days of <strong>${overall["days"]}</strong> possible (<strong>${overall["gcdays/week"]}</strong> caching days/week)</td>
+</tr>
+
+<tr>
+<td#{css(["td", "endsection"])}>Overall: Averages</td>
+<td#{css(["td", "endsection"])}><strong>${overall["finds/gcday"]}</strong> finds/caching day, <strong>${overall["finds/day"]}</strong> caches/day, <strong>${overall["finds/week"]}</strong> caches/week, <strong>${overall["finds/month"]}</strong> caches/month</td>
+</tr>

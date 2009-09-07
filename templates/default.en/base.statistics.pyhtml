@@ -1,0 +1,21 @@
+<?py _context["title"] = "Statistics" ?>
+
+
+<div#{css("gcstats")}>
+<?py
+rendered = []
+order    = [":general"]
+for template in order:
+    if template in templates:
+        rendered.append(template)
+        include(template, context=templates[template])
+    #
+#
+for template in templates:
+    if template not in rendered:
+        include(template, context=templates[template])
+    #
+#
+?>
+
+</div>

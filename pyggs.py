@@ -27,6 +27,7 @@ from optparse import OptionParser
 
 from GCparser.GCparser import GCparser
 
+from Templar import Templar
 import Configurator
 import plugins
 
@@ -125,6 +126,7 @@ class Pyggs(GCparser):
             config.update("plugins", plugin, _("Enable '%s' plugin") % plugin, validate = ["y", "n"])
         for plugin in config.options("plugins"):
             if plugin not in installedPlugins:
+                logging.debug("Removing not installed plugin %s." % plugin)
                 config.remove_option("plugins", plugin)
 
         config.assertSection("geocaching.com")
@@ -141,11 +143,21 @@ class Pyggs(GCparser):
         for template in os.listdir(os.path.dirname(__file__) + "/templates"):
             if os.path.isdir(os.path.dirname(__file__) + "/templates/" + template):
                 templates.append(template)
+        themes = []
+        if os.path.isdir(pyggsDir + "/themes"):
+            for theme in os.listdir(pyggsDir + "/themes"):
+                if os.path.isfile(pyggsDir + "/themes/" + theme):
+                    themes.append(theme.replace(".theme", ""))
+        for theme in os.listdir(os.path.dirname(__file__) + "/themes"):
+            if os.path.isfile(os.path.dirname(__file__) + "/themes/" + theme):
+                themes.append(theme.replace(".theme", ""))
         config.assertSection("output")
         print()
         print("  %s:" % _("Output"))
         print("    %s:\n      * %s\n      * %s" % (_("Templates are looked up in these directories (consecutively)"), pyggsDir + "/templates", os.path.dirname(__file__) + "/templates"))
         config.update("output", "template", _("Template"), validate = templates)
+        print("    %s:\n      * %s\n      * %s" % (_("Themes are looked up in these directories (consecutively)"), pyggsDir + "/themes", os.path.dirname(__file__) + "/themes"))
+        config.update("output", "theme", _("Theme"), validate = themes)
         config.update("output", "directory", _("Directory"), validate = True)
 
         print()
@@ -169,14 +181,14 @@ class Pyggs(GCparser):
         pyggsDir = self.workDir + "/pyggs"
         profileDir = "%s/%s" %(pyggsDir, self.opts.profile)
         if not os.path.isdir(self.workDir) or not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir) or not os.path.isdir(profileDir):
-            self.log.critical(_("Working directory '%s' is not set up properly, please run setup.py script.") % self.workDir)
+            self.log.error(_("Working directory '%s' is not set up properly, please run setup.py script.") % self.workDir)
             self.die()
 
         self.log.info("Working directory is '%s'." % self.workDir)
 
         configFile = "%s/config.cfg" % profileDir
         if not os.path.isfile(configFile):
-            self.log.critical(_("Configuration file not found for profile '%s', please run setup.py script.") % self.opts.profile)
+            self.log.error(_("Configuration file not found for profile '%s', please run setup.py script.") % self.opts.profile)
             self.die()
         self.config = config = Configurator.Profile(configFile)
 
@@ -188,6 +200,7 @@ class Pyggs(GCparser):
         self.profileStorage = Storage("%s/storage.db" % profileDir)
 
         self.handlers = {}
+        self.pages    = {}
         self.loadPlugins()
         self.makeDepTree()
 
@@ -198,6 +211,15 @@ class Pyggs(GCparser):
         # Run plugins
         for plugin in self.plugins:
             self.plugins[plugin].run()
+
+        # Render output
+        templar = Templar(self)
+        templar.outputPages(self.pages)
+
+
+    def registerPage(self, output, template, menutemplate, context, layout = True):
+        """Register page for rendering"""
+        self.pages[output] = {"template":template, "menu":menutemplate, "context":context, "layout":layout}
 
 
     def registerHandler(self, parsername, handler):
@@ -237,7 +259,7 @@ class Pyggs(GCparser):
             if self.config.get("plugins", plugin) == "y":
                 self.loadPlugin(plugin)
 
-        for plugin in self.plugins:
+        for plugin in list(self.plugins.keys()):
             self.loadWithDeps(plugin)
 
 

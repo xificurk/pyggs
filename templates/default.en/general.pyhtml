@@ -1,0 +1,19 @@
+<table#{css("table")}>
+<caption#{css("caption")}>General Statistics</caption>
+<?py
+rendered = []
+order    = [":myFindsAverages"]
+for template in order:
+    if template in templates:
+        rendered.append(template)
+        include(template, context=templates[template])
+    #
+#
+for template in templates:
+    if template not in rendered:
+        include(template, context=templates[template])
+    #
+#
+?>
+
+</table>

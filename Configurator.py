@@ -27,6 +27,9 @@ class BaseConfig(configparser.RawConfigParser):
         self.log = logging.getLogger("Pyggs.Config")
         configparser.RawConfigParser.__init__(self)
 
+        # Let's make option names case-sensitive
+        self.optionxform = str
+
         self.defaults = {}
 
         self.configFile = configFile
@@ -87,5 +90,21 @@ class Profile(BaseConfig):
         # set default values
         self.defaults["output"] = {}
         self.defaults["output"]["template"] = "default.en"
+        self.defaults["output"]["theme"] = "default"
         self.defaults["plugins"] = {}
         self.defaults["plugins"]["base"] = "y"
+
+
+
+class Theme(BaseConfig):
+    def __init__(self, configFile):
+        BaseConfig.__init__(self, configFile)
+        self.log = logging.getLogger("Pyggs.Config.Theme")
+
+    def options(self, section):
+        """Handle missing section error"""
+        try:
+            return BaseConfig.options(self, section)
+        except configparser.NoSectionError:
+            self.log.warn("This theme has no section '%s'." % section)
+            return []

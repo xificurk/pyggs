@@ -22,11 +22,11 @@
 """
 
 import logging, os, sqlite3
-from ColorConsole import ColorConsole
+from collections import OrderedDict
 from optparse import OptionParser
 
+from ColorConsole import ColorConsole
 from GCparser.GCparser import GCparser
-
 from Templar import Templar
 import Configurator
 import plugins
@@ -205,11 +205,11 @@ class Pyggs(GCparser):
         self.makeDepTree()
 
         # Prepare plugins
-        for plugin in self.depTree:
+        for plugin in self.plugins:
             self.plugins[plugin].prepare()
 
         # Run plugins
-        for plugin in self.depTree:
+        for plugin in self.plugins:
             self.plugins[plugin].run()
 
         # Render output
@@ -276,21 +276,20 @@ class Pyggs(GCparser):
 
     def makeDepTree(self):
         """Rearragne the order of self.plugins according to dependencies"""
-        self.depTree = []
-        plugins = list(self.plugins.keys())
-
+        plugins = OrderedDict()
         fs = 0
-        while len(plugins):
+        while len(self.plugins):
             fs = fs +1
             if fs > 100:
-                self.log.warn("Cannot make plugin depedency tree for %s. Possible circular dependencies." % ",".join(plugins))
-                self.depTree.extend(plugins)
+                self.log.warn("Cannot make plugin depedency tree for %s. Possible circular dependencies." % ",".join(list(self.plugins.keys())))
+                for plugin in list(self.plugins.keys()):
+                    plugins[plugin] = self.plugins.pop(plugin)
 
-            for plugin in list(plugins):
-                if self.pluginDepsLoaded(self.depTree, self.plugins[plugin].dependencies):
-                    self.log.debug("Adding plugin '%s' to the deptree." % plugin)
-                    plugins.remove(plugin)
-                    self.depTree.append(plugin)
+            for plugin in list(self.plugins.keys()):
+                if self.pluginDepsLoaded(list(plugins.keys()), self.plugins[plugin].dependencies):
+                    plugins[plugin] = self.plugins.pop(plugin)
+
+        self.plugins = plugins
 
 
     def pluginDepsLoaded(self, loaded, dependencies):
@@ -333,7 +332,8 @@ class Storage(object):
                 return []
 
         # make associative tree
-        data = {"result":None}
+        data = OrderedDict()
+        data["result"] = None
         while row:
             x = data
             i = "result"
@@ -346,7 +346,7 @@ class Storage(object):
                     i = len(x)-1
                 else:
                     if x[i] is None:
-                        x[i] = {}
+                        x[i] = OrderedDict()
                     try:
                         foo = x[i][row[field]]
                     except:

@@ -29,7 +29,7 @@ class gcczUpdater(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["myFinds", "cache"]
+        self.dependencies = ["myFinds", "cache", "gccz"]
         self.templateData = {}
 
 
@@ -38,10 +38,8 @@ class gcczUpdater(object):
         config = self.master.config
 
         config.assertSection(self.NS)
-        config.defualts[self.NS] = {}
-        config.defualts[self.NS]["force"] = "n"
-        config.update(self.NS, "username", _("Geocaching.cz username"), validate=True)
-        config.update(self.NS, "password", _("Geocaching.cz password"), validate=True)
+        config.defaults[self.NS] = {}
+        config.defaults[self.NS]["force"] = "n"
         config.update(self.NS, "force", _("Force my finds update on every run"), validate=["y","n"])
 
 
@@ -70,15 +68,17 @@ class gcczUpdater(object):
                 self.log.info("Geocaching.cz database seems already up to date, skipping update.")
                 return
 
-        data = {"a":"nalezy","u":config.get(self.NS, "username"),"p":config.get(self.NS, "password"),"d":finds}
+        data = {"a":"nalezy","u":config.get(self.master.plugins["gccz"].NS, "username"),"p":config.get(self.master.plugins["gccz"].NS, "password"),"d":finds}
         result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
         result = result.read().decode().splitlines()
+
         succ   = False
         for row in result:
             row = row.split(":")
             if row[0] == "info" and row[1] == "ok":
                 succ = True
                 break
+
         if succ is False:
             self.log.error("Unable to update Geocaching.cz database.")
             self.log.debug("Response: %s" % result)

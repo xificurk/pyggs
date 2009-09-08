@@ -1,0 +1,94 @@
+<table#{css("table")}>
+<caption#{css("caption")}>History</caption>
+
+<?py
+for year in history:
+    year = "%s" % year
+?>
+<tr><th#{css("th")} colspan="2"><strong>#{year}</strong></th></tr>
+<tr>
+<td#{css("td","td-layouttable")}>
+  <table#{css("table","fixedtable","graph")}>
+    <col#{css("col-graph-header")} />
+    <col span="12"#{css("col-graph")} />
+
+<tr#{css("small")}>
+<td#{css("td","graph-cell","graph-leftheader")}></td>
+<?py
+    for month in range(1,13):
+        month = "%02d" % month
+        try:
+            count = history[year]["data"][month]["finds"]
+        #
+        except:
+            count = 0
+        #
+        if count >= top:
+            share = 1
+        #
+        elif count >= history[year]["top"]:
+            share = 0.4
+        #
+        else:
+            share = 0
+        #
+        bar  = {"height":"%dpx" % (count*5),"background":gradient("lightmin","lightmax",share),"border-color":gradient("bordermin","bordermax",share)}
+        cell = {"height":"%dpx" % (top*5+20)}
+?>
+    <td#{css("td","graph-cell",cell)}>#{count}<br /><div#{css("graph-bar",bar)}>&nbsp;</div></td>
+<?py
+    #endfor
+?>
+</tr>
+
+
+<tr#{css("small")}>
+<th#{css("th","graph-header","graph-leftheader")}>Month</th>
+<?py
+    for month in range(1,13):
+        month = "%02d" % month
+?>
+    <th#{css("th","graph-header")}>#{date("%s-%s-01" % (year, month),"%(monthabr)s")}</th>
+<?py
+    #endfor
+?>
+</tr>
+
+<tr#{css("small")}>
+<th#{css("th","graph-header","graph-leftheader")}>Caching days</th>
+<?py
+    for month in range(1,13):
+        month = "%02d" % month
+        try:
+            count = history[year]["data"][month]["gcdays"]
+        #
+        except:
+            count = ""
+        #
+?>
+    <th#{css("th","graph-header")}>#{count}</th>
+<?py
+    #endfor
+?>
+</tr>
+
+
+  </table>
+</td>
+<td#{css("td","td-layouttable")}>
+  <table#{css("table", "fixedtable")}>
+  <col#{css("col-history-header")} />
+  <col#{css("col-history-numbers")} />
+  <tr><td#{css("td")}>Total finds</td><td#{css("td", "right")}>#{history[year]["averages"]["finds"]}</td></tr>
+  <tr><td#{css("td")}>Caching days</td><td#{css("td", "right")}>#{history[year]["averages"]["gcdays"]}</td></tr>
+  <tr><td#{css("td")}>Caching days/week</td><td#{css("td", "right")}>#{history[year]["averages"]["gcdays/week"]}</td></tr>
+  <tr><td#{css("td")}>Finds/caching day</td><td#{css("td", "right")}>#{history[year]["averages"]["finds/gcday"]}</td></tr>
+  <tr><td#{css("td")}>Finds/day</td><td#{css("td", "right")}>#{history[year]["averages"]["finds/day"]}</td></tr>
+  <tr><td#{css("td")}>Finds/week</td><td#{css("td", "right")}>#{history[year]["averages"]["finds/week"]}</td></tr>
+  <tr><td#{css("td")}>Finds/month</td><td#{css("td", "right")}>#{history[year]["averages"]["finds/month"]}</td></tr>
+  </table>
+</td>
+</tr>
+<?py #endfor ?>
+
+</table>

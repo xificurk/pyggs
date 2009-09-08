@@ -71,6 +71,6 @@ class myFindsAverages(object):
         ret["finds/gcday"] = "%.2f" % (ret["finds"]/max(ret["gcdays"],1))
         ret["finds/day"]   = "%.2f" % (ret["finds"]/period)
         ret["finds/week"]  = "%.2f" % (ret["finds"]/period*7)
-        ret["finds/month"] = "%.2f" % (ret["finds"]/period*365.12/12)
+        ret["finds/month"] = "%.2f" % (ret["finds"]/period*365.25/12)
 
         return ret

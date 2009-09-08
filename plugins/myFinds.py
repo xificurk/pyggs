@@ -55,7 +55,7 @@ class myFinds(object):
 
     def parseMyFinds(self, myFinds):
         """Update MyFinds database"""
-        self.log.debug("Updating MyFinds database.")
+        self.log.info("Updating MyFinds database.")
         myFinds = myFinds.getList()
         #TODO: user corrections
         self.storage.update(myFinds)

@@ -56,8 +56,9 @@ class cache(object):
 
     def parseCache(self, cache):
         """Update Cache database"""
-        self.log.debug("Updating Cache database.")
-        self.storage.update(cache.getDetails())
+        details = cache.getDetails()
+        self.log.info("Updating Cache database for %s: %s." % (details.get("waypoint"), details.get("name")))
+        self.storage.update(details)
 
 
 

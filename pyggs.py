@@ -353,8 +353,7 @@ class Storage(object):
                         x[i][row[field]] = None
                     x = x[i]
                     i = row[field]
-            x[i] = {}
-            x[i][k] = dict(row)
+            x[i] = dict(row)
 
         return data["result"]
 

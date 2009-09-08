@@ -179,10 +179,10 @@ class Templar(tenjin.Engine):
     def cacheType(self, ctype):
         ctypes = {}
         ctypes["Traditional Cache"] = 2
-        ctypes["Multi-Cache"] = 3
+        ctypes["Multi-cache"] = 3
         ctypes["Unknown Cache"] = 8
         ctypes["Letterbox Hybrid"] = 5
-        ctypes["EarthCache"] = 'earthcache'
+        ctypes["Earthcache"] = 'earthcache'
         ctypes["Wherigo Cache"] = 1858
         ctypes["Event Cache"] = 6
         ctypes["Virtual Cache"] = 4

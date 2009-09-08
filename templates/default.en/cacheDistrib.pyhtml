@@ -1,0 +1,52 @@
+<table#{css("table","layouttable")}><tr>
+
+<td#{css("td","td-layouttable","endsection-bold-v")}>
+<table#{css("table")}>
+<caption#{css("caption")}>Found caches by type</caption>
+<tr><th#{css("th")}>Type</th><th#{css("th")}>Finds</th><th#{css("th")}>Percent</th></tr>
+<?py
+for type in types:
+    color = {"background":gradient("lightmin","lightmax",types[type]/total)}
+?>
+    <tr><td#{css("td","center","td-icon")}>#{ctype(type)}</td><td#{css("td","right")}>#{types[type]}</td><td#{css("td","right",color)}>#{"%.1f" % (types[type]/total*100)}%</td></tr>
+<?py #endfor ?>
+</table>
+</td>
+
+<td#{css("td","td-layouttable","endsection-bold-v")}>
+<table#{css("table")}>
+<caption#{css("caption")}>Found caches by container</caption>
+<tr><th#{css("th")}>Container</th><th#{css("th")}>Finds</th><th#{css("th")}>Percent</th></tr>
+<?py
+for size in ["Large", "Regular", "Small", "Micro", "Other", "Not chosen", "Virtual"]:
+    if size in sizes:
+        color = {"background":gradient("lightmin","lightmax",sizes[size]/total)}
+    #
+    else:
+        sizes[size] = 0
+        color = {}
+    #
+?>
+    <tr><td#{css("td","center","td-icon")}>#{csize(size)}</td><td#{css("td","right")}>#{sizes[size]}</td><td#{css("td","right",color)}>#{"%.1f" % (sizes[size]/total*100)}%</td></tr>
+<?py
+#endfor
+?>
+</table>
+</td>
+
+
+<td#{css("td","td-layouttable","endsection-bold-v")}>
+<table#{css("table")}>
+<caption#{css("caption")}>Found caches by Country</caption>
+<tr><th#{css("th")}>Country</th><th#{css("th")}>Finds</th><th#{css("th")}>Percent</th></tr>
+<?py
+for country in countries:
+    color = {"background":gradient("lightmin","lightmax",countries[country]/total)}
+?>
+    <tr><td#{css("td")}>#{country}</td><td#{css("td","right")}>#{countries[country]}</td><td#{css("td","right",color)}>#{"%.1f" % (countries[country]/total*100)}%</td></tr>
+<?py #endfor ?>
+</table>
+</td>
+
+</td>
+</tr></table>

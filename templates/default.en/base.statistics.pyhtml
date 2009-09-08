@@ -18,7 +18,7 @@ except:
 <div#{css("gcstats")}>
 <?py
 rendered = []
-order    = [":general", ":dtMatrix", ":myFindsHistory", ":milestones"]
+order    = [":general", ":dtMatrix", ":cacheDistrib", ":myFindsHistory", ":milestones"]
 for template in order:
     if template in templates:
         rendered.append(template)

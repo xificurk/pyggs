@@ -123,7 +123,7 @@ class myFindsDatabase(object):
 
 
     def getList(self):
-        """Get list of guids oa MyFinds"""
+        """Get list of guids of MyFinds"""
         result  = self.select("SELECT guid FROM myFinds")
         myFinds = []
         for row in result:

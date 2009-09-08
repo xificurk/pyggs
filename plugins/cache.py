@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, time
+import logging, time, math
 
 class cache(object):
     def __init__(self, master):
@@ -45,6 +45,10 @@ class cache(object):
         """Setup everything needed before actual run"""
         self.log.debug("Preparing...")
 
+        self.homecoord = {}
+        self.homecoord["lat"] = float(self.master.config.get("general", "homelat"))
+        self.homecoord["lon"] = float(self.master.config.get("general", "homelon"))
+
         self.master.registerHandler("cache", self.parseCache)
         self.storage = cacheDatabase(self, self.master.globalStorage)
 
@@ -59,6 +63,23 @@ class cache(object):
         details = cache.getDetails()
         self.log.info("Updating Cache database for %s: %s." % (details.get("waypoint"), details.get("name")))
         self.storage.update(details)
+
+
+    def distance(self, lat1, lon1, lat2 = None, lon2 = None):
+        """Calculate distance from home coordinates"""
+        if lat2 is None:
+            lat2 = self.homecoord["lat"]
+        if lon2 is None:
+            lon2 = self.homecoord["lon"]
+
+        lon1 = math.radians(lon1)
+        lat1 = math.radians(lat1)
+        lon2 = math.radians(lon2)
+        lat2 = math.radians(lat2)
+        d_lon = lon1 - lon2
+        dist  = math.sin(lat1) * math.sin(lat2) + math.cos(lat1) * math.cos(lat2) * math.cos(d_lon)
+        dist  = math.acos(dist) * 6371
+        return dist
 
 
 

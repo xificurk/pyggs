@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, math
+import logging
 
 class cacheTopFeatures(object):
     def __init__(self, master):
@@ -41,17 +41,14 @@ class cacheTopFeatures(object):
     def prepare(self):
         """Setup everything needed before actual run"""
         self.log.debug("Preparing...")
-        self.homecoord = {}
-        self.homecoord["lat"] = float(self.master.config.get("general", "homelat"))
-        self.homecoord["lon"] = float(self.master.config.get("general", "homelon"))
 
 
     def run(self):
         """Run the plugin's code"""
         self.log.info("Running...")
 
-        myFindsDB = self.master.plugins["myFinds"].storage.getList()
-        caches    = self.master.plugins["cache"].storage.select(myFinds)
+        myFinds = self.master.plugins["myFinds"].storage.getList()
+        caches  = self.master.plugins["cache"].storage.select(myFinds)
 
         self.templateData["distances"]  = self.getTopDistances(caches)
         self.templateData["directions"] = self.getTopDirections(caches)
@@ -63,7 +60,7 @@ class cacheTopFeatures(object):
     def getTopDistances(self, caches):
         distances = {"min":caches[0], "max":caches[0]}
         for cache in caches:
-            cache["distance"] = self.distance(cache["lat"], cache["lon"])
+            cache["distance"] = self.master.plugins["cache"].distance(cache["lat"], cache["lon"])
             if cache["distance"] > distances["max"]["distance"]:
                 distances["max"] = cache
             if cache["distance"] < distances["min"]["distance"]:
@@ -106,20 +103,3 @@ class cacheTopFeatures(object):
 
         archived["relative"] = archived["absolute"]/len(caches)
         return archived
-
-
-    def distance(self, lat1, lon1, lat2 = None, lon2 = None):
-        """Calculate distance from home coordinates"""
-        if lat2 is None:
-            lat2 = self.homecoord["lat"]
-        if lon2 is None:
-            lon2 = self.homecoord["lon"]
-
-        lon1 = math.radians(lon1)
-        lat1 = math.radians(lat1)
-        lon2 = math.radians(lon2)
-        lat2 = math.radians(lat2)
-        d_lon = lon1 - lon2
-        dist  = math.sin(lat1) * math.sin(lat2) + math.cos(lat1) * math.cos(lat2) * math.cos(d_lon)
-        dist  = math.acos(dist) * 6371
-        return dist

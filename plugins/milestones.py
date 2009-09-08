@@ -28,7 +28,7 @@ class milestones(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["cache", "myFinds"]
+        self.dependencies = ["base", "cache", "myFinds"]
         self.templateData = {}
 
 
@@ -54,7 +54,7 @@ class milestones(object):
         result = []
         cacheDB = self.master.plugins["cache"].storage
 
-        myFinds  = self.master.plugins["myFinds"].storage.select("SELECT * FROM myFinds ORDER BY date ASC, sequence ASC")
+        myFinds    = self.master.plugins["myFinds"].storage.select("SELECT * FROM myFinds ORDER BY date ASC, sequence ASC")
         milestones = self.master.config.get(self.NS, "milestones").split(",")
         for i in range(0, len(milestones)):
             if milestones[i] == "LAST":

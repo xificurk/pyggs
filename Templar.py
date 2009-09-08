@@ -21,6 +21,7 @@
 """
 
 import logging, os.path, sys, re, datetime, locale, math
+from collections import OrderedDict
 
 import Configurator
 
@@ -102,7 +103,7 @@ class Templar(tenjin.Engine):
         elif value is None:
             value = datetime.datetime.today()
 
-        return format % {"year":value.year, "month":value.month, "day":value.day, "hour":value.hour, "minute":value.minute, "monthname":value.strftime("%B")}
+        return format % {"year":value.year, "month":value.month, "day":value.day, "hour":value.hour, "minute":value.minute, "monthname":value.strftime("%B"),"monthabr":value.strftime("%b")}
 
 
     def dateRange(self, start, end = None):
@@ -210,7 +211,7 @@ class Theme(Configurator.Theme):
 
     def css(self, *classes):
         """Merge definitions from classe and return them"""
-        all = {}
+        all = OrderedDict()
         for cl in classes:
             tomerge = {}
             if type(cl) is dict:

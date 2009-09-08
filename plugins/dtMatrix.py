@@ -28,7 +28,7 @@ class dtMatrix(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["cache", "myFinds"]
+        self.dependencies = ["base", "cache", "myFinds"]
         self.templateData = {}
 
 

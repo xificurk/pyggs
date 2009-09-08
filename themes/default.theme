@@ -84,10 +84,7 @@ table-layout = fixed
 [col-matrix]
 width = 60px
 
-
-
-
-
+# Used for layout tables
 [layouttable]
 border-spacing = 0
 margin = 0
@@ -97,27 +94,27 @@ background = inherit
 padding = NULL
 vertical-align = top
 
-[td-icon]
-padding = NULL
-vertical-align = middle
-
-[endsection-bold-v]
-border-right = 4px white solid
-
-[right]
-text-align = right
-
-[center]
-text-align = center
-
+# Graph table in :myFindsHistory
 [graph]
 border-spacing = 1px
+border = 1px solid white
+
+[col-graph-header]
+width = 80px
+
+[col-graph]
+width = 20px
 
 [graph-cell]
 vertical-align = bottom
 text-align = center
 padding = 0
 padding-top = 5px
+
+[graph-bar]
+font-size = 0
+border = 1px solid black
+border-bottom = none
 
 [graph-header]
 padding = 1px 0
@@ -126,19 +123,24 @@ padding = 1px 0
 text-align = left
 padding = 0 3px
 
-[graph-bar]
-font-size = 0
-border = 1px solid black
-border-bottom = none
-
-[col-graph-header]
-width = 80px
-
-[col-graph]
-width = 20px
-
+# History table in :myFindsHistory
 [col-history-header]
 width = 140px
 
 [col-history-numbers]
 width = 50px
+
+# Text align
+[right]
+text-align = right
+
+[center]
+text-align = center
+
+
+[td-icon]
+padding = inherit
+vertical-align = middle
+
+[endsection-bold-v]
+border-right = 4px white solid

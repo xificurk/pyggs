@@ -120,3 +120,12 @@ class myFindsDatabase(object):
         result = db.cursor().execute(query).fetchall()
         db.close()
         return result
+
+
+    def getList(self):
+        """Get list of guids oa MyFinds"""
+        result  = self.select("SELECT guid FROM myFinds")
+        myFinds = []
+        for row in result:
+            myFinds.append(row["guid"])
+        return myFinds

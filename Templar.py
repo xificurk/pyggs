@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, os.path, sys, re, datetime, locale
+import logging, os.path, sys, re, datetime, locale, math
 
 import Configurator
 
@@ -70,7 +70,7 @@ class Templar(tenjin.Engine):
     def outputPages(self, pages):
         """Render and save all pages"""
         for output in pages:
-            globals = {"escape":escape, "to_str":to_str, "echo":echo, "css_header":self.theme.cssHeader, "css":self.theme.css, "gradient":self.theme.cssGradient, "datetime":datetime, "date":self.formatDate, "dateRange":self.dateRange, "locale":locale}
+            globals = {"escape":escape, "to_str":to_str, "echo":echo, "css_header":self.theme.cssHeader, "css":self.theme.css, "gradient":self.theme.cssGradient, "datetime":datetime, "date":self.formatDate, "dist":self.formatDistance, "lat":self.formatLat, "lon":self.formatLon, "dateRange":self.dateRange, "locale":locale}
             context = pages[output]["context"]
             context["pages"] = pages
             result = self.render(pages[output]["template"], context, globals = globals, layout = pages[output]["layout"])
@@ -121,6 +121,40 @@ class Templar(tenjin.Engine):
         string = "%s&nbsp;– %s" % (string, self.formatDate(end, "%(day)d.&nbsp;%(month)d.&nbsp;%(year)d"))
 
         return string
+
+
+    def formatDistance(self, value):
+        """Returns distance with suitable precision"""
+        if value < 10:
+            return "%.2f" % value
+        elif value < 100:
+            return "%.1f" % value
+        else:
+            return "%.0f" % value
+
+
+    def formatLat(self, lat):
+        """Formats latitude"""
+        if lat > 0:
+            pre = "N"
+        else:
+            pre = "S"
+        lat = abs(lat)
+        dg  = math.floor(lat)
+        mi  = (lat-dg)*60
+        return "%s %02d° %06.3f" % (pre, dg, mi)
+
+
+    def formatLon(self, lon):
+        """Formats Longitude"""
+        if lon > 0:
+            pre = "E"
+        else:
+            pre = "W"
+        lon = abs(lon)
+        dg  = math.floor(lon)
+        mi  = (lon-dg)*60
+        return "%s %03d° %06.3f" % (pre, dg, mi)
 
 
 

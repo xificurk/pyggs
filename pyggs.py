@@ -114,6 +114,10 @@ class Pyggs(GCparser):
         config.update("general", "language", _("Please, select user interface language"), validate = list(langs.keys()))
         langs[config.get("general", "language")].install()
 
+        print("    %s:\n" % _("Enter your home coordinates in degrees as deciamal number (N means positive value, S negative; E means positive value, W negative)"))
+        config.update("general", "homelat", _("Latitude"), validate = True)
+        config.update("general", "homelon", _("Laongitude"), validate = True)
+
         installedPlugins = []
         for plugin in os.listdir(os.path.dirname(__file__) + "/plugins"):
             if plugin[-3:] == ".py" and not plugin.startswith("__init__") and not plugin.startswith("example"):

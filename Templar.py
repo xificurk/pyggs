@@ -208,10 +208,8 @@ class Theme(Configurator.Theme):
         Configurator.Theme.__init__(self, themeFile)
 
 
-    def css(self, classes):
+    def css(self, *classes):
         """Merge definitions from classe and return them"""
-        if type(classes) is str:
-            classes = [classes]
         all = {}
         for cl in classes:
             tomerge = {}

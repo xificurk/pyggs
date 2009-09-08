@@ -19,8 +19,8 @@
 </tr>
 
 <tr>
-<td#{css(["td", "endsection"])}>Top year</td>
-<td#{css(["td", "endsection"])}>#{date(year["date"],format="%(year)d")} (<strong>#{year["count"]}</strong> finds)</td>
+<td#{css("td", "endsection")}>Top year</td>
+<td#{css("td", "endsection")}>#{date(year["date"],format="%(year)d")} (<strong>#{year["count"]}</strong> finds)</td>
 </tr>
 
 <tr>
@@ -29,6 +29,6 @@
 </tr>
 
 <tr>
-<td#{css(["td", "endsection"])}>Longest non-caching period</td>
-<td#{css(["td", "endsection"])}>#{dateRange(nongcperiod["start"], nongcperiod["end"])} (<strong>#{nongcperiod["count"]}</strong> days)</td>
+<td#{css("td", "endsection")}>Longest non-caching period</td>
+<td#{css("td", "endsection")}>#{dateRange(nongcperiod["start"], nongcperiod["end"])} (<strong>#{nongcperiod["count"]}</strong> days)</td>
 </tr>

@@ -76,11 +76,17 @@ font-size = 0.75em
 [endsection]
 border-bottom = 1px rgb(100,100,100) solid
 
-
-
-
+# Used for tables with specified column widths
 [fixedtable]
 table-layout = fixed
+
+# DT matrix column width
+[col-matrix]
+width = 60px
+
+
+
+
 
 [layouttable]
 border-spacing = 0
@@ -136,6 +142,3 @@ width = 140px
 
 [col-history-numbers]
 width = 50px
-
-[col-matrix]
-width = 60px

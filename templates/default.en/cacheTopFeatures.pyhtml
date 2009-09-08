@@ -4,8 +4,8 @@
 </tr>
 
 <tr>
-<td#{css(["td", "endsection"])}>Furthest cache found</td>
-<td#{css(["td", "endsection"])}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{distances["max"]["guid"]}">${distances["max"]["name"]}</a> (<strong>#{dist(distances["max"]["distance"])}</strong>km)</td>
+<td#{css("td", "endsection")}>Furthest cache found</td>
+<td#{css("td", "endsection")}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{distances["max"]["guid"]}">${distances["max"]["name"]}</a> (<strong>#{dist(distances["max"]["distance"])}</strong>km)</td>
 </tr>
 
 <tr>
@@ -24,8 +24,8 @@
 </tr>
 
 <tr>
-<td#{css(["td", "endsection"])}>Westernmost cache found</td>
-<td#{css(["td", "endsection"])}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{directions["west"]["guid"]}">${directions["west"]["name"]}</a> (<strong>#{lon(directions["west"]["lon"])}</strong>)</td>
+<td#{css("td", "endsection")}>Westernmost cache found</td>
+<td#{css("td", "endsection")}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{directions["west"]["guid"]}">${directions["west"]["name"]}</a> (<strong>#{lon(directions["west"]["lon"])}</strong>)</td>
 </tr>
 
 <tr>
@@ -34,11 +34,11 @@
 </tr>
 
 <tr>
-<td#{css(["td", "endsection"])}>Oldest cache found</td>
-<td#{css(["td", "endsection"])}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{age["min"]["guid"]}">${age["min"]["name"]}</a> (<strong>#{date(age["min"]["hidden"])}</strong>)</td>
+<td#{css("td", "endsection")}>Oldest cache found</td>
+<td#{css("td", "endsection")}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{age["min"]["guid"]}">${age["min"]["name"]}</a> (<strong>#{date(age["min"]["hidden"])}</strong>)</td>
 </tr>
 
 <tr>
-<td#{css(["td", "endsection"])}>Meanwhile archived</td>
-<td#{css(["td", "endsection"])}><strong>#{archived["absolute"]}</strong> (#{"%.1f" % (archived["relative"]*100)}%)</td>
+<td#{css("td", "endsection")}>Meanwhile archived</td>
+<td#{css("td", "endsection")}><strong>#{archived["absolute"]}</strong> (#{"%.1f" % (archived["relative"]*100)}%)</td>
 </tr>

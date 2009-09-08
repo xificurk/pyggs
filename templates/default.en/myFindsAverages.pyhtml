@@ -4,8 +4,8 @@
 </tr>
 
 <tr>
-<td#{css(["td", "endsection"])}>Overall: Averages</td>
-<td#{css(["td", "endsection"])}><strong>${overall["finds/gcday"]}</strong> finds/caching day, <strong>${overall["finds/day"]}</strong> caches/day, <strong>${overall["finds/week"]}</strong> caches/week, <strong>${overall["finds/month"]}</strong> caches/month</td>
+<td#{css("td", "endsection")}>Overall: Averages</td>
+<td#{css("td", "endsection")}><strong>${overall["finds/gcday"]}</strong> finds/caching day, <strong>${overall["finds/day"]}</strong> caches/day, <strong>${overall["finds/week"]}</strong> caches/week, <strong>${overall["finds/month"]}</strong> caches/month</td>
 </tr>
 
 <tr>
@@ -14,6 +14,6 @@
 </tr>
 
 <tr>
-<td#{css(["td", "endsection"])}>Last 365 days: Averages</td>
-<td#{css(["td", "endsection"])}><strong>${last365["finds/gcday"]}</strong> finds/caching day, <strong>${last365["finds/day"]}</strong> caches/day, <strong>${last365["finds/week"]}</strong> caches/week, <strong>${last365["finds/month"]}</strong> caches/month</td>
+<td#{css("td", "endsection")}>Last 365 days: Averages</td>
+<td#{css("td", "endsection")}><strong>${last365["finds/gcday"]}</strong> finds/caching day, <strong>${last365["finds/day"]}</strong> caches/day, <strong>${last365["finds/week"]}</strong> caches/week, <strong>${last365["finds/month"]}</strong> caches/month</td>
 </tr>

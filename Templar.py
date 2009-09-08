@@ -70,7 +70,21 @@ class Templar(tenjin.Engine):
     def outputPages(self, pages):
         """Render and save all pages"""
         for output in pages:
-            globals = {"escape":escape, "to_str":to_str, "echo":echo, "css_header":self.theme.cssHeader, "css":self.theme.css, "gradient":self.theme.cssGradient, "datetime":datetime, "date":self.formatDate, "dist":self.formatDistance, "lat":self.formatLat, "lon":self.formatLon, "dateRange":self.dateRange, "locale":locale}
+            globals = { "escape":escape,
+                        "to_str":to_str,
+                        "echo":echo,
+                        "css_header":self.theme.cssHeader,
+                        "css":self.theme.css,
+                        "gradient":self.theme.cssGradient,
+                        "locale":locale,
+                        "datetime":datetime,
+                        "dateRange":self.dateRange,
+                        "date":self.formatDate,
+                        "dist":self.formatDistance,
+                        "lat":self.formatLat,
+                        "lon":self.formatLon,
+                        "ctype":self.cacheType,
+                        "csize":self.cacheSize}
             context = pages[output]["context"]
             context["pages"] = pages
             result = self.render(pages[output]["template"], context, globals = globals, layout = pages[output]["layout"])
@@ -155,6 +169,27 @@ class Templar(tenjin.Engine):
         dg  = math.floor(lon)
         mi  = (lon-dg)*60
         return "%s %03d° %06.3f" % (pre, dg, mi)
+
+
+    def cacheSize(self, size):
+        return "<img alt=\"%s\" title=\"%s\" src=\"http://www.geocaching.com/images/icons/container/%s.gif\" width=\"45\" height=\"12\" />" % (size, size, size.lower().replace(" ", "_"))
+
+
+    def cacheType(self, ctype):
+        ctypes = {}
+        ctypes["Traditional Cache"] = 2
+        ctypes["Multi-Cache"] = 3
+        ctypes["Unknown Cache"] = 8
+        ctypes["Letterbox Hybrid"] = 5
+        ctypes["EarthCache"] = 'earthcache'
+        ctypes["Wherigo Cache"] = 1858
+        ctypes["Event Cache"] = 6
+        ctypes["Virtual Cache"] = 4
+        ctypes["Webcam Cache"] = 11
+        ctypes["Cache In Trash Out Event"] = 13
+        ctypes["Mega-Event Cache"] = 'mega'
+
+        return "<img alt=\"%s\" title=\"%s\" src=\"http://www.geocaching.com/images/WptTypes/sm/%s.gif\" width=\"16\" height=\"16\" />" % (ctype, ctype, ctypes[ctype])
 
 
 

@@ -1,0 +1,17 @@
+<table#{css("table")}>
+<caption#{css("caption")}>Top 10 found caches</caption>
+
+<tr><th#{css("th")}>My rating</th><th#{css("th")}>Community rating</th><th#{css("th")}>Cache</th><th#{css("th")}>Found</th></tr>
+
+<?py
+i = 0
+for cache in top10:
+    i = i+1
+    if i > 10:
+        break
+    #
+?>
+<tr><td#{css("td","right")}>#{cache["myrating"]}%</td><td#{css("td","right")}>#{cache["rating"]}% by #{cache["count"]} cachers</td><td#{css("td")}>#{ctype(cache["type"])} <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{cache["guid"]}">${cache["name"]}</a></td><td#{css("td","right")}>#{date(cache["date"])}</td></tr>
+<?py #endfor ?>
+
+</table>

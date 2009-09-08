@@ -124,14 +124,14 @@ class gcczRatingsDatabase(object):
         self.database.setE("%s.lastcheck" % self.NS, time.time())
 
 
-    def select(self, waypoints):
+    def select(self, waypoints, min=0):
         """Selects data from database, performs update if neccessary"""
         self.checkValidity()
         result = []
         db  = self.database.getDb()
         cur = db.cursor()
         for wpt in waypoints:
-            row = cur.execute("SELECT * FROM gcczRatings WHERE waypoint = ?", (wpt,)).fetchone()
+            row = cur.execute("SELECT * FROM gcczRatings WHERE waypoint = ? AND count >= ?", (wpt,min)).fetchone()
             if row is not None:
                 row = dict(row)
                 result.append(row)

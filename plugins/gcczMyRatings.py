@@ -70,7 +70,7 @@ class gcczMyRatingsDatabase(object):
         db = self.database.getDb()
         db.execute("""CREATE TABLE IF NOT EXISTS gcczMyRatings (
                 waypoint varchar(9) NOT NULL,
-                rating int(3) NOT NULL,
+                myrating int(3) NOT NULL,
                 PRIMARY KEY (waypoint))""")
         db.close()
 
@@ -116,7 +116,7 @@ class gcczMyRatingsDatabase(object):
             for row in result.split("|"):
                 row = row.split(";")
                 if len(row) >= 2:
-                    cur.execute("INSERT INTO gcczMyRatings(waypoint, rating) VALUES(?,?)", (row[0], row[1]))
+                    cur.execute("INSERT INTO gcczMyRatings(waypoint, myrating) VALUES(?,?)", (row[0], row[1]))
             self.log.info("Geocaching.cz MyRatings database successfully updated.")
 
         db.commit()

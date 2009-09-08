@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/myTopGcczRatings.py - Your Top10 rated caches.
+    plugins/gcczMyRatingsTop10.py - Your Top10 rated caches.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -22,9 +22,9 @@
 
 import logging
 
-class myTopGcczRatings(object):
+class gcczMyRatingsTop10(object):
     def __init__(self, master):
-        self.NS  = "plugin.myTopGcczRatings"
+        self.NS  = "plugin.gcczMyRatingsTop10"
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
@@ -73,4 +73,4 @@ class myTopGcczRatings(object):
             caches.reverse()
 
             self.templateData["top10"] = caches
-            self.master.plugins["base"].registerTemplate(":myTopGcczRatings", self.templateData)
+            self.master.plugins["base"].registerTemplate(":statistics.gcczMyRatingsTop10", self.templateData)

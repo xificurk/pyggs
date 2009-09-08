@@ -74,4 +74,4 @@ class myFindsHistory(object):
 
         self.templateData["history"] = myFinds
         self.templateData["top"]     = top
-        self.master.plugins["base"].registerTemplate(":myFindsHistory", self.templateData)
+        self.master.plugins["base"].registerTemplate(":statistics.myFindsHistory", self.templateData)

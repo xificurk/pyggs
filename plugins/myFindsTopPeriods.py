@@ -47,7 +47,7 @@ class myFindsTopPeriods(object):
         """Run the plugin's code"""
         self.log.info("Running...")
         self.templateData = self.getTopPeriods()
-        self.master.plugins["general"].registerTemplate(":myFindsTopPeriods", self.templateData)
+        self.master.plugins["general"].registerTemplate(":statistics.general.myFindsTopPeriods", self.templateData)
 
 
     def getTopPeriods(self):

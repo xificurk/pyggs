@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/topGcczRatings.py - Add best/worst found cache to general
+    plugins/gcczRatingsTop.py - Add best/worst found cache to general
       statistics.
     Copyright (C) 2009 Petr Morávek
 
@@ -23,9 +23,9 @@
 
 import logging
 
-class topGcczRatings(object):
+class gcczRatingsTop(object):
     def __init__(self, master):
-        self.NS  = "plugin.topGcczRatings"
+        self.NS  = "plugin.gcczRatingsTop"
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
@@ -71,4 +71,4 @@ class topGcczRatings(object):
                     result["worst"] = caches[wpt]
 
             self.templateData = result
-            self.master.plugins["general"].registerTemplate(":topGcczRatings", self.templateData)
+            self.master.plugins["general"].registerTemplate(":statistics.general.gcczRatingsTop", self.templateData)

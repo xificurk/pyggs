@@ -41,7 +41,7 @@ class general(object):
         """Setup everything needed before actual run"""
         self.log.debug("Preparing...")
 
-        self.master.plugins["base"].registerTemplate(":general", self.templateData)
+        self.master.plugins["base"].registerTemplate(":statistics.general", self.templateData)
 
 
     def run(self):

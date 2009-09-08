@@ -89,4 +89,4 @@ class cacheDistrib(object):
 
         self.templateData["sizes"] = sizes
 
-        self.master.plugins["base"].registerTemplate(":cacheDistrib", self.templateData)
+        self.master.plugins["base"].registerTemplate(":statistics.cacheDistrib", self.templateData)

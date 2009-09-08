@@ -41,8 +41,8 @@ class base(object):
         """Setup everything needed before actual run"""
         self.log.debug("Preparing...")
 
-        self.master.registerPage("index.html", ":base.statistics", ":menu.base.statistics", self.templateData)
-        self.master.registerPage("export.html", ":base.statistics", ":menu.base.export", self.templateData, layout = False)
+        self.master.registerPage("index.html", ":statistics", ":menu.statistics", self.templateData)
+        self.master.registerPage("export.html", ":statistics", ":menu.export", self.templateData, layout = False)
 
 
     def run(self):

@@ -71,4 +71,4 @@ class milestones(object):
                     result.append(row)
 
         self.templateData["milestones"] = result
-        self.master.plugins["base"].registerTemplate(":milestones", self.templateData)
+        self.master.plugins["base"].registerTemplate(":statistics.milestones", self.templateData)

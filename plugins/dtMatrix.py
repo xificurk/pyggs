@@ -98,4 +98,4 @@ class dtMatrix(object):
         self.templateData["terrain"]    = terrain
         self.templateData["top"]        = top
         self.templateData["mean"]       = mean
-        self.master.plugins["base"].registerTemplate(":dtMatrix", self.templateData)
+        self.master.plugins["base"].registerTemplate(":statistics.dtMatrix", self.templateData)

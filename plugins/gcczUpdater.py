@@ -21,6 +21,7 @@
 """
 
 import logging, urllib
+from hashlib import md5
 
 class gcczUpdater(object):
     def __init__(self, master):
@@ -37,8 +38,11 @@ class gcczUpdater(object):
         config = self.master.config
 
         config.assertSection(self.NS)
+        config.defualts[self.NS] = {}
+        config.defualts[self.NS]["force"] = "n"
         config.update(self.NS, "username", _("Geocaching.cz username"), validate=True)
         config.update(self.NS, "password", _("Geocaching.cz password"), validate=True)
+        config.update(self.NS, "force", _("Force my finds update on every run"), validate=["y","n"])
 
 
     def prepare(self):
@@ -57,8 +61,16 @@ class gcczUpdater(object):
             details = self.master.plugins["cache"].storage.select([row["guid"]])[0]
             finds = "%s%s;%s;%s;%s" % (finds,details["waypoint"], row["date"], details["lat"], details["lon"])
         config = self.master.config
-        data = {"a":"nalezy","u":config.get(self.NS, "username"),"p":config.get(self.NS, "password"),"d":finds}
 
+        if config.get(self.NS, "force") != "y":
+            hash = "%s" % finds
+            hash = md5(hash.encode()).hexdigest()
+            hash_old = self.master.profileStorage.getE("%s.hash" % self.NS)
+            if hash == hash_old:
+                self.log.info("Geocaching.cz database seems already up to date, skipping update.")
+                return
+
+        data = {"a":"nalezy","u":config.get(self.NS, "username"),"p":config.get(self.NS, "password"),"d":finds}
         result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
         result = result.read().decode().splitlines()
         succ   = False
@@ -68,5 +80,8 @@ class gcczUpdater(object):
                 succ = True
                 break
         if succ is False:
-            self.log.error("Unable to update GC.cz database.")
+            self.log.error("Unable to update Geocaching.cz database.")
             self.log.debug("Response: %s" % result)
+        else:
+            self.master.profileStorage.setE("%s.hash" % self.NS, hash)
+            self.log.info("Geocaching.cz database successfully updated.")

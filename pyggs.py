@@ -354,8 +354,7 @@ class Storage(object):
                     x = x[i]
                     i = row[field]
             x[i] = {}
-            for k in row.keys():
-                x[i][k] = row[k]
+            x[i][k] = dict(row)
 
         return data["result"]
 

@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+import logging, time
 
 class cache(object):
     def __init__(self, master):
@@ -33,7 +33,12 @@ class cache(object):
 
     def setup(self):
         """Setup script"""
-        pass
+        config = self.master.config
+
+        config.assertSection(self.NS)
+        config.defaults[self.NS] = {}
+        config.defaults[self.NS]["timeout"] = "14"
+        config.update(self.NS, "timeout", _("'Cache' details data timeout in days"))
 
 
     def prepare(self):
@@ -52,6 +57,7 @@ class cache(object):
     def parseCache(self, cache):
         """Update Cache database"""
         self.log.debug("Updating Cache database.")
+        self.storage.update(cache.getDetails())
 
 
 
@@ -69,11 +75,12 @@ class cacheDatabase(object):
         """If Environment table doesn't exist, create it"""
         db = self.database.getDb()
         db.execute("""CREATE TABLE IF NOT EXISTS cache (
+                guid varchar(36) NOT NULL,
                 waypoint varchar(9) NOT NULL,
-                gid varchar(36) NOT NULL,
                 name varchar(255) NOT NULL,
-                author varchar(100) NOT NULL,
-                placed date NOT NULL,
+                owner varchar(100) NOT NULL,
+                owner_id varchar(36) NOT NULL,
+                hidden date NOT NULL,
                 type varchar(30) NOT NULL,
                 country varchar(100) NOT NULL,
                 province varchar(100) NOT NULL,
@@ -82,9 +89,78 @@ class cacheDatabase(object):
                 difficulty decimal(2,1) NOT NULL,
                 terrain decimal(2,1) NOT NULL,
                 size varchar(15) NOT NULL,
+                disabled int(1) NOT NULL,
                 archived int(1) NOT NULL,
-                rating int(3) default NULL,
-                count int(4) default NULL,
-                PRIMARY KEY (waypoint),
-                UNIQUE (gid))""")
+                hint text,
+                attributes text,
+                lastCheck date NOT NULL,
+                PRIMARY KEY (guid),
+                UNIQUE (waypoint))""")
+        db.execute("""CREATE TABLE IF NOT EXISTS cache_visits (
+                guid varchar(36) NOT NULL,
+                type varchar(30) NOT NULL,
+                count int(4),
+                PRIMARY KEY (guid,type))""")
+        db.execute("""CREATE TABLE IF NOT EXISTS cache_inventory (
+                guid varchar(36) NOT NULL,
+                tbid varchar(36) NOT NULL,
+                name varchar(100) NOT NULL,
+                PRIMARY KEY (guid,tbid))""")
         db.close()
+
+
+    def update(self, data):
+        """Update Cache database by data"""
+        if "guid" not in data:
+            self.log.debug("No guid passed, not updating.")
+            return
+
+        db = self.database.getDb()
+        cur = db.cursor()
+        cur.execute("SELECT * FROM cache WHERE guid=?", (data["guid"],))
+        if (len(cur.fetchall()) > 0):
+            exists = True
+        else:
+            exists = False
+
+        cur.execute("DELETE FROM cache_inventory WHERE guid = ?", (data["guid"],))
+        if len(data) > 1:
+            for tbid in data["inventory"]:
+                cur.execute("INSERT INTO cache_inventory(guid, tbid, name) VALUES(?,?,?)", (data["guid"], tbid, data["inventory"][tbid]))
+            cur.execute("DELETE FROM cache WHERE guid = ?", (data["guid"],))
+            cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["owner_id"], data["hidden"], data["type"], data["country"], data["province"], data["lat"], data["lon"], data["difficulty"], data["terrain"], data["size"], data["disabled"], data["archived"], data["hint"], data["attributes"], time.time()))
+            cur.execute("DELETE FROM cache_visits WHERE guid = ?", (data["guid"],))
+            for logtype in data["visits"]:
+                cur.execute("INSERT INTO cache_visits(guid, type, count) VALUES(?,?,?)", (data["guid"], logtype, data["visits"][logtype]))
+        else:
+            if exists:
+                cur.execute("UPDATE cache SET lastCheck = ? WHERE guid = ?", (time.time(), data["guid"]))
+            else:
+                cur.execute("INSERT INTO cache(guid,lastCheck) VALUES(?,?)", (data["guid"],time.time()))
+        db.commit()
+        db.close()
+        self.database.setE("%s.lastcheck" % self.NS, time.time())
+
+
+    def select(self, guids):
+        """Selects data from database, performs update if neccessary"""
+        timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*24*3600
+        result = []
+        db  = self.database.getDb()
+        cur = db.cursor()
+        for guid in guids:
+            row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
+            if row is None or (timeout + float(row["lastCheck"])) <= time.time():
+                self.log.debug("Data about guid '%s' out of date, initiating refresh." % guid)
+                self.plugin.master.parse("cache", guid=guid)
+                row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
+            row = dict(row)
+            row["inventory"] = {}
+            for inv in cur.execute("SELECT tbid, name FROM cache_inventory WHERE guid = ?", (guid,)).fetchall():
+                row["inventory"][inv["tbid"]] = inv["name"]
+            row["visits"] = {}
+            for vis in cur.execute("SELECT type, count FROM cache_visits WHERE guid = ?", (guid,)).fetchall():
+                row["visits"][vis["type"]] = int(vis["count"])
+            result.append(row)
+        db.close()
+        return result

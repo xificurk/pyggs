@@ -89,7 +89,6 @@ class cacheDatabase(object):
         self.log      = logging.getLogger("Pyggs.%s" % self.NS)
         self.database = database
         self.plugin   = plugin
-        self.cache    = {}
 
         self.createTables()
 
@@ -167,10 +166,6 @@ class cacheDatabase(object):
 
     def select(self, guids):
         """Selects data from database, performs update if neccessary"""
-        hash = "/".join(guids)
-        if hash in self.cache:
-            return self.cache[hash]
-
         timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*24*3600
         result = []
         db  = self.database.getDb()
@@ -193,5 +188,4 @@ class cacheDatabase(object):
             result.append(row)
         db.close()
 
-        self.cache[hash] = result
-        return self.cache[hash]
+        return result

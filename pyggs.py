@@ -160,7 +160,9 @@ class Pyggs(GCparser):
         self.loadPlugins()
 
         # Plugin configuration section
-        for plugin in self.plugins:
+        plugins = list(self.plugins.keys())
+        plugins.sort()
+        for plugin in plugins:
             if hasattr(self.plugins[plugin], "setup"):
                 print()
                 print("  %s:" % _("Configuration of '%s' plugin") % plugin)
@@ -337,6 +339,7 @@ class Pyggs(GCparser):
         for plugin in os.listdir(os.path.dirname(__file__) + "/plugins"):
             if plugin[-3:] == ".py" and not plugin.startswith("__init__") and not plugin.startswith("example") and plugin[:-3] != "base":
                 plugins.append(plugin[:-3])
+        plugins.sort()
         return plugins
 
 

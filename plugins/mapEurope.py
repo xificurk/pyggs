@@ -28,7 +28,7 @@ class mapEurope(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["base", "myFinds", "cache", "gccz"]
+        self.dependencies = ["stats", "myFinds", "cache", "gccz"]
         self.templateData = {}
 
 
@@ -115,4 +115,4 @@ class mapEurope(object):
             self.templateData["total"] = total
             self.templateData["id"] = id
             self.templateData["uid"] = self.master.config.get(self.master.plugins["gccz"].NS, "uid")
-            self.master.plugins["base"].registerTemplate(":statistics.mapEurope", self.templateData)
+            self.master.plugins["stats"].registerTemplate(":stats.mapEurope", self.templateData)

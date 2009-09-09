@@ -28,7 +28,7 @@ class gcczMyRatingsTop10(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["base", "myFinds", "gcczRatings", "gcczMyRatings", "cache"]
+        self.dependencies = ["stats", "myFinds", "gcczRatings", "gcczMyRatings", "cache"]
         self.templateData = {}
 
 
@@ -73,4 +73,4 @@ class gcczMyRatingsTop10(object):
             caches.reverse()
 
             self.templateData["top10"] = caches
-            self.master.plugins["base"].registerTemplate(":statistics.gcczMyRatingsTop10", self.templateData)
+            self.master.plugins["stats"].registerTemplate(":stats.gcczMyRatingsTop10", self.templateData)

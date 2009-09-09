@@ -29,7 +29,7 @@ class gccomUpdater(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["base"]
+        self.dependencies = ["stats"]
         self.templateData = {}
 
 

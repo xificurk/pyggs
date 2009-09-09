@@ -30,7 +30,7 @@ class cacheDistrib(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["base", "myFinds", "cache"]
+        self.dependencies = ["stats", "myFinds", "cache"]
         self.templateData = {}
 
 
@@ -89,4 +89,4 @@ class cacheDistrib(object):
 
         self.templateData["sizes"] = sizes
 
-        self.master.plugins["base"].registerTemplate(":statistics.cacheDistrib", self.templateData)
+        self.master.plugins["stats"].registerTemplate(":stats.cacheDistrib", self.templateData)

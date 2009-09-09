@@ -28,7 +28,7 @@ class mapCR(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["base", "myFinds", "cache", "gccz"]
+        self.dependencies = ["stats", "myFinds", "cache", "gccz"]
         self.templateData = {}
 
 
@@ -92,4 +92,4 @@ class mapCR(object):
             self.templateData["map"]["chd"] = "%s|%s" % (tmp1, tmp2)
 
             self.templateData["uid"] = self.master.config.get(self.master.plugins["gccz"].NS, "uid")
-            self.master.plugins["base"].registerTemplate(":statistics.mapCR", self.templateData)
+            self.master.plugins["stats"].registerTemplate(":stats.mapCR", self.templateData)

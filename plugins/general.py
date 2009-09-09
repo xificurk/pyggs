@@ -28,7 +28,7 @@ class general(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["base"]
+        self.dependencies = ["stats"]
         self.templateData = {"templates":{}}
 
 
@@ -41,7 +41,7 @@ class general(object):
         """Setup everything needed before actual run"""
         self.log.debug("Preparing...")
 
-        self.master.plugins["base"].registerTemplate(":statistics.general", self.templateData)
+        self.master.plugins["stats"].registerTemplate(":stats.general", self.templateData)
 
 
     def run(self):

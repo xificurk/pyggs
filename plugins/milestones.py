@@ -28,7 +28,7 @@ class milestones(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["base", "cache", "myFinds"]
+        self.dependencies = ["stats", "cache", "myFinds"]
         self.templateData = {}
 
 
@@ -71,4 +71,4 @@ class milestones(object):
                     result.append(row)
 
         self.templateData["milestones"] = result
-        self.master.plugins["base"].registerTemplate(":statistics.milestones", self.templateData)
+        self.master.plugins["stats"].registerTemplate(":stats.milestones", self.templateData)

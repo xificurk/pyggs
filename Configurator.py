@@ -92,7 +92,10 @@ class Profile(BaseConfig):
         self.defaults["output"]["template"] = "default.en"
         self.defaults["output"]["theme"] = "default"
         self.defaults["plugins"] = {}
-        self.defaults["plugins"]["base"] = "y"
+        self.defaults["plugins"]["stats"] = "y"
+        self.defaults["plugins"]["unrated"] = "y"
+        self.defaults["plugins"]["general"] = "y"
+        self.defaults["plugins"]["myFindsAverages"] = "y"
 
 
 

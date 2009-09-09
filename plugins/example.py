@@ -25,7 +25,7 @@ import logging
 class base(object):
     def __init__(self, master):
         # For convinience, define namespace used by this plugin (logger, config etc.)
-        self.NS  = "plugin.base"
+        self.NS  = "plugin.example"
 
         # Let's define logging facility in Pyggs way.
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
@@ -71,8 +71,8 @@ class base(object):
         self.master.registerParser("myParserName", MyParserClass)
 
         # Register handlers for all kinds of parsers, e.g.
-        self.master.registerHandler("myFinds", self.parserMyFinds)
-        self.master.registerHandler("myParserName", self.parserMyParserName)
+        self.master.registerHandler("myFinds", self.parseMyFinds)
+        self.master.registerHandler("myParserName", self.parseMyParserName)
 
         # If your plugin needs some special storage facility, initialize it here
         self.storage = MyStorage()

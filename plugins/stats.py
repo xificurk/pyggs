@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/base.py - base plugin for statistics rendering.
+    plugins/stats.py - Statistics rendering.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -22,9 +22,9 @@
 
 import logging
 
-class base(object):
+class stats(object):
     def __init__(self, master):
-        self.NS  = "plugin.base"
+        self.NS  = "plugin.stats"
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
@@ -41,8 +41,8 @@ class base(object):
         """Setup everything needed before actual run"""
         self.log.debug("Preparing...")
 
-        self.master.registerPage("index.html", ":statistics", ":menu.statistics", self.templateData)
-        self.master.registerPage("export.html", ":statistics", ":menu.export", self.templateData, layout = False)
+        self.master.registerPage("index.html", ":stats", ":menu.stats", self.templateData)
+        self.master.registerPage("export.html", ":stats", ":menu.export", self.templateData, layout = False)
 
 
     def run(self):

@@ -57,7 +57,7 @@ class cacheTopFeatures(object):
         self.templateData["directions"] = self.getTopDirections(caches)
         self.templateData["age"]        = self.getTopAge(caches)
         self.templateData["archived"]   = self.getArchived(caches)
-        self.master.plugins["general"].registerTemplate(":statistics.general.cacheTopFeatures", self.templateData)
+        self.master.plugins["general"].registerTemplate(":stats.general.cacheTopFeatures", self.templateData)
 
 
     def getTopDistances(self, caches):

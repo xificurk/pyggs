@@ -71,4 +71,4 @@ class gcczRatingsTop(object):
                     result["worst"] = caches[wpt]
 
             self.templateData = result
-            self.master.plugins["general"].registerTemplate(":statistics.general.gcczRatingsTop", self.templateData)
+            self.master.plugins["general"].registerTemplate(":stats.general.gcczRatingsTop", self.templateData)

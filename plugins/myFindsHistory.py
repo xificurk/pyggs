@@ -28,7 +28,7 @@ class myFindsHistory(object):
         self.log = logging.getLogger("Pyggs.%s" % self.NS)
         self.master = master
 
-        self.dependencies = ["myFindsAverages"]
+        self.dependencies = ["myFindsAverages", "stats"]
         self.templateData = {}
 
 
@@ -74,4 +74,4 @@ class myFindsHistory(object):
 
         self.templateData["history"] = myFinds
         self.templateData["top"]     = top
-        self.master.plugins["base"].registerTemplate(":statistics.myFindsHistory", self.templateData)
+        self.master.plugins["stats"].registerTemplate(":stats.myFindsHistory", self.templateData)

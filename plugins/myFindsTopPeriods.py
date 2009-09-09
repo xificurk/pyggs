@@ -21,39 +21,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, datetime
+from .base import base
+import datetime
 
-class myFindsTopPeriods(object):
+class myFindsTopPeriods(base):
     def __init__(self, master):
-        self.NS  = "plugin.myFindsTopPeriods"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["general", "myFinds"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        self.about        = _("Adds rows about user's top day, week, month etc. into General statistics section.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
-        self.templateData = self.getTopPeriods()
-        self.master.plugins["general"].registerTemplate(":stats.general.myFindsTopPeriods", self.templateData)
+        templateData = self.getTopPeriods()
+        self.general.registerTemplate(":stats.general.myFindsTopPeriods", templateData)
 
 
     def getTopPeriods(self):
         """return top periods stats"""
-        myFindsDB = self.master.plugins["myFinds"].storage
-        result = myFindsDB.select("""SELECT
+        fetchAssoc = self.myFinds.storage.fetchAssoc
+        result = self.myFinds.storage.select("""SELECT
                 date,
                 (STRFTIME('%w', date) = "0" OR STRFTIME('%w', date) = "6") AS weekend,
                 DATE(date, "weekday 0") AS sunday,
@@ -64,35 +50,35 @@ class myFindsTopPeriods(object):
 
         ret = {}
         ret["day"] = {"date":"", "count":0}
-        days = myFindsDB.database.fetchAssoc(result, "date,#")
+        days = fetchAssoc(result, "date,#")
         for day in days:
             if len(days[day]) > ret["day"]["count"]:
                 ret["day"]["count"] = len(days[day])
                 ret["day"]["date"]  = day
 
         ret["weekend"] = {"date":"", "count":0}
-        weekends = myFindsDB.database.fetchAssoc(result, "weekend,sunday,#")[1]
+        weekends = fetchAssoc(result, "weekend,sunday,#")[1]
         for weekend in weekends:
             if len(weekends[weekend]) > ret["weekend"]["count"]:
                 ret["weekend"]["count"] = len(weekends[weekend])
                 ret["weekend"]["date"]  = weekend
 
         ret["week"] = {"date":"", "count":0}
-        weeks = myFindsDB.database.fetchAssoc(result, "sunday,#")
+        weeks = fetchAssoc(result, "sunday,#")
         for week in weeks:
             if len(weeks[week]) > ret["week"]["count"]:
                 ret["week"]["count"] = len(weeks[week])
                 ret["week"]["date"]  = week
 
         ret["month"] = {"date":"", "count":0}
-        months = myFindsDB.database.fetchAssoc(result, "month,#")
+        months = fetchAssoc(result, "month,#")
         for month in months:
             if len(months[month]) > ret["month"]["count"]:
                 ret["month"]["count"] = len(months[month])
                 ret["month"]["date"]  = months[month][0]["date"]
 
         ret["year"] = {"date":"", "count":0}
-        years = myFindsDB.database.fetchAssoc(result, "year,#")
+        years = fetchAssoc(result, "year,#")
         for year in years:
             if len(years[year]) > ret["year"]["count"]:
                 ret["year"]["count"] = len(years[year])

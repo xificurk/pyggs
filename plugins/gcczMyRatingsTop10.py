@@ -20,43 +20,38 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class gcczMyRatingsTop10(object):
+class gcczMyRatingsTop10(base):
     def __init__(self, master):
-        self.NS  = "plugin.gcczMyRatingsTop10"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["stats", "myFinds", "gcczRatings", "gcczMyRatings", "cache"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        self.about        = _("List of top 10 user rated caches.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
+        templateData = {"top10":self.getMyRatingsTop()}
+        if len(templateData["top10"]):
+            self.stats.registerTemplate(":stats.gcczMyRatingsTop10", templateData)
+
+
+    def getMyRatingsTop(self):
         fetchAssoc = self.master.globalStorage.fetchAssoc
-        plugins = self.master.plugins
-        myFinds = plugins["myFinds"].storage.select("SELECT * FROM myFinds")
+
+        myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
         myFinds = fetchAssoc(myFinds, "guid")
-        caches  = plugins["cache"].storage.select(myFinds.keys())
+
+        caches  = self.cache.storage.select(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
         caches  = fetchAssoc(caches, "waypoint")
-        ratings = plugins["gcczRatings"].storage.select(caches.keys())
+
+        ratings = self.gcczRatings.storage.select(caches.keys())
         ratings = fetchAssoc(ratings, "waypoint")
-        myratings = plugins["gcczMyRatings"].storage.select(caches.keys())
+
+        myratings = self.gcczMyRatings.storage.select(caches.keys())
         myratings = fetchAssoc(myratings, "waypoint")
+
         for wpt in caches:
             try:
                 caches[wpt].update(ratings[wpt])
@@ -67,10 +62,7 @@ class gcczMyRatingsTop10(object):
             except:
                 del(caches[wpt])
 
-        if len(caches):
-            caches = list(caches.values())
-            caches.sort(key=lambda x: int(x["myrating"]) + int(x["rating"])/1000 + int(x["count"])/10000000)
-            caches.reverse()
-
-            self.templateData["top10"] = caches
-            self.master.plugins["stats"].registerTemplate(":stats.gcczMyRatingsTop10", self.templateData)
+        caches = list(caches.values())
+        caches.sort(key=lambda x: int(x["myrating"]) + int(x["rating"])/1000 + int(x["count"])/10000000)
+        caches.reverse()
+        return caches

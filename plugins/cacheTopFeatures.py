@@ -21,49 +21,34 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class cacheTopFeatures(object):
+class cacheTopFeatures(base):
     def __init__(self, master):
-        self.NS  = "plugin.cacheTopFeatures"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["general", "cache", "myFinds"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        self.about        = _("Adds rows about most distant, most southern, oldest etc. caches found into General statistics section.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
-
-        myFinds = self.master.plugins["myFinds"].storage.select("SELECT * FROM myFinds")
-        myFinds = self.master.profileStorage.fetchAssoc(myFinds, "guid")
-        caches  = self.master.plugins["cache"].storage.select(self.master.plugins["myFinds"].storage.getList())
+        myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
+        myFinds = self.myFinds.storage.fetchAssoc(myFinds, "guid")
+        caches  = self.cache.storage.select(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
 
-        self.templateData["distances"]  = self.getTopDistances(caches)
-        self.templateData["directions"] = self.getTopDirections(caches)
-        self.templateData["age"]        = self.getTopAge(caches)
-        self.templateData["archived"]   = self.getArchived(caches)
-        self.master.plugins["general"].registerTemplate(":stats.general.cacheTopFeatures", self.templateData)
+        templateData = {}
+        templateData["distances"]  = self.getTopDistances(caches)
+        templateData["directions"] = self.getTopDirections(caches)
+        templateData["age"]        = self.getTopAge(caches)
+        templateData["archived"]   = self.getArchived(caches)
+        self.general.registerTemplate(":stats.general.cacheTopFeatures", templateData)
 
 
     def getTopDistances(self, caches):
         distances = {"min":caches[0], "max":caches[0]}
         for cache in caches:
-            cache["distance"] = self.master.plugins["cache"].distance(cache["lat"], cache["lon"])
+            cache["distance"] = self.cache.distance(cache["lat"], cache["lon"])
             if cache["distance"] > distances["max"]["distance"] or (cache["distance"] == distances["max"]["distance"] and cache["date"] < distances["max"]["date"]):
                 distances["max"] = cache
             if cache["distance"] < distances["min"]["distance"] or (cache["distance"] == distances["min"]["distance"] and cache["date"] < distances["min"]["date"]):

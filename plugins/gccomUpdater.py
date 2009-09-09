@@ -20,21 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, os
+from .base import base
+import os
 from hashlib import md5
 
-class gccomUpdater(object):
+class gccomUpdater(base):
     def __init__(self, master):
-        self.NS  = "plugin.gccomUpdater"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["stats"]
-        self.templateData = {}
+        self.about        = _("Updates geocaching.com profile with generated statistics.")
 
 
     def setup(self):
-        """Setup script"""
         config = self.master.config
 
         config.assertSection(self.NS)
@@ -43,18 +40,7 @@ class gccomUpdater(object):
         config.update(self.NS, "force", _("Force geocaching.com profile update on every run"), validate=["y","n"])
 
 
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
-
-    def run(self):
-        pass
-
-
     def finish(self):
-        """Run the plugin's code after rendering"""
-        self.log.debug("Finishing...")
-
         file = "%s/%s" % (self.master.templar.outdir, "export.html")
         if not os.path.isfile(file):
             self.log.error("Export file not found.")
@@ -72,7 +58,7 @@ class gccomUpdater(object):
         hash = "\n".join(hash)
         hash = md5(hash.encode()).hexdigest()
         if config.get(self.NS, "force") != "y":
-            hash_old = self.master.profileStorage.getE("%s.hash" % self.NS)
+            hash_old = self.master.profileStorage.getEnv("%s.hash" % self.NS)
             if hash == hash_old:
                 self.log.info("Geocaching.com profile seems already up to date, skipping update.")
                 return
@@ -81,7 +67,7 @@ class gccomUpdater(object):
 
         self.master.registerHandler("editProfile", self.update)
         self.master.parse("editProfile", data)
-        self.master.profileStorage.setE("%s.hash" % self.NS, hash)
+        self.master.profileStorage.setEnv("%s.hash" % self.NS, hash)
 
 
     def update(self, parser):

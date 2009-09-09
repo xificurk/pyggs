@@ -20,44 +20,36 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class unrated(object):
+class unrated(base):
     def __init__(self, master):
-        self.NS  = "plugin.unrated"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["myFinds", "gcczMyRatings", "cache"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        self.about        = _("Generates statistics html page.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
+        templateData = {"unrated":self.getUnrated()}
+        self.master.registerPage("unrated.html", ":unrated", ":menu.unrated", templateData)
+
+
+    def getUnrated(self):
         fetchAssoc = self.master.globalStorage.fetchAssoc
-        plugins = self.master.plugins
-        myFinds = plugins["myFinds"].storage.select("SELECT * FROM myFinds")
+
+        myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
         myFinds = fetchAssoc(myFinds, "guid")
-        caches  = plugins["cache"].storage.select(myFinds.keys())
+
+        caches  = self.cache.storage.select(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
         caches  = fetchAssoc(caches, "waypoint")
-        myratings = plugins["gcczMyRatings"].storage.select(caches.keys())
+
+        myratings = self.gcczMyRatings.storage.select(caches.keys())
         myratings = list(fetchAssoc(myratings, "waypoint").keys())
+
         unrated = []
         for wpt in caches:
             if caches[wpt]["waypoint"] not in myratings:
                 unrated.append(caches[wpt])
-        self.templateData["unrated"] = unrated
-        self.master.registerPage("unrated.html", ":unrated", ":menu.unrated", self.templateData)
+        return unrated

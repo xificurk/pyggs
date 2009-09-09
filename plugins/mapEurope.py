@@ -20,34 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class mapEurope(object):
+class mapEurope(base):
     def __init__(self, master):
-        self.NS  = "plugin.mapEurope"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["stats", "myFinds", "cache", "gccz"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        self.about        = _("Maps of Czech Republic from geocaching.cz.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
-
-        myFinds = self.master.plugins["myFinds"].storage.getList()
-        caches  = self.master.plugins["cache"].storage.select(myFinds)
+        myFinds = self.myFinds.storage.getList()
+        caches  = self.cache.storage.select(myFinds)
         caches  = self.master.globalStorage.fetchAssoc(caches, "country,#")
         europe = {}
         europe["Albania"] = "AL"
@@ -107,12 +91,11 @@ class mapEurope(object):
                 id = "%s%s" % (id, europe[country])
 
         if caches:
-            total = {}
-            total["countries"] = len(caches)
-            total["caches"] = 0
+            total = {"countries":len(caches), "caches":0}
             for country in caches:
                 total["caches"] = total["caches"] + len(caches[country])
-            self.templateData["total"] = total
-            self.templateData["id"] = id
-            self.templateData["uid"] = self.master.config.get(self.master.plugins["gccz"].NS, "uid")
-            self.master.plugins["stats"].registerTemplate(":stats.mapEurope", self.templateData)
+            templateData          = {}
+            templateData["total"] = total
+            templateData["id"]    = id
+            templateData["uid"]    = self.master.config.get(self.gccz.NS, "uid")
+            self.stats.registerTemplate(":stats.mapEurope", templateData)

@@ -20,21 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, urllib
+from .base import base
+import urllib
 from hashlib import md5
 
-class gcczUpdater(object):
+class gcczUpdater(base):
     def __init__(self, master):
-        self.NS  = "plugin.gcczUpdater"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["myFinds", "cache", "gccz"]
-        self.templateData = {}
+        self.about        = _("Updates user's finds in geocaching.cz database.")
 
 
     def setup(self):
-        """Setup script"""
         config = self.master.config
 
         config.assertSection(self.NS)
@@ -43,32 +40,24 @@ class gcczUpdater(object):
         config.update(self.NS, "force", _("Force my finds update on every run"), validate=["y","n"])
 
 
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
-
-
-    def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
-
+    def finish(self):
         finds = ""
-        for row in self.master.plugins["myFinds"].storage.select("SELECT date, guid FROM myFinds"):
+        for row in self.myFinds.storage.select("SELECT date, guid FROM myFinds"):
             if len(finds):
                 finds = "%s|" %finds
-            details = self.master.plugins["cache"].storage.select([row["guid"]])[0]
+            details = self.cache.storage.select([row["guid"]])[0]
             finds = "%s%s;%s;%s;%s" % (finds,details["waypoint"], row["date"], details["lat"], details["lon"])
         config = self.master.config
 
         hash = "%s" % finds
         hash = md5(hash.encode()).hexdigest()
         if config.get(self.NS, "force") != "y":
-            hash_old = self.master.profileStorage.getE("%s.hash" % self.NS)
+            hash_old = self.master.profileStorage.getEnv("%s.hash" % self.NS)
             if hash == hash_old:
                 self.log.info("Geocaching.cz database seems already up to date, skipping update.")
                 return
 
-        data = {"a":"nalezy","u":config.get(self.master.plugins["gccz"].NS, "username"),"p":config.get(self.master.plugins["gccz"].NS, "password"),"d":finds}
+        data = {"a":"nalezy","u":config.get(self.gccz.NS, "username"),"p":config.get(self.gccz.NS, "password"),"d":finds}
         result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
         result = result.read().decode().splitlines()
 
@@ -83,5 +72,5 @@ class gcczUpdater(object):
             self.log.error("Unable to update Geocaching.cz database.")
             self.log.debug("Response: %s" % result)
         else:
-            self.master.profileStorage.setE("%s.hash" % self.NS, hash)
+            self.master.profileStorage.setEnv("%s.hash" % self.NS, hash)
             self.log.info("Geocaching.cz database successfully updated.")

@@ -20,19 +20,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+from .base import base
+from pyggs import Storage
 import logging, time
 
-class myFinds(object):
+class myFinds(base):
     def __init__(self, master):
-        self.NS  = "plugin.myFinds"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
-        self.dependencies = []
+        base.__init__(self, master)
+        self.about        = _("Storage for My Finds data from geocaching.com profile.")
 
 
     def setup(self):
-        """Setup script"""
         config = self.master.config
 
         config.assertSection(self.NS)
@@ -40,17 +38,10 @@ class myFinds(object):
         config.defaults[self.NS]["timeout"] = "24"
         config.update(self.NS, "timeout", _("'My Finds' data timeout in hours"))
 
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
 
+    def prepare(self):
         self.master.registerHandler("myFinds", self.parseMyFinds)
         self.storage = myFindsDatabase(self, self.master.profileStorage)
-
-
-    def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
 
 
     def parseMyFinds(self, myFinds):
@@ -62,12 +53,12 @@ class myFinds(object):
 
 
 
-class myFindsDatabase(object):
+class myFindsDatabase(Storage):
     def __init__(self, plugin, database):
-        self.NS       = "%s.MF" % plugin.NS
+        self.NS       = "%s.db" % plugin.NS
         self.log      = logging.getLogger("Pyggs.%s" % self.NS)
-        self.database = database
         self.plugin   = plugin
+        self.filename = database.filename
 
         self.valid    = None
 
@@ -75,8 +66,8 @@ class myFindsDatabase(object):
 
 
     def createTables(self):
-        """If Environment table doesn't exist, create it"""
-        db = self.database.getDb()
+        """If MyFinds table doesn't exist, create it"""
+        db = self.getDb()
         db.execute("""CREATE TABLE IF NOT EXISTS myFinds (
                 guid varchar(36) NOT NULL,
                 sequence int(4) NOT NULL,
@@ -90,7 +81,7 @@ class myFindsDatabase(object):
         if self.valid is not None:
             return self.valid
 
-        lastCheck = self.database.getE("%s.lastcheck" % self.NS)
+        lastCheck = self.getEnv("%s.lastcheck" % self.NS)
         timeout   = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*3600
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
@@ -103,20 +94,20 @@ class myFindsDatabase(object):
 
     def update(self, data):
         """Update MyFinds database by data"""
-        db = self.database.getDb()
+        db = self.getDb()
         cur = db.cursor()
         cur.execute("DELETE FROM myFinds")
         for find in data:
             cur.execute("INSERT INTO myFinds(guid, sequence, date) VALUES(?,?,?)", (find["guid"], find["sequence"], find["f_date"]))
         db.commit()
         db.close()
-        self.database.setE("%s.lastcheck" % self.NS, time.time())
+        self.setEnv("%s.lastcheck" % self.NS, time.time())
 
 
     def select(self, query):
         """Selects data from database, performs update if neccessary"""
         self.checkValidity()
-        db     = self.database.getDb()
+        db     = self.getDb()
         result = db.cursor().execute(query).fetchall()
         db.close()
         return result

@@ -20,33 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class gccz(object):
+class gccz(base):
     def __init__(self, master):
-        self.NS  = "plugin.gccz"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
-        self.dependencies = []
-        self.templateData = {}
+        base.__init__(self, master)
+        self.about        = _("Storage for geocaching.cz credentials etc.")
 
 
     def setup(self):
-        """Setup script"""
         config = self.master.config
 
         config.assertSection(self.NS)
         config.update(self.NS, "username", _("Geocaching.cz username"), validate=True)
         config.update(self.NS, "password", _("Geocaching.cz password"), validate=True)
         config.update(self.NS, "uid", _("UID (for map generating)"), validate=True)
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
-
-
-    def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")

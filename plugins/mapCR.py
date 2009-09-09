@@ -20,34 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class mapCR(object):
+class mapCR(base):
     def __init__(self, master):
-        self.NS  = "plugin.mapCR"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["stats", "myFinds", "cache", "gccz"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        self.about        = _("Maps of Czech Republic from geocaching.cz.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
-
-        myFinds = self.master.plugins["myFinds"].storage.getList()
-        caches  = self.master.plugins["cache"].storage.select(myFinds)
+        myFinds = self.myFinds.storage.getList()
+        caches  = self.cache.storage.select(myFinds)
         caches  = self.master.globalStorage.fetchAssoc(caches, "country,province,#")
         caches  = caches.get("Czech Republic")
         if caches:
@@ -75,12 +59,9 @@ class mapCR(object):
                     provinces[provincesAbbr[province]] = len(caches[province])
                     tot = tot+len(caches[province])
             total["province"] = len(provinces)
-            self.templateData["total"] = total
 
             prsorted = list(provinces.keys())
             prsorted.sort()
-            self.templateData["map"] = {}
-            self.templateData["map"]["chld"] = "".join(prsorted)
             tmp1 = ""
             tmp2 = ""
             for province in prsorted:
@@ -89,7 +70,11 @@ class mapCR(object):
                     tmp2 = "%s," % tmp2
                 tmp1 = "%s%s" % (tmp1, provinces[province])
                 tmp2 = "%s%d" % (tmp2, round(100*provinces[province]/tot))
-            self.templateData["map"]["chd"] = "%s|%s" % (tmp1, tmp2)
 
-            self.templateData["uid"] = self.master.config.get(self.master.plugins["gccz"].NS, "uid")
-            self.master.plugins["stats"].registerTemplate(":stats.mapCR", self.templateData)
+            templateData               = {}
+            templateData["map"]         = {}
+            templateData["map"]["chld"] = "".join(prsorted)
+            templateData["map"]["chd"]  = "%s|%s" % (tmp1, tmp2)
+            templateData["total"]       = total
+            templateData["uid"]         = self.master.config.get(self.gccz.NS, "uid")
+            self.stats.registerTemplate(":stats.mapCR", templateData)

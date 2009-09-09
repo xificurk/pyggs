@@ -21,39 +21,35 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class gcczRatingsTop(object):
+class gcczRatingsTop(base):
     def __init__(self, master):
-        self.NS  = "plugin.gcczRatingsTop"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["general", "myFinds", "gcczRatings", "cache"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        self.about        = _("Adds rows about worst/best rated cache found into General statistics section.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
-        myFinds = self.master.plugins["myFinds"].storage.select("SELECT * FROM myFinds")
-        myFinds = self.master.profileStorage.fetchAssoc(myFinds, "guid")
-        caches  = self.master.plugins["cache"].storage.select(myFinds.keys())
+        templateData = self.getTopRated()
+        if templateData:
+            self.general.registerTemplate(":stats.general.gcczRatingsTop", templateData)
+
+
+    def getTopRated(self):
+        fetchAssoc = self.master.globalStorage.fetchAssoc
+
+        myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
+        myFinds = fetchAssoc(myFinds, "guid")
+
+        caches  = self.cache.storage.select(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
-        caches  = self.master.globalStorage.fetchAssoc(caches, "waypoint")
-        ratings = self.master.plugins["gcczRatings"].storage.select(caches.keys(), min=3)
-        ratings = self.master.globalStorage.fetchAssoc(ratings, "waypoint")
+        caches  = fetchAssoc(caches, "waypoint")
+
+        ratings = self.gcczRatings.storage.select(caches.keys(), min=3)
+        ratings = fetchAssoc(ratings, "waypoint")
+
         for wpt in caches:
             try:
                 caches[wpt].update(ratings[wpt])
@@ -69,6 +65,6 @@ class gcczRatingsTop(object):
                     result["best"] = caches[wpt]
                 if caches[wpt]["rating"] < result["worst"]["rating"] or (caches[wpt]["rating"] == result["worst"]["rating"] and caches[wpt]["count"] > result["worst"]["count"]):
                     result["worst"] = caches[wpt]
-
-            self.templateData = result
-            self.master.plugins["general"].registerTemplate(":stats.general.gcczRatingsTop", self.templateData)
+            return result
+        else:
+            return None

@@ -20,45 +20,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, time, math
+from .base import base
+import time, math
 
-class myFindsAverages(object):
+class myFindsAverages(base):
     def __init__(self, master):
-        self.NS  = "plugin.myFindsAverages"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["general", "myFinds"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        self.about        = _("Adds rows about average finds (overall, in last 365 days) into General statistics section.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
-        self.templateData["overall"] = self.getAverages()
-        self.templateData["last365"] = self.getAverages("date > DATE('now', '-365 days')", 365);
-        self.master.plugins["general"].registerTemplate(":stats.general.myFindsAverages", self.templateData)
+        templateData            = {}
+        templateData["overall"] = self.getAverages()
+        templateData["last365"] = self.getAverages("date > DATE('now', '-365 days')", 365);
+        self.general.registerTemplate(":stats.general.myFindsAverages", templateData)
 
 
     def getAverages(self, where = "1", period = None):
         """return averages stats"""
-        myFindsDB = self.master.plugins["myFinds"].storage
-        result = myFindsDB.select("SELECT * FROM myFinds WHERE %s ORDER BY date ASC, sequence ASC" % where)
-        all    = myFindsDB.database.fetchAssoc(result)
-        days   = myFindsDB.database.fetchAssoc(result, "date")
+        result = self.myFinds.storage.select("SELECT * FROM myFinds WHERE %s ORDER BY date ASC, sequence ASC" % where)
+        all    = self.myFinds.storage.fetchAssoc(result)
+        days   = self.myFinds.storage.fetchAssoc(result, "date")
 
-        ret = {}
-        ret["finds"] = len(all);
+        ret           = {}
+        ret["finds"]  = len(all);
         ret["gcdays"] = len(days);
 
         if period is None:
@@ -66,11 +52,11 @@ class myFindsAverages(object):
             start  = start["date"]
             period = int(math.ceil((time.time()-time.mktime(time.strptime(start, "%Y-%m-%d")))/24/3600+1))
 
-        ret["days"] = period;
-        ret["gcdays/week"] = "%.2f" % (ret["gcdays"]/period*7)
-        ret["finds/gcday"] = "%.2f" % (ret["finds"]/max(ret["gcdays"],1))
-        ret["finds/day"]   = "%.2f" % (ret["finds"]/period)
-        ret["finds/week"]  = "%.2f" % (ret["finds"]/period*7)
-        ret["finds/month"] = "%.2f" % (ret["finds"]/period*365.25/12)
+        ret["days"]        = period;
+        ret["gcdays/week"] = ret["gcdays"]/period*7
+        ret["finds/gcday"] = ret["finds"]/max(ret["gcdays"],1)
+        ret["finds/day"]   = ret["finds"]/period
+        ret["finds/week"]  = ret["finds"]/period*7
+        ret["finds/month"] = ret["finds"]/period*365.25/12
 
         return ret

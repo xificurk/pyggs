@@ -20,19 +20,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+from .base import base
+from pyggs import Storage
 import logging, time, math
 
-class cache(object):
+class cache(base):
     def __init__(self, master):
-        self.NS  = "plugin.cache"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
-        self.dependencies = []
+        base.__init__(self, master)
+        self.about        = _("Global storage for detailed info about caches.")
 
 
     def setup(self):
-        """Setup script"""
         config = self.master.config
 
         config.assertSection(self.NS)
@@ -42,8 +40,7 @@ class cache(object):
 
 
     def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        base.prepare(self)
 
         self.homecoord = {}
         self.homecoord["lat"] = float(self.master.config.get("general", "homelat"))
@@ -51,11 +48,6 @@ class cache(object):
 
         self.master.registerHandler("cache", self.parseCache)
         self.storage = cacheDatabase(self, self.master.globalStorage)
-
-
-    def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
 
 
     def parseCache(self, cache):
@@ -83,19 +75,19 @@ class cache(object):
 
 
 
-class cacheDatabase(object):
+class cacheDatabase(Storage):
     def __init__(self, plugin, database):
-        self.NS       = "%s.C" % plugin.NS
+        self.NS       = "%s.db" % plugin.NS
         self.log      = logging.getLogger("Pyggs.%s" % self.NS)
-        self.database = database
         self.plugin   = plugin
+        self.filename = database.filename
 
         self.createTables()
 
 
     def createTables(self):
-        """If Environment table doesn't exist, create it"""
-        db = self.database.getDb()
+        """If Cache table doesn't exist, create it"""
+        db = self.getDb()
         db.execute("""CREATE TABLE IF NOT EXISTS cache (
                 guid varchar(36) NOT NULL,
                 waypoint varchar(9) NOT NULL,
@@ -137,7 +129,7 @@ class cacheDatabase(object):
             self.log.debug("No guid passed, not updating.")
             return
 
-        db = self.database.getDb()
+        db  = self.getDb()
         cur = db.cursor()
         cur.execute("SELECT * FROM cache WHERE guid=?", (data["guid"],))
         if (len(cur.fetchall()) > 0):
@@ -161,14 +153,14 @@ class cacheDatabase(object):
                 cur.execute("INSERT INTO cache(guid,lastCheck) VALUES(?,?)", (data["guid"],time.time()))
         db.commit()
         db.close()
-        self.database.setE("%s.lastcheck" % self.NS, time.time())
+        self.setEnv("%s.lastcheck" % self.NS, time.time())
 
 
     def select(self, guids):
         """Selects data from database, performs update if neccessary"""
         timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*24*3600
         result = []
-        db  = self.database.getDb()
+        db  = self.getDb()
         cur = db.cursor()
         for guid in guids:
             row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()

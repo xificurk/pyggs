@@ -81,11 +81,11 @@ for year in history:
   <col#{css("col-history-numbers")} />
   <tr><td#{css("td")}>Total finds</td><td#{css("td", "right")}>#{history[year]["averages"]["finds"]}</td></tr>
   <tr><td#{css("td")}>Caching days</td><td#{css("td", "right")}>#{history[year]["averages"]["gcdays"]}</td></tr>
-  <tr><td#{css("td")}>Caching days/week</td><td#{css("td", "right")}>#{history[year]["averages"]["gcdays/week"]}</td></tr>
-  <tr><td#{css("td")}>Finds/caching day</td><td#{css("td", "right")}>#{history[year]["averages"]["finds/gcday"]}</td></tr>
-  <tr><td#{css("td")}>Finds/day</td><td#{css("td", "right")}>#{history[year]["averages"]["finds/day"]}</td></tr>
-  <tr><td#{css("td")}>Finds/week</td><td#{css("td", "right")}>#{history[year]["averages"]["finds/week"]}</td></tr>
-  <tr><td#{css("td")}>Finds/month</td><td#{css("td", "right")}>#{history[year]["averages"]["finds/month"]}</td></tr>
+  <tr><td#{css("td")}>Caching days/week</td><td#{css("td", "right")}>#{"%.2f" % history[year]["averages"]["gcdays/week"]}</td></tr>
+  <tr><td#{css("td")}>Finds/caching day</td><td#{css("td", "right")}>#{"%.2f" % history[year]["averages"]["finds/gcday"]}</td></tr>
+  <tr><td#{css("td")}>Finds/day</td><td#{css("td", "right")}>#{"%.2f" % history[year]["averages"]["finds/day"]}</td></tr>
+  <tr><td#{css("td")}>Finds/week</td><td#{css("td", "right")}>#{"%.2f" % history[year]["averages"]["finds/week"]}</td></tr>
+  <tr><td#{css("td")}>Finds/month</td><td#{css("td", "right")}>#{"%.2f" % history[year]["averages"]["finds/month"]}</td></tr>
   </table>
 </td>
 </tr>

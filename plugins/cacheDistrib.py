@@ -21,41 +21,35 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 from collections import OrderedDict
 
-class cacheDistrib(object):
+class cacheDistrib(base):
     def __init__(self, master):
-        self.NS  = "plugin.cacheDistrib"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["stats", "myFinds", "cache"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
+        self.about        = _("Statistics of found caches by type, size and country.")
 
 
     def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        base.prepare(self)
+        self.fetchAssoc = self.master.globalStorage.fetchAssoc
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
+        myFinds = self.myFinds.storage.getList()
+        caches  = self.cache.storage.select(myFinds)
 
-        myFinds = self.master.plugins["myFinds"].storage.getList()
-        caches  = self.master.plugins["cache"].storage.select(myFinds)
+        templateData              = {}
+        templateData["total"]     = len(myFinds)
+        templateData["countries"] = self.getCountries(caches)
+        templateData["types"]     = self.getTypes(caches)
+        templateData["sizes"]     = self.getSizes(caches)
+        self.stats.registerTemplate(":stats.cacheDistrib", templateData)
 
-        self.templateData["total"] = len(myFinds)
 
-        fetchAssoc = self.master.plugins["cache"].storage.database.fetchAssoc
-
-        result = fetchAssoc(caches, "country,#")
+    def getCountries(self, caches):
+        result = self.fetchAssoc(caches, "country,#")
         tmp = []
         for country in result:
             tmp.append({"country":country, "count":len(result[country])})
@@ -64,9 +58,11 @@ class cacheDistrib(object):
         countries = OrderedDict()
         for row in tmp:
             countries[row["country"]] = row["count"]
-        self.templateData["countries"] = countries
+        return countries
 
-        result = fetchAssoc(caches, "type,#")
+
+    def getTypes(self, caches):
+        result = self.fetchAssoc(caches, "type,#")
         tmp = []
         for type in result:
             tmp.append({"type":type, "count":len(result[type])})
@@ -75,9 +71,11 @@ class cacheDistrib(object):
         types = OrderedDict()
         for row in tmp:
             types[row["type"]] = row["count"]
-        self.templateData["types"] = types
+        return types
 
-        result = fetchAssoc(caches, "size,#")
+
+    def getSizes(self, caches):
+        result = self.fetchAssoc(caches, "size,#")
         tmp = []
         for size in result:
             tmp.append({"size":size, "count":len(result[size])})
@@ -86,7 +84,4 @@ class cacheDistrib(object):
         sizes = OrderedDict()
         for row in tmp:
             sizes[row["size"]] = row["count"]
-
-        self.templateData["sizes"] = sizes
-
-        self.master.plugins["stats"].registerTemplate(":stats.cacheDistrib", self.templateData)
+        return sizes

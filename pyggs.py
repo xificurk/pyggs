@@ -40,10 +40,11 @@ for lang in os.listdir(localeDir):
         langs[lang] = gettext.translation("pyggs", localedir = localeDir, codeset="utf-8", languages = [lang])
 gettext.install("pyggs", localedir = localeDir, codeset="utf-8")
 
+
 class Pyggs(GCparser):
     def __init__(self):
         # Setup console output logging
-        console = ColorConsole(fmt="%(levelname)-8s %(name)-35s %(message)s")
+        console = ColorConsole(fmt="%(levelname)-8s %(name)-30s %(message)s")
         rootlog = logging.getLogger("")
         rootlog.addHandler(console)
         rootlog.setLevel(logging.WARN)
@@ -105,9 +106,9 @@ class Pyggs(GCparser):
         if lang:
             langs[lang].install()
 
-        print()
-        print(_("Now, we're going to setup your profile named '%s'.") % self.opts.profile)
+        print(_("Let's setup your profile named '%s'.") % self.opts.profile)
 
+        # General section
         config.assertSection("general")
         print()
         print("  %s:" % _("General options"))
@@ -118,60 +119,52 @@ class Pyggs(GCparser):
         config.update("general", "homelat", _("Latitude"), validate = True)
         config.update("general", "homelon", _("Laongitude"), validate = True)
 
-        installedPlugins = []
-        for plugin in os.listdir(os.path.dirname(__file__) + "/plugins"):
-            if plugin[-3:] == ".py" and not plugin.startswith("__init__") and not plugin.startswith("example"):
-                installedPlugins.append(plugin[:-3])
-
-        config.assertSection("plugins")
-        print()
-        print("  %s:" % _("Plugins"))
-        for plugin in installedPlugins:
-            config.update("plugins", plugin, _("Enable '%s' plugin") % plugin, validate = ["y", "n"])
-        for plugin in config.options("plugins"):
-            if plugin not in installedPlugins:
-                logging.debug("Removing not installed plugin %s." % plugin)
-                config.remove_option("plugins", plugin)
-
+        # Geocaching.com section
         config.assertSection("geocaching.com")
         print()
         print("  Geocaching.com:")
         config.update("geocaching.com", "username", _("Username"), validate = True)
         config.update("geocaching.com", "password", _("Password"), validate = True)
 
-        templates = []
-        if os.path.isdir(pyggsDir + "/templates"):
-            for template in os.listdir(pyggsDir + "/templates"):
-                if os.path.isdir(pyggsDir + "/templates/" + template):
-                    templates.append(template)
-        for template in os.listdir(os.path.dirname(__file__) + "/templates"):
-            if os.path.isdir(os.path.dirname(__file__) + "/templates/" + template):
-                templates.append(template)
-        themes = []
-        if os.path.isdir(pyggsDir + "/themes"):
-            for theme in os.listdir(pyggsDir + "/themes"):
-                if os.path.isfile(pyggsDir + "/themes/" + theme):
-                    themes.append(theme.replace(".theme", ""))
-        for theme in os.listdir(os.path.dirname(__file__) + "/themes"):
-            if os.path.isfile(os.path.dirname(__file__) + "/themes/" + theme):
-                themes.append(theme.replace(".theme", ""))
+        # Output section
+        themesDir = templatesDir = [pyggsDir, os.path.dirname(__file__)]
+        templates = self.detectTemplates(templatesDir)
+        themes    = self.detectThemes(themesDir)
         config.assertSection("output")
         print()
         print("  %s:" % _("Output"))
-        print("    %s:\n      * %s\n      * %s" % (_("Templates are looked up in these directories (consecutively)"), pyggsDir + "/templates", os.path.dirname(__file__) + "/templates"))
+        print("    %s:\n      * %s" % (_("Templates are looked up in 'templates' subdirectory of these paths (consecutively)"), "\n      * ".join(templatesDir)))
         config.update("output", "template", _("Template"), validate = templates)
-        print("    %s:\n      * %s\n      * %s" % (_("Themes are looked up in these directories (consecutively)"), pyggsDir + "/themes", os.path.dirname(__file__) + "/themes"))
+        print("    %s:\n      * %s" % (_("Themes are looked up in 'themes' subdirectory of these paths (consecutively)"), "\n      * ".join(themesDir)))
         config.update("output", "theme", _("Theme"), validate = themes)
         config.update("output", "directory", _("Directory"), validate = True)
 
+        # Plugins section
+        installedPlugins = self.detectPlugins()
+        config.assertSection("plugins")
+        print()
+        print("  %s:" % _("Plugins"))
+        for plugin in installedPlugins:
+            self.loadPlugin(plugin)
+            print("    Plugin %s: %s" % (plugin, self.plugins[plugin].about))
+            config.update("plugins", plugin, _("Enable"), validate = ["y", "n"])
+        for plugin in config.options("plugins"):
+            if plugin not in installedPlugins:
+                logging.debug("Removing not installed plugin %s." % plugin)
+                config.remove_option("plugins", plugin)
+
+        # Check plugins deps
         print()
         print("  Checking plugins dependency tree...")
+        self.plugins = {}
         self.loadPlugins()
 
+        # Plugin configuration section
         for plugin in self.plugins:
-            print()
-            print("  %s:" % _("Configuration of '%s' plugin") % plugin)
-            self.plugins[plugin].setup()
+            if hasattr(self.plugins[plugin], "setup"):
+                print()
+                print("  %s:" % _("Configuration of '%s' plugin") % plugin)
+                self.plugins[plugin].setup()
 
         config.save()
         print()
@@ -210,18 +203,25 @@ class Pyggs(GCparser):
 
         # Prepare plugins
         for plugin in self.plugins:
-            self.plugins[plugin].prepare()
+            if hasattr(self.plugins[plugin], "prepare"):
+                self.log.info("Preparing plugin %s..." % plugin)
+                self.plugins[plugin].prepare()
 
         # Run plugins
         for plugin in self.plugins:
-            self.plugins[plugin].run()
+            if hasattr(self.plugins[plugin], "run"):
+                self.log.info("Running plugin %s..." % plugin)
+                self.plugins[plugin].run()
 
         # Render output
         self.templar = Templar(self)
         self.templar.outputPages(self.pages)
 
         # Finish plugins
-        self.plugins["gccomUpdater"].finish()
+        for plugin in self.plugins:
+            if hasattr(self.plugins[plugin], "finish"):
+                self.log.info("Finishing plugin %s..." % plugin)
+                self.plugins[plugin].finish()
 
 
     def registerPage(self, output, template, menutemplate, context, layout = True):
@@ -249,15 +249,15 @@ class Pyggs(GCparser):
 
     def loadPlugin(self, name):
         """ Load a plugin - name is the file and class name"""
-        if name not in globals()['plugins'].__dict__:
+        if name not in globals()["plugins"].__dict__:
             self.log.info("Loading plugin '%s'." % name)
             __import__(self.pluginModule(name))
-        self.plugins[name] = getattr(globals()['plugins'].__dict__[name], name)(self)
+        self.plugins[name] = getattr(globals()["plugins"].__dict__[name], name)(self)
         return True
 
 
     def pluginModule(self, name):
-        return "%s.%s" % (globals()['plugins'].__name__, name)
+        return "%s.%s" % (globals()["plugins"].__name__, name)
 
 
     def loadPlugins(self):
@@ -307,6 +307,37 @@ class Pyggs(GCparser):
                 ret = False
                 break
         return ret
+
+
+    def detectTemplates(self, dirs):
+        """Search for available templates"""
+        templates = []
+        for dir in dirs:
+            if os.path.isdir(dir + "/templates"):
+                for template in os.listdir(dir + "/templates"):
+                    if os.path.isdir(dir + "/templates/" + template):
+                        templates.append(template)
+        return templates
+
+
+    def detectThemes(self, dirs):
+        """Search for available themes"""
+        themes = []
+        for dir in dirs:
+            if os.path.isdir(dir + "/themes"):
+                for theme in os.listdir(dir + "/themes"):
+                    if os.path.isfile(dir + "/themes/" + theme):
+                        themes.append(theme.replace(".theme", ""))
+        return themes
+
+
+    def detectPlugins(self):
+        """Search for available plugins"""
+        plugins = []
+        for plugin in os.listdir(os.path.dirname(__file__) + "/plugins"):
+            if plugin[-3:] == ".py" and not plugin.startswith("__init__") and not plugin.startswith("example") and plugin[:-3] != "base":
+                plugins.append(plugin[:-3])
+        return plugins
 
 
 
@@ -372,7 +403,7 @@ class Storage(object):
         db.close()
 
 
-    def setE(self, variable, value):
+    def setEnv(self, variable, value):
         """insert or update env variale"""
         db = self.getDb()
         cur = db.cursor()
@@ -385,7 +416,7 @@ class Storage(object):
         db.close()
 
 
-    def getE(self, variable):
+    def getEnv(self, variable):
         """get env variable"""
         db = self.getDb()
         cur = db.cursor()
@@ -397,7 +428,7 @@ class Storage(object):
         return value
 
 
-    def delE(self, variable):
+    def delEnv(self, variable):
         """delete env variale"""
         db = self.getDb()
         cur = db.cursor()
@@ -408,6 +439,6 @@ class Storage(object):
 
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pyggs = Pyggs()
     pyggs.run()

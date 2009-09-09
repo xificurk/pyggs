@@ -20,34 +20,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class stats(object):
+class stats(base):
     def __init__(self, master):
-        self.NS  = "plugin.stats"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
+        base.__init__(self, master)
+        self.about        = _("Generates statistics html page.")
 
-        self.dependencies = []
         self.templateData = {"templates":{}}
 
 
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
-
+    def run(self):
         self.master.registerPage("index.html", ":stats", ":menu.stats", self.templateData)
         self.master.registerPage("export.html", ":stats", ":menu.export", self.templateData, layout = False)
 
-
-    def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
 
     def registerTemplate(self, template, context):
         """Register template for rendering in GC statistics"""

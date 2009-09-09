@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/general.py - Prepare place to pug general statistics.
+    plugins/base.py - Parent plugin for all others.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -20,21 +20,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+import logging
 
-class general(base):
+class base(object):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["stats"]
-        self.about        = _("Container for General statistics table.")
-
-        self.templateData = {"templates":{}}
-
-
-    def run(self):
-        self.stats.registerTemplate(":stats.general", self.templateData)
+        self.NS  = "plug.%s"  % self.__class__.__name__
+        self.log = logging.getLogger("Pyggs.%s" % self.NS)
+        self.master = master
+        self.about = ""
+        self.dependencies = []
 
 
-    def registerTemplate(self, template, context):
-        """Register template for rendering in General stats section"""
-        self.templateData["templates"][template] = context
+    def prepare(self):
+        for plugin in self.dependencies:
+            self.__dict__[plugin] = self.master.plugins[plugin]

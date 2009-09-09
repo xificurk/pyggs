@@ -20,33 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, datetime
+from .base import base
+import datetime
 
-class myFindsHistory(object):
+class myFindsHistory(base):
     def __init__(self, master):
-        self.NS  = "plugin.myFindsHistory"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
-        self.dependencies = ["myFindsAverages", "stats"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        base.__init__(self, master)
+        self.dependencies = ["myFinds", "myFindsAverages", "stats"]
+        self.about        = _("Adds graph and average find values for every user's caching year.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
-
-        myFinds  = self.master.plugins["myFinds"].storage.select("""SELECT
+        myFinds  = self.myFinds.storage.select("""SELECT
                 COUNT(DISTINCT date) AS gcdays,
                 COUNT(guid) AS finds,
                 STRFTIME('%Y', date) AS year,
@@ -56,7 +41,7 @@ class myFindsHistory(object):
             GROUP BY ym
             ORDER BY ym ASC
             """)
-        myFinds = self.master.plugins["myFinds"].storage.database.fetchAssoc(myFinds, "year,month")
+        myFinds = self.myFinds.storage.fetchAssoc(myFinds, "year,month")
 
         top = 0
         for year in myFinds:
@@ -69,9 +54,9 @@ class myFindsHistory(object):
             myFinds[year] = {
                     "top":yearstop,
                     "data":myFinds[year],
-                    "averages":self.master.plugins["myFindsAverages"].getAverages("STRFTIME('%%Y', date) = '%d'" % int(year), int(datetime.date(int(year), 12, 31).strftime("%j")))}
+                    "averages":self.myFindsAverages.getAverages("STRFTIME('%%Y', date) = '%d'" % int(year), int(datetime.date(int(year), 12, 31).strftime("%j")))}
 
-
-        self.templateData["history"] = myFinds
-        self.templateData["top"]     = top
-        self.master.plugins["stats"].registerTemplate(":stats.myFindsHistory", self.templateData)
+        templateData            = {}
+        templateData["history"] = myFinds
+        templateData["top"]     = top
+        self.stats.registerTemplate(":stats.myFindsHistory", templateData)

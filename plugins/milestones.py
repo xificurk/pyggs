@@ -20,20 +20,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, re
+from .base import base
+import re
 
-class milestones(object):
+class milestones(base):
     def __init__(self, master):
-        self.NS  = "plugin.milestones"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["stats", "cache", "myFinds"]
-        self.templateData = {}
+        self.about        = _("List of accomplished milestones.")
 
 
     def setup(self):
-        """Setup script"""
         config = self.master.config
 
         config.assertSection(self.NS)
@@ -43,18 +40,14 @@ class milestones(object):
         config.update(self.NS, "milestones", _("Milestones"), validate=True)
 
 
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
-
-
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
-        result = []
-        cacheDB = self.master.plugins["cache"].storage
+        templateData = {"milestones":self.getMilestones()}
+        self.stats.registerTemplate(":stats.milestones", templateData)
 
-        myFinds    = self.master.plugins["myFinds"].storage.select("SELECT * FROM myFinds ORDER BY date ASC, sequence ASC")
+
+    def getMilestones(self):
+        result = []
+        myFinds    = self.myFinds.storage.select("SELECT * FROM myFinds ORDER BY date ASC, sequence ASC")
         milestones = self.master.config.get(self.NS, "milestones").split(",")
         for i in range(0, len(milestones)):
             if milestones[i] == "LAST":
@@ -67,8 +60,6 @@ class milestones(object):
                 if match:
                     self.log.debug("Cache %d matches expr %s." % (cache["sequence"], milestone))
                     row = dict(cache)
-                    row.update(cacheDB.select([cache["guid"]])[0])
+                    row.update(self.cache.storage.select([cache["guid"]])[0])
                     result.append(row)
-
-        self.templateData["milestones"] = result
-        self.master.plugins["stats"].registerTemplate(":stats.milestones", self.templateData)
+        return result

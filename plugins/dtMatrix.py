@@ -20,44 +20,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class dtMatrix(object):
+class dtMatrix(base):
     def __init__(self, master):
-        self.NS  = "plugin.dtMatrix"
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-        self.master = master
-
+        base.__init__(self, master)
         self.dependencies = ["stats", "cache", "myFinds"]
-        self.templateData = {}
-
-
-    def setup(self):
-        """Setup script"""
-        pass
-
-
-    def prepare(self):
-        """Setup everything needed before actual run"""
-        self.log.debug("Preparing...")
+        self.about        = _("Difficulty / Terrain matrix of found caches.")
 
 
     def run(self):
-        """Run the plugin's code"""
-        self.log.info("Running...")
+        myFinds      = self.myFinds.storage.getList()
+        caches       = self.cache.storage.select(myFinds)
+        templateData = self.getMatrix(caches)
+        self.stats.registerTemplate(":stats.dtMatrix", templateData)
 
-        myFinds = self.master.plugins["myFinds"].storage.getList()
-        caches  = self.master.plugins["cache"].storage.select(myFinds)
-        totalfinds = len(myFinds)
-        caches = self.master.plugins["cache"].storage.database.fetchAssoc(caches, "terrain,difficulty,#")
 
-        top = {}
-        top["matrix"] = 0
-        top["sum"]    = 0
-        terrain       = {}
-        difficulty    = {}
-        mean = {"terrain":0, "difficulty":0}
-        dt = {}
+    def getMatrix(self, caches):
+        totalfinds = len(caches)
+        caches     = self.cache.storage.fetchAssoc(caches, "terrain,difficulty,#")
+
+        top        = {"matrix":0, "sum":0}
+        terrain    = {}
+        difficulty = {}
+        mean       = {"terrain":0, "difficulty":0}
+        dt         = {}
 
         t = 0.5
         while t < 5:
@@ -93,9 +80,10 @@ class dtMatrix(object):
             mean["difficulty"] = mean["difficulty"] + difficulty[d]*d;
         mean["difficulty"] = mean["difficulty"]/totalfinds
 
-        self.templateData["matrix"]     = dt
-        self.templateData["difficulty"] = difficulty
-        self.templateData["terrain"]    = terrain
-        self.templateData["top"]        = top
-        self.templateData["mean"]       = mean
-        self.master.plugins["stats"].registerTemplate(":stats.dtMatrix", self.templateData)
+        result               = {}
+        result["matrix"]     = dt
+        result["difficulty"] = difficulty
+        result["terrain"]    = terrain
+        result["top"]        = top
+        result["mean"]       = mean
+        return result

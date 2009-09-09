@@ -1,0 +1,22 @@
+<?py
+_context["title"] = "Unrated caches"
+try:
+    locale.setlocale(locale.LC_ALL, ("en", "UTF-8"))
+#
+except:
+    echo("prvni")
+    try:
+        locale.setlocale(locale.LC_ALL, ("en", ""))
+    #
+    except:
+        echo("druhy")
+        locale.setlocale(locale.LC_ALL, "")
+    #
+#
+?>
+
+<ul>
+<?py for cache in unrated: ?>
+    <li><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{cache["waypoint"]}">${cache["name"]}</a> (#{date(cache["date"])})</li>
+<?py #endfor ?>
+</ul>

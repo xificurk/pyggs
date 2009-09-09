@@ -21,13 +21,14 @@ for type in types:
 for size in ["Large", "Regular", "Small", "Micro", "Other", "Not chosen", "Virtual"]:
     if size in sizes:
         color = {"background":gradient("lightmin","lightmax",sizes[size]/total)}
+        count = sizes[size]
     #
     else:
-        sizes[size] = 0
+        count = 0
         color = {}
     #
 ?>
-    <tr><td#{css("td","center","td-icon")}>#{csize(size)}</td><td#{css("td","right")}>#{sizes[size]}</td><td#{css("td","right",color)}>#{"%.1f" % (sizes[size]/total*100)}%</td></tr>
+    <tr><td#{css("td","center","td-icon")}>#{csize(size)}</td><td#{css("td","right")}>#{count}</td><td#{css("td","right",color)}>#{"%.1f" % (count/total*100)}%</td></tr>
 <?py
 #endfor
 ?>

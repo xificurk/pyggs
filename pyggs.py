@@ -217,8 +217,11 @@ class Pyggs(GCparser):
             self.plugins[plugin].run()
 
         # Render output
-        templar = Templar(self)
-        templar.outputPages(self.pages)
+        self.templar = Templar(self)
+        self.templar.outputPages(self.pages)
+
+        # Finish plugins
+        self.plugins["gccomUpdater"].finish()
 
 
     def registerPage(self, output, template, menutemplate, context, layout = True):

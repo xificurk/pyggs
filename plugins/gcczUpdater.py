@@ -60,9 +60,9 @@ class gcczUpdater(object):
             finds = "%s%s;%s;%s;%s" % (finds,details["waypoint"], row["date"], details["lat"], details["lon"])
         config = self.master.config
 
+        hash = "%s" % finds
+        hash = md5(hash.encode()).hexdigest()
         if config.get(self.NS, "force") != "y":
-            hash = "%s" % finds
-            hash = md5(hash.encode()).hexdigest()
             hash_old = self.master.profileStorage.getE("%s.hash" % self.NS)
             if hash == hash_old:
                 self.log.info("Geocaching.cz database seems already up to date, skipping update.")

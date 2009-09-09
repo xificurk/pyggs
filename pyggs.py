@@ -43,7 +43,7 @@ gettext.install("pyggs", localedir = localeDir, codeset="utf-8")
 class Pyggs(GCparser):
     def __init__(self):
         # Setup console output logging
-        console = ColorConsole(fmt="%(levelname)-8s %(name)-30s %(message)s")
+        console = ColorConsole(fmt="%(levelname)-8s %(name)-35s %(message)s")
         rootlog = logging.getLogger("")
         rootlog.addHandler(console)
         rootlog.setLevel(logging.WARN)

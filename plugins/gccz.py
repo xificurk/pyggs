@@ -39,6 +39,7 @@ class gccz(object):
         config.assertSection(self.NS)
         config.update(self.NS, "username", _("Geocaching.cz username"), validate=True)
         config.update(self.NS, "password", _("Geocaching.cz password"), validate=True)
+        config.update(self.NS, "uid", _("UID (for map generating)"), validate=True)
 
 
     def prepare(self):

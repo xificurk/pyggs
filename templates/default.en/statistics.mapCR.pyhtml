@@ -1,0 +1,7 @@
+<table#{css("table")}>
+<caption#{css("caption")}>Czech Republic: #{total["country"]} caches found in #{total["province"]} regions</caption>
+<tr><th#{css("th")}><img src="http://www.geocaching.cz/mapacr.php?uid=#{uid}&amp;typ=crkrajemesta" /><br /><small#{css("small")}>Map from <a href="http://geocaching.cz">geocaching.cz</a></small></th></tr>
+<tr><th#{css("th")}><img src="#{"http://www.geocaching.cz/ggstat/generator_mapy.php?cht=t:K&amp;chs=650x372&amp;chtm=CZkraj&amp;chf=bg,s,FFFFFF&amp;chco=FFFFFF,%s,%s&amp;chd=%s&amp;chld=%s" % (gradient("lightmin", "lightmax", 0)[1:], gradient("lightmin", "lightmax", 1)[1:], map["chd"], map["chld"])}" /><br /><small#{css("small")}>Map from <a href="http://geocaching.cz">geocaching.cz</a></small></th></tr>
+</table>
+
+

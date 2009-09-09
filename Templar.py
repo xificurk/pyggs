@@ -265,4 +265,4 @@ class Theme(Configurator.Theme):
         green = (1-share)*float(match1.group(2)) + share*float(match2.group(2))
         blue  = (1-share)*float(match1.group(3)) + share*float(match2.group(3))
 
-        return "rgb(%d, %d, %d)" % (red, green, blue)
+        return "#%02x%02x%02x" % (red, green, blue)

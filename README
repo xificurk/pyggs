@@ -5,6 +5,9 @@ them to users's profile at geocaching.com.
 
 Pyggs is easily extensible via plugin and templating system.
 
+Example output:
+http://www.geocaching.com/profile/?guid=71db7de9-2edc-4ca1-a255-784057c8973e
+
 Author:
     Petr Morávek [Xificurk]
     jabber id: xificurk [at] jabber.cz
@@ -14,3 +17,16 @@ Requirements
 ============================================================================
 * Python 3.1 or newer
 * GCparser lib v0.2 or newer
+
+Installation
+============================================================================
+Just put the Pyggs (with GCparser lib) whereever you want, then run script:
+$ ./setup.py -p profilename
+And input your settings. Then you can run:
+$ ./pyggs.py -p profilename
+There are more options available, see:
+$ ./pyggs.py --help
+
+FAQ
+============================================================================
+None, at the moment, please write me any comments ;-)

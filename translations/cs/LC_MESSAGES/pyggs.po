@@ -4,8 +4,8 @@
 #
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2009-09-06 23:43+CEST\n"
-"PO-Revision-Date: 2009-09-06 23:55+CEST\n"
+"POT-Creation-Date: 2009-09-09 15:48+CEST\n"
+"POT-Creation-Date: 2009-09-09 16:17+CEST\n"
 "Last-Translator: Petr Morávek <xificurk@centrum.cz>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -13,115 +13,263 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: Configurator.py:70
+#: Configurator.py:73
 msgid "ERROR: You have to input a value from %s."
 msgstr "CHYBA: Musíte zadat jednu z hodnot %s."
 
-#: Configurator.py:73
+#: Configurator.py:76
 msgid "ERROR: You have to input a non-empty string."
 msgstr "CHYBA: Musíte zadat neprázdný řetězec."
 
-#: plugins/base.py:43
-msgid "'My Finds' data timeout in hours"
-msgstr "Platnost pro 'My Finds' data v hodinách"
+#: Templar.py:43
+msgid "Template '%s' not found."
+msgstr "Šablona '%s' nenalezena."
 
-#: pyggs.py:52
+#: Templar.py:50
+msgid "Invalid output directory '%s'."
+msgstr "Chybný adresář '%s' pro výstup."
+
+#: Templar.py:206
+msgid "Theme '%s' not found."
+msgstr "Motiv '%s' nenalezen."
+
+#: plugins/cache.py:30
+msgid "Global storage for detailed info about caches."
+msgstr "Globální uložiště podrobností o keších."
+
+#: plugins/cache.py:39
+msgid "'Cache' details data timeout in days"
+msgstr "Platnost uložených podrobností o keši v dnech"
+
+#: plugins/cacheDistrib.py:31
+msgid "Statistics of found caches by type, size and country."
+msgstr "Statistika nalezených keší podle typu, velikosti a země."
+
+#: plugins/cacheTopFeatures.py:30
+msgid "Adds rows about most distant, most southern, oldest etc. caches found into General statistics section."
+msgstr "Přidá řádky o nejvzdálenější, nejižnější, nejstarší, atd. keši do sekce Celková statistika."
+
+#: plugins/dtMatrix.py:29
+msgid "Difficulty / Terrain matrix of found caches."
+msgstr "Matice Obtížnost / Terén nalezených keší."
+
+#: plugins/gccomUpdater.py:31
+msgid "Updates geocaching.com profile with generated statistics."
+msgstr "Aktualizuje profil na geocaching.com vygenerovanými statistikami."
+
+#: plugins/gccomUpdater.py:40
+msgid "Force geocaching.com profile update on every run"
+msgstr "Vynutit aktualizaci profilu při každém spuštění"
+
+#: plugins/gccz.py:28
+msgid "Storage for geocaching.cz credentials etc."
+msgstr "Uložiště pro přihlašovací údaje na geoaching.cz"
+
+#: plugins/gccz.py:35
+msgid "Geocaching.cz username"
+msgstr "Uživatelské jméno na geocaching.cz"
+
+#: plugins/gccz.py:36
+msgid "Geocaching.cz password"
+msgstr "Heslo na geocaching.cz"
+
+#: plugins/gccz.py:37
+msgid "UID (for map generating)"
+msgstr "UID z geocaching.cz (pro generování map)"
+
+#: plugins/gcczMyRatings.py:31
+msgid "Storage for user's ratings of caches from geocaching.cz."
+msgstr "Uložiště pro vlastní hodnocení keší z geocaching.cz."
+
+#: plugins/gcczMyRatings.py:40
+msgid "Timeout for user's stored geocaching.cz ratings in hours"
+msgstr "Platnost uložených vlastních hodnocení z geocaching.cz v hodinách"
+
+#: plugins/gcczMyRatingsTop10.py:29
+msgid "List of top 10 user rated caches."
+msgstr "Seznam 10 nejlépe hodnocených keší uživatelem."
+
+#: plugins/gcczRatings.py:30
+msgid "Global storage for ratings of caches from geocaching.cz."
+msgstr "Globální uložiště pro hodnocení z geocaching.cz."
+
+#: plugins/gcczRatings.py:39
+msgid "Timeout for stored geocaching.cz ratings in days"
+msgstr "Platnost uložených hodnocení z geocaching.cz v dnech"
+
+#: plugins/gcczRatingsTop.py:30
+msgid "Adds rows about worst/best rated cache found into General statistics section."
+msgstr "Přidá řádky o nejlepší/nejhorší nalezené keši do sekce Celková statistika."
+
+#: plugins/gcczUpdater.py:31
+msgid "Updates user's finds in geocaching.cz database."
+msgstr "Aktualizuje nálezy uživatele v databázi geocaching.cz."
+
+#: plugins/gcczUpdater.py:40
+msgid "Force my finds update on every run"
+msgstr "Vynutit aktualizaci nálezů při každém spuštění"
+
+#: plugins/general.py:29
+msgid "Container for General statistics table."
+msgstr "Tabulka pro sekci Celková statistika."
+
+#: plugins/mapCR.py:29 plugins/mapEurope.py:29
+msgid "Maps of Czech Republic from geocaching.cz."
+msgstr "Mapy České republiky z geocaching.cz."
+
+#: plugins/milestones.py:30
+msgid "List of accomplished milestones."
+msgstr "Seznam dosažených milníků."
+
+#: plugins/milestones.py:39
+msgid "Please specify milestones as coma separeted list. You can also use regular expressions, e.g. '[0-9]+00' matches 100, 200, 300, ..., and magic word LAST means the last found cache."
+msgstr "Zadejte prosím milníky oddělené čárkou. Můžete také použít regulární výrazy, např. '[0-9]+00' odpovídá 100, 200, 300, ... a slovo LAST zastupuje poslední nalezenou keš."
+
+#: plugins/milestones.py:40
+msgid "Milestones"
+msgstr "Milníky"
+
+#: plugins/myFinds.py:30
+msgid "Storage for My Finds data from geocaching.com profile."
+msgstr "Uložiště pro My Finds data z profilu na geocaching.com."
+
+#: plugins/myFinds.py:39
+msgid "'My Finds' data timeout in hours"
+msgstr "Platnost uložených My Finds dat v hodinách"
+
+#: plugins/myFindsAverages.py:30
+msgid "Adds rows about average finds (overall, in last 365 days) into General statistics section."
+msgstr "Přidá řádky s průměrnými údaji o nálezech (celkově, za posledních 365 dní) do sekce Celková statistika."
+
+#: plugins/myFindsHistory.py:30
+msgid "Adds graph and average find values for every user's caching year."
+msgstr "Graf nálezů a průměrné hodnoty z každého roku."
+
+#: plugins/myFindsTopPeriods.py:31
+msgid "Adds rows about user's top day, week, month etc. into General statistics section."
+msgstr "Přidá řádky o nejúspěšnějším dnu, týdnu, měsíci, ... do sekce Celková statistika."
+
+#: plugins/stats.py:28 plugins/unrated.py:29
+msgid "Generates statistics html page."
+msgstr "Generuje HTML stránku se statistikami."
+
+#: pyggs.py:54
 msgid "set logging to ERROR"
 msgstr "nastavit logování na ERROR"
 
-#: pyggs.py:53
+#: pyggs.py:55
 msgid "set logging to INFO"
 msgstr "nastavit logování na INFO"
 
-#: pyggs.py:54
+#: pyggs.py:56
 msgid "set logging to DEBUG"
 msgstr "nastavit logování na DEBUG"
 
-#: pyggs.py:55
+#: pyggs.py:57
 msgid "set logging to ALL"
 msgstr "nastavit logování na ALL"
 
-#: pyggs.py:56
+#: pyggs.py:58
 msgid "set working directory, default is %s"
 msgstr "nastavení pracovního adresáře, výchozí je %s"
 
-#: pyggs.py:57
+#: pyggs.py:59
 msgid "choose profile"
 msgstr "nastavit profil"
 
-#: pyggs.py:64
+#: pyggs.py:66
 msgid "You have to select a profile."
 msgstr "Musíte nastavit profil."
 
-#: pyggs.py:77
+#: pyggs.py:79
 msgid "Unable to create working directory '%s'."
 msgstr "Nepodařilo se vytvořit pracovní adresář '%s'."
 
-#: pyggs.py:87
+#: pyggs.py:89
 msgid "Unable to set up base directory structure in working directory '%s'."
 msgstr "Nepodařilo se vytvořit základní adresářovou strukturu v pracovním adresáři '%s'."
 
-#: pyggs.py:96
+#: pyggs.py:98
 msgid "Unable to create profile directory '%s'."
 msgstr "Nepodařilo se vytvořit adresář profilu '%s'."
 
-#: pyggs.py:108
-msgid "Now, we're going to setup your profile named '%s'."
-msgstr "Teď nastavíme váš profil '%s'."
+#: pyggs.py:109
+msgid "Let's setup your profile named '%s'."
+msgstr "Nastavení profilu pojmenovaného '%s'."
 
-#: pyggs.py:112
+#: pyggs.py:114
 msgid "General options"
 msgstr "Obecná nastavení"
 
-#: pyggs.py:113
+#: pyggs.py:115
 msgid "Please, select user interface language"
 msgstr "Vyberte prosím jazyk uživatelského rozhraní"
 
-#: pyggs.py:123
-msgid "Plugins"
-msgstr "Pluginy"
+#: pyggs.py:118
+msgid "Enter your home coordinates in degrees as deciamal number (N means positive value, S negative; E means positive value, W negative)"
+msgstr "Zadejte domovské souřadnice jako desetinné číslo ve stupních (N je jsou kladné hodnoty, S záporné; E jsou kladné hodnoty, W záporné)"
 
-#: pyggs.py:125
-msgid "Enable '%s' plugin"
-msgstr "Zapnout plugin '%s'"
+#: pyggs.py:119
+msgid "Latitude"
+msgstr "Zeměpisná šířka"
 
-#: pyggs.py:133
+#: pyggs.py:120
+msgid "Laongitude"
+msgstr "Zeměpisná délka"
+
+#: pyggs.py:126
 msgid "Username"
 msgstr "Uživatelské jméno"
 
-#: pyggs.py:134
+#: pyggs.py:127
 msgid "Password"
 msgstr "Heslo"
 
-#: pyggs.py:146
+#: pyggs.py:135
 msgid "Output"
 msgstr "Výstup"
 
-#: pyggs.py:147
-msgid "Templates are looked up in these directories (consecutively)"
-msgstr "Šablony se hledají v těchto adresářích (postupně)"
+#: pyggs.py:136
+msgid "Templates are looked up in 'templates' subdirectory of these paths (consecutively)"
+msgstr "Šablony se hledají v podadresáři 'templates' v následujích cestách (popořadě)"
 
-#: pyggs.py:148
+#: pyggs.py:137
 msgid "Template"
 msgstr "Šablona"
 
-#: pyggs.py:149
+#: pyggs.py:138
+msgid "Themes are looked up in 'themes' subdirectory of these paths (consecutively)"
+msgstr "Motivy se hledají v podadresáři 'themes' v následujích cestách (popořadě)"
+
+#: pyggs.py:139
+msgid "Theme"
+msgstr "Motiv"
+
+#: pyggs.py:140
 msgid "Directory"
 msgstr "Adresář"
 
-#: pyggs.py:157
+#: pyggs.py:146
+msgid "Plugins"
+msgstr "Pluginy"
+
+#: pyggs.py:150
+msgid "Enable"
+msgstr "Aktivovat"
+
+#: pyggs.py:166
 msgid "Configuration of '%s' plugin"
 msgstr "Nastavení pluginu '%s'"
 
-#: pyggs.py:162
+#: pyggs.py:171
 msgid "Note: You can always edit these setings by re-running setup.py script, or by hand in file %s."
 msgstr "Poznámka: Tato nastavení můžete kdykoliv změnit znovuspuštěním setup.py skriptu, nebo ručně v souboru %s."
 
-#: pyggs.py:172
+#: pyggs.py:181
 msgid "Working directory '%s' is not set up properly, please run setup.py script."
 msgstr "Pracovní adresář '%s' není připraven, spusťte prosím setup.py skript."
 
-#: pyggs.py:179
+#: pyggs.py:188
 msgid "Configuration file not found for profile '%s', please run setup.py script."
 msgstr "Konfigurační soubor profilu '%s' nenalezen, spusťte prosím setup.py skript."
 

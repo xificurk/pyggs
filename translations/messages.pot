@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2009-09-06 23:43+CEST\n"
+"POT-Creation-Date: 2009-09-09 15:48+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,115 +15,263 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: Configurator.py:70
+#: Configurator.py:73
 msgid "ERROR: You have to input a value from %s."
 msgstr ""
 
-#: Configurator.py:73
+#: Configurator.py:76
 msgid "ERROR: You have to input a non-empty string."
 msgstr ""
 
-#: plugins/base.py:43
+#: Templar.py:43
+msgid "Template '%s' not found."
+msgstr ""
+
+#: Templar.py:50
+msgid "Invalid output directory '%s'."
+msgstr ""
+
+#: Templar.py:206
+msgid "Theme '%s' not found."
+msgstr ""
+
+#: plugins/cache.py:30
+msgid "Global storage for detailed info about caches."
+msgstr ""
+
+#: plugins/cache.py:39
+msgid "'Cache' details data timeout in days"
+msgstr ""
+
+#: plugins/cacheDistrib.py:31
+msgid "Statistics of found caches by type, size and country."
+msgstr ""
+
+#: plugins/cacheTopFeatures.py:30
+msgid "Adds rows about most distant, most southern, oldest etc. caches found into General statistics section."
+msgstr ""
+
+#: plugins/dtMatrix.py:29
+msgid "Difficulty / Terrain matrix of found caches."
+msgstr ""
+
+#: plugins/gccomUpdater.py:31
+msgid "Updates geocaching.com profile with generated statistics."
+msgstr ""
+
+#: plugins/gccomUpdater.py:40
+msgid "Force geocaching.com profile update on every run"
+msgstr ""
+
+#: plugins/gccz.py:28
+msgid "Storage for geocaching.cz credentials etc."
+msgstr ""
+
+#: plugins/gccz.py:35
+msgid "Geocaching.cz username"
+msgstr ""
+
+#: plugins/gccz.py:36
+msgid "Geocaching.cz password"
+msgstr ""
+
+#: plugins/gccz.py:37
+msgid "UID (for map generating)"
+msgstr ""
+
+#: plugins/gcczMyRatings.py:31
+msgid "Storage for user's ratings of caches from geocaching.cz."
+msgstr ""
+
+#: plugins/gcczMyRatings.py:40
+msgid "Timeout for user's stored geocaching.cz ratings in hours"
+msgstr ""
+
+#: plugins/gcczMyRatingsTop10.py:29
+msgid "List of top 10 user rated caches."
+msgstr ""
+
+#: plugins/gcczRatings.py:30
+msgid "Global storage for ratings of caches from geocaching.cz."
+msgstr ""
+
+#: plugins/gcczRatings.py:39
+msgid "Timeout for stored geocaching.cz ratings in days"
+msgstr ""
+
+#: plugins/gcczRatingsTop.py:30
+msgid "Adds rows about worst/best rated cache found into General statistics section."
+msgstr ""
+
+#: plugins/gcczUpdater.py:31
+msgid "Updates user's finds in geocaching.cz database."
+msgstr ""
+
+#: plugins/gcczUpdater.py:40
+msgid "Force my finds update on every run"
+msgstr ""
+
+#: plugins/general.py:29
+msgid "Container for General statistics table."
+msgstr ""
+
+#: plugins/mapCR.py:29 plugins/mapEurope.py:29
+msgid "Maps of Czech Republic from geocaching.cz."
+msgstr ""
+
+#: plugins/milestones.py:30
+msgid "List of accomplished milestones."
+msgstr ""
+
+#: plugins/milestones.py:39
+msgid "Please specify milestones as coma separeted list. You can also use regular expressions, e.g. '[0-9]+00' matches 100, 200, 300, ... and magic word LAST means the last found cache.)"
+msgstr ""
+
+#: plugins/milestones.py:40
+msgid "Milestones"
+msgstr ""
+
+#: plugins/myFinds.py:30
+msgid "Storage for My Finds data from geocaching.com profile."
+msgstr ""
+
+#: plugins/myFinds.py:39
 msgid "'My Finds' data timeout in hours"
 msgstr ""
 
-#: pyggs.py:52
-msgid "set logging to ERROR"
+#: plugins/myFindsAverages.py:30
+msgid "Adds rows about average finds (overall, in last 365 days) into General statistics section."
 msgstr ""
 
-#: pyggs.py:53
-msgid "set logging to INFO"
+#: plugins/myFindsHistory.py:30
+msgid "Adds graph and average find values for every user's caching year."
+msgstr ""
+
+#: plugins/myFindsTopPeriods.py:31
+msgid "Adds rows about user's top day, week, month etc. into General statistics section."
+msgstr ""
+
+#: plugins/stats.py:28 plugins/unrated.py:29
+msgid "Generates statistics html page."
 msgstr ""
 
 #: pyggs.py:54
-msgid "set logging to DEBUG"
+msgid "set logging to ERROR"
 msgstr ""
 
 #: pyggs.py:55
-msgid "set logging to ALL"
+msgid "set logging to INFO"
 msgstr ""
 
 #: pyggs.py:56
-msgid "set working directory, default is %s"
+msgid "set logging to DEBUG"
 msgstr ""
 
 #: pyggs.py:57
+msgid "set logging to ALL"
+msgstr ""
+
+#: pyggs.py:58
+msgid "set working directory, default is %s"
+msgstr ""
+
+#: pyggs.py:59
 msgid "choose profile"
 msgstr ""
 
-#: pyggs.py:64
+#: pyggs.py:66
 msgid "You have to select a profile."
 msgstr ""
 
-#: pyggs.py:77
+#: pyggs.py:79
 msgid "Unable to create working directory '%s'."
 msgstr ""
 
-#: pyggs.py:87
+#: pyggs.py:89
 msgid "Unable to set up base directory structure in working directory '%s'."
 msgstr ""
 
-#: pyggs.py:96
+#: pyggs.py:98
 msgid "Unable to create profile directory '%s'."
 msgstr ""
 
-#: pyggs.py:108
-msgid "Now, we're going to setup your profile named '%s'."
+#: pyggs.py:109
+msgid "Let's setup your profile named '%s'."
 msgstr ""
 
-#: pyggs.py:112
+#: pyggs.py:114
 msgid "General options"
 msgstr ""
 
-#: pyggs.py:113
+#: pyggs.py:115
 msgid "Please, select user interface language"
 msgstr ""
 
-#: pyggs.py:123
-msgid "Plugins"
+#: pyggs.py:118
+msgid "Enter your home coordinates in degrees as deciamal number (N means positive value, S negative; E means positive value, W negative)"
 msgstr ""
 
-#: pyggs.py:125
-msgid "Enable '%s' plugin"
+#: pyggs.py:119
+msgid "Latitude"
 msgstr ""
 
-#: pyggs.py:133
+#: pyggs.py:120
+msgid "Laongitude"
+msgstr ""
+
+#: pyggs.py:126
 msgid "Username"
 msgstr ""
 
-#: pyggs.py:134
+#: pyggs.py:127
 msgid "Password"
 msgstr ""
 
-#: pyggs.py:146
+#: pyggs.py:135
 msgid "Output"
 msgstr ""
 
-#: pyggs.py:147
-msgid "Templates are looked up in these directories (consecutively)"
+#: pyggs.py:136
+msgid "Templates are looked up in 'templates' subdirectory of these paths (consecutively)"
 msgstr ""
 
-#: pyggs.py:148
+#: pyggs.py:137
 msgid "Template"
 msgstr ""
 
-#: pyggs.py:149
+#: pyggs.py:138
+msgid "Themes are looked up in 'themes' subdirectory of these paths (consecutively)"
+msgstr ""
+
+#: pyggs.py:139
+msgid "Theme"
+msgstr ""
+
+#: pyggs.py:140
 msgid "Directory"
 msgstr ""
 
-#: pyggs.py:157
+#: pyggs.py:146
+msgid "Plugins"
+msgstr ""
+
+#: pyggs.py:150
+msgid "Enable"
+msgstr ""
+
+#: pyggs.py:166
 msgid "Configuration of '%s' plugin"
 msgstr ""
 
-#: pyggs.py:162
+#: pyggs.py:171
 msgid "Note: You can always edit these setings by re-running setup.py script, or by hand in file %s."
 msgstr ""
 
-#: pyggs.py:172
+#: pyggs.py:181
 msgid "Working directory '%s' is not set up properly, please run setup.py script."
 msgstr ""
 
-#: pyggs.py:179
+#: pyggs.py:188
 msgid "Configuration file not found for profile '%s', please run setup.py script."
 msgstr ""
 

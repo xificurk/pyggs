@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2009-09-09 15:48+CEST\n"
+"POT-Creation-Date: 2009-09-09 20:46+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -124,7 +124,7 @@ msgid "List of accomplished milestones."
 msgstr ""
 
 #: plugins/milestones.py:39
-msgid "Please specify milestones as coma separeted list. You can also use regular expressions, e.g. '[0-9]+00' matches 100, 200, 300, ... and magic word LAST means the last found cache.)"
+msgid "Please specify milestones as coma separeted list. You can also use regular expressions, e.g. '[0-9]+00' matches 100, 200, 300, ... and magic word LAST means the last found cache."
 msgstr ""
 
 #: plugins/milestones.py:40
@@ -151,8 +151,12 @@ msgstr ""
 msgid "Adds rows about user's top day, week, month etc. into General statistics section."
 msgstr ""
 
-#: plugins/stats.py:28 plugins/unrated.py:29
+#: plugins/stats.py:28
 msgid "Generates statistics html page."
+msgstr ""
+
+#: plugins/unrated.py:29
+msgid "Generates page with the list of found but unrated caches by user."
 msgstr ""
 
 #: pyggs.py:54

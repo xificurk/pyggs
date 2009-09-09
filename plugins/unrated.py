@@ -26,7 +26,7 @@ class unrated(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["myFinds", "gcczMyRatings", "cache"]
-        self.about        = _("Generates statistics html page.")
+        self.about        = _("Generates page with the list of found but unrated caches by user.")
 
 
     def run(self):

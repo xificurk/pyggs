@@ -360,12 +360,15 @@ class Storage(object):
 
     def fetchAssoc(self, result, format = "#"):
         """Fetch result to a dictionary"""
-        if len(result) == 0:
-            return []
-
         if format == "":
             format = "#"
         format = format.split(",")
+
+        if len(result) == 0:
+            if format[0] == "#":
+                return []
+            else:
+                return OrderedDict()
 
         for field in format:
             if field != "#" and field not in result[0].keys():

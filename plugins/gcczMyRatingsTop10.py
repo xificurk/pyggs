@@ -52,7 +52,7 @@ class gcczMyRatingsTop10(base):
         myratings = self.gcczMyRatings.storage.select(caches.keys())
         myratings = fetchAssoc(myratings, "waypoint")
 
-        for wpt in caches:
+        for wpt in list(caches.keys()):
             try:
                 caches[wpt].update(ratings[wpt])
             except:

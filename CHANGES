@@ -1,6 +1,19 @@
 CHANGES
 ============================================================================
 
+
+Release 0.1 (2009-09-11)
+--------------------------
+
+[Bugfixes]
+
+  * Plugin setup script in alphabetical order.
+
+  * Missing translations.
+
+  * gcczMyRatingsTop10 plugin fix.
+
+
 Release 0.1 (2009-09-09)
 --------------------------
 

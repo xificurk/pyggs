@@ -34,12 +34,20 @@ class BaseConfig(configparser.RawConfigParser):
 
         self.configFile = configFile
         if os.path.isfile(configFile):
-            self.read(configFile)
+            self.load(configFile)
+
 
     def save(self):
         """Save config to a file"""
-        with open(self.configFile, "w") as cfp:
+        with open(self.configFile, "w", encoding="utf-8") as cfp:
             self.write(cfp)
+
+
+    def load(self, configFile):
+        """Loads config from a file"""
+        with open(configFile, encoding="utf-8") as cfp:
+            self.readfp(cfp)
+
 
     def get(self, section, option):
         """Get section->option, from config, or self.defaults"""
@@ -52,12 +60,14 @@ class BaseConfig(configparser.RawConfigParser):
                 value = ""
         return value
 
+
     def assertSection(self, section):
         """Add section, if not present"""
         try:
             self.add_section(section)
         except:
             pass
+
 
     def update(self, section, option, prompt, validate = None):
         """Update option via user input"""

@@ -1,10 +1,10 @@
-<table#{css("table", "fixedtable")}>
-<caption#{css("caption")}>Difficulty / Terrain matrix</caption>
+<table#{{css("table", "fixedtable")}}>
+<caption#{{css("caption")}}>Difficulty / Terrain matrix</caption>
 
-<col span="12" #{css("col-matrix")} />
+<col span="12" #{{css("col-matrix")}} />
 
-<tr><th#{css("th")}></th><th#{css("th")} colspan="10">Difficulty</th><th#{css("th")}></th></tr>
-<tr><th#{css("th")} rowspan="10">Terrain</th><th#{css("th")}></th><th#{css("th")}>1</th><th#{css("th")}>1.5</th><th#{css("th")}>2</th><th#{css("th")}>2.5</th><th#{css("th")}>3</th><th#{css("th")}>3.5</th><th#{css("th")}>4</th><th#{css("th")}>4.5</th><th#{css("th")}>5</th><th#{css("th")}></th></tr>
+<tr><th#{{css("th")}}></th><th#{{css("th")}} colspan="10">Difficulty</th><th#{{css("th")}}></th></tr>
+<tr><th#{{css("th")}} rowspan="10">Terrain</th><th#{{css("th")}}></th><th#{{css("th")}}>1</th><th#{{css("th")}}>1.5</th><th#{{css("th")}}>2</th><th#{{css("th")}}>2.5</th><th#{{css("th")}}>3</th><th#{{css("th")}}>3.5</th><th#{{css("th")}}>4</th><th#{{css("th")}}>4.5</th><th#{{css("th")}}>5</th><th#{{css("th")}}></th></tr>
 
 <?py
 t = 0.5
@@ -14,7 +14,7 @@ while t < 5:
         t = int(t)
     #
 ?>
-    <tr><th#{css("th")}>#{t}</th>
+    <tr><th#{{css("th")}}>#{{t}}</th>
     <?py
     d = 0.5
     while d < 5:
@@ -22,30 +22,30 @@ while t < 5:
         if matrix[t][d] > 0:
             color = {"background":gradient("lightmin", "lightmax", (matrix[t][d]-1)/(top["matrix"]-1))}
         ?>
-            <td#{css("td","right",color)}>#{matrix[t][d]}</td>
+            <td#{{css("td","right",color)}}>#{{matrix[t][d]}}</td>
         <?py
         #
         else:
         ?>
-            <td#{css("td")}></td>
+            <td#{{css("td")}}></td>
         <?py
         #
     #end
     if terrain[t] > 0:
         color = {"background":gradient("darkmin", "darkmax", (terrain[t]-1)/(top["sum"]-1))}
     ?>
-        <th#{css("th","right",color)}>#{terrain[t]}</th>
+        <th#{{css("th","right",color)}}>#{{terrain[t]}}</th>
     <?py
     #
     else:
     ?>
-        <th#{css("th","right")}>0</th>
+        <th#{{css("th","right")}}>0</th>
     <?py
     #
 #end
 ?>
 
-<tr><th#{css("th")}"></th><th#{css("th")}"></th>
+<tr><th#{{css("th")}}"></th><th#{{css("th")}}"></th>
 <?py
 d = 0.5
 while d < 5:
@@ -53,18 +53,18 @@ while d < 5:
     if difficulty[d] > 0:
         color = {"background":gradient("darkmin", "darkmax", (difficulty[d]-1)/(top["sum"]-1))}
     ?>
-        <th#{css("th","right",color)}>#{difficulty[d]}</th>
+        <th#{{css("th","right",color)}}>#{{difficulty[d]}}</th>
     <?py
     #
     else:
     ?>
-        <th#{css("th","right")}>0</th>
+        <th#{{css("th","right")}}>0</th>
     <?py
     #
 #end
 ?>
-<th#{css("th")}"></th></tr>
+<th#{{css("th")}}"></th></tr>
 
-<tr><th#{css("th")} colspan="12">Average D/T values: #{"%.1f" % mean["difficulty"]}/#{"%.1f" % mean["terrain"]}</th></tr>
+<tr><th#{{css("th")}} colspan="12">Average D/T values: #{{"{0:.1f}".format(mean["difficulty"])}}/#{{"{0:.1f}".format(mean["terrain"])}}</th></tr>
 
 </table>

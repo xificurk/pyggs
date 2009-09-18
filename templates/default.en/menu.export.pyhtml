@@ -1,1 +1,1 @@
-<a href="${url}">Export</a>
+<a href="${{url}}">Export</a>

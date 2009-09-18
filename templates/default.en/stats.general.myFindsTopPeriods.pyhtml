@@ -1,34 +1,34 @@
 <tr>
-<td#{css("td")}>Top day</td>
-<td#{css("td")}>#{date(day["date"])} (<strong>#{day["count"]}</strong> finds)</td>
+<td#{{css("td")}}>Top day</td>
+<td#{{css("td")}}>#{{date(day["date"])}} (<strong>#{{day["count"]}}</strong> finds)</td>
 </tr>
 
 <tr>
-<td#{css("td")}>Top weekend</td>
-<td#{css("td")}>#{dateRange(weekend["date"], datetime.timedelta(-1))} (<strong>#{weekend["count"]}</strong> finds)</td>
+<td#{{css("td")}}>Top weekend</td>
+<td#{{css("td")}}>#{{dateRange(weekend["date"], datetime.timedelta(-1))}} (<strong>#{{weekend["count"]}}</strong> finds)</td>
 </tr>
 
 <tr>
-<td#{css("td")}>Top week</td>
-<td#{css("td")}>#{dateRange(week["date"], datetime.timedelta(-6))} (<strong>#{week["count"]}</strong> finds)</td>
+<td#{{css("td")}}>Top week</td>
+<td#{{css("td")}}>#{{dateRange(week["date"], datetime.timedelta(-6))}} (<strong>#{{week["count"]}}</strong> finds)</td>
 </tr>
 
 <tr>
-<td#{css("td")}>Top month</td>
-<td#{css("td")}>#{date(month["date"], format="%(monthname)s&nbsp;%(year)d")} (<strong>#{month["count"]}</strong> finds)</td>
+<td#{{css("td")}}>Top month</td>
+<td#{{css("td")}}>#{{date(month["date"], format="{monthname}&nbsp;{year}")}} (<strong>#{{month["count"]}}</strong> finds)</td>
 </tr>
 
 <tr>
-<td#{css("td", "endsection")}>Top year</td>
-<td#{css("td", "endsection")}>#{date(year["date"],format="%(year)d")} (<strong>#{year["count"]}</strong> finds)</td>
+<td#{{css("td", "endsection")}}>Top year</td>
+<td#{{css("td", "endsection")}}>#{{date(year["date"],format="{year}")}} (<strong>#{{year["count"]}}</strong> finds)</td>
 </tr>
 
 <tr>
-<td#{css("td")}>Longest caching period</td>
-<td#{css("td")}>#{dateRange(gcperiod["start"], gcperiod["end"])} (<strong>#{gcperiod["count"]}</strong> days)</td>
+<td#{{css("td")}}>Longest caching period</td>
+<td#{{css("td")}}>#{{dateRange(gcperiod["start"], gcperiod["end"])}} (<strong>#{{gcperiod["count"]}}</strong> days)</td>
 </tr>
 
 <tr>
-<td#{css("td", "endsection")}>Longest non-caching period</td>
-<td#{css("td", "endsection")}>#{dateRange(nongcperiod["start"], nongcperiod["end"])} (<strong>#{nongcperiod["count"]}</strong> days)</td>
+<td#{{css("td", "endsection")}}>Longest non-caching period</td>
+<td#{{css("td", "endsection")}}>#{{dateRange(nongcperiod["start"], nongcperiod["end"])}} (<strong>#{{nongcperiod["count"]}}</strong> days)</td>
 </tr>

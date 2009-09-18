@@ -29,6 +29,11 @@ import tenjin
 from tenjin.helpers import *
 
 
+# Double the brackets
+tenjin.Template.EXPR_PATTERN = re.compile(r'([#$])\{\{(.*?)\}\}', re.S)
+tenjin.Preprocessor.EXPR_PATTERN = re.compile(r'([#$])\{\{\{(.*?)\}\}\}', re.S)
+
+
 class Templar(tenjin.Engine):
     def __init__(self, master):
         self.log    = logging.getLogger("Pyggs.Templar")
@@ -94,7 +99,7 @@ class Templar(tenjin.Engine):
                 fp.flush()
 
 
-    def formatDate(self, value = None, format = "%(day)d.&nbsp;%(month)d.&nbsp;%(year)d"):
+    def formatDate(self, value = None, format = "{day:d}.&nbsp;{month:d}.&nbsp;{year:d}"):
         """Return date in string fromat"""
         if type(value) is str:
             value = datetime.datetime.strptime(value, "%Y-%m-%d")
@@ -103,7 +108,7 @@ class Templar(tenjin.Engine):
         elif value is None:
             value = datetime.datetime.today()
 
-        return format % {"year":value.year, "month":value.month, "day":value.day, "hour":value.hour, "minute":value.minute, "monthname":value.strftime("%B"),"monthabr":value.strftime("%b")}
+        return format.format(year=value.year, month=value.month, day=value.day, hour=value.hour, minute=value.minute, monthname=value.strftime("%B"), monthabr=value.strftime("%b"))
 
 
     def dateRange(self, start, end = None):
@@ -116,7 +121,7 @@ class Templar(tenjin.Engine):
             start = datetime.datetime.today()
 
         if end is None:
-            return self.formatDate(start, "%(day)d.&nbsp;%(month)d.&nbsp;%(year)d")
+            return self.formatDate(start, "{day:d}.&nbsp;{month:d}.&nbsp;{year:d}")
         elif type(end) is datetime.timedelta:
             end = start + end
         elif type(end) is str:
@@ -127,13 +132,13 @@ class Templar(tenjin.Engine):
         if start > end:
             (start,end) = (end,start)
 
-        if self.formatDate(start, "%(year)d-%(month)d") == self.formatDate(end, "%(year)d-%(month)d"):
-            string = self.formatDate(start, "%(day)d.");
-        elif self.formatDate(start, "%(year)d") == self.formatDate(end, "%(year)d"):
-            string = self.formatDate(start, "%(day)d.&nbsp;%(month)d.")
+        if self.formatDate(start, "{year:d}-{month:d}") == self.formatDate(end, "{year:d}-{month:d}"):
+            string = self.formatDate(start, "{day:d}.");
+        elif self.formatDate(start, "{year:d}") == self.formatDate(end, "{year:d}"):
+            string = self.formatDate(start, "{day:d}.&nbsp;{month:d}.")
         else:
-            string = self.formatDate(start, "%(day)d.&nbsp;%(month)d.&nbsp;%(year)d")
-        string = "%s&nbsp;– %s" % (string, self.formatDate(end, "%(day)d.&nbsp;%(month)d.&nbsp;%(year)d"))
+            string = self.formatDate(start, "{day:d}.&nbsp;{month:d}.&nbsp;{year:d}")
+        string = string + "&nbsp;– " + self.formatDate(end, "{day:d}.&nbsp;{month:d}.&nbsp;{year:d}")
 
         return string
 
@@ -141,11 +146,11 @@ class Templar(tenjin.Engine):
     def formatDistance(self, value):
         """Returns distance with suitable precision"""
         if value < 10:
-            return "%.2f" % value
+            return "{0:.2f}".format(value)
         elif value < 100:
-            return "%.1f" % value
+            return "{0:.1f}".format(value)
         else:
-            return "%.0f" % value
+            return "{0:.0f}".format(value)
 
 
     def formatLat(self, lat):
@@ -157,7 +162,7 @@ class Templar(tenjin.Engine):
         lat = abs(lat)
         dg  = math.floor(lat)
         mi  = (lat-dg)*60
-        return "%s %02d° %06.3f" % (pre, dg, mi)
+        return "{0} {1:02d}° {2:06.3f}".format(pre, dg, mi)
 
 
     def formatLon(self, lon):
@@ -169,11 +174,11 @@ class Templar(tenjin.Engine):
         lon = abs(lon)
         dg  = math.floor(lon)
         mi  = (lon-dg)*60
-        return "%s %03d° %06.3f" % (pre, dg, mi)
+        return "{0} {1:03d}° {2:06.3f}".format(pre, dg, mi)
 
 
     def cacheSize(self, size):
-        return "<img alt=\"%s\" title=\"%s\" src=\"http://www.geocaching.com/images/icons/container/%s.gif\" width=\"45\" height=\"12\" />" % (size, size, size.lower().replace(" ", "_"))
+        return "<img alt=\"{0}\" title=\"{0}\" src=\"http://www.geocaching.com/images/icons/container/{1}.gif\" width=\"45\" height=\"12\" />".format(size, size.lower().replace(" ", "_"))
 
 
     def cacheType(self, ctype):
@@ -190,7 +195,7 @@ class Templar(tenjin.Engine):
         ctypes["Cache In Trash Out Event"] = 13
         ctypes["Mega-Event Cache"] = 'mega'
 
-        return "<img alt=\"%s\" title=\"%s\" src=\"http://www.geocaching.com/images/WptTypes/sm/%s.gif\" width=\"16\" height=\"16\" />" % (ctype, ctype, ctypes[ctype])
+        return "<img alt=\"{0}\" title=\"{0}\" src=\"http://www.geocaching.com/images/WptTypes/sm/{1}.gif\" width=\"16\" height=\"16\" />".format(ctype, ctypes[ctype])
 
 
 

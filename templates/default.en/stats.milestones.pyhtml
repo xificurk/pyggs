@@ -1,10 +1,10 @@
-<table#{css("table")}>
-<caption#{css("caption")}>Milestones</caption>
+<table#{{css("table")}}>
+<caption#{{css("caption")}}>Milestones</caption>
 
-<tr><th#{css("th")}>Milestone</th><th#{css("th")}>Found</th><th#{css("th")}>Cache</th></tr>
+<tr><th#{{css("th")}}>Milestone</th><th#{{css("th")}}>Found</th><th#{{css("th")}}>Cache</th></tr>
 
 <?py for milestone in milestones: ?>
-<tr><td#{css("td","right")}>#{milestone["sequence"]}</td><td#{css("td","right")}>#{date(milestone["date"])}</td><td#{css("td")}>#{ctype(milestone["type"])} <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{milestone["guid"]}">${milestone["name"]}</a></td></tr>
+<tr><td#{{css("td","right")}}>#{{milestone["sequence"]}}</td><td#{{css("td","right")}}>#{{date(milestone["date"])}}</td><td#{{css("td")}}>#{{ctype(milestone["type"])}} <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{milestone["guid"]}}">${{milestone["name"]}}</a></td></tr>
 <?py #endfor ?>
 
 </table>

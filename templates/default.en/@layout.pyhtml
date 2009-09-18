@@ -10,11 +10,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Language" content="en" />
 
-    <title>Pyggs | ${title}</title>
+    <title>Pyggs | ${{title}}</title>
 
     <style type="text/css" media="screen">
         /* <![CDATA[ */
-        #{css_header()}
+        #{{css_header()}}
         /* ]]> */
     </style>
 
@@ -23,7 +23,7 @@
 
 
 <body>
-    <h1>Pyggs | ${title}</h1>
+    <h1>Pyggs | ${{title}}</h1>
     <p><strong>Menu:</strong>
 
 <?py
@@ -42,7 +42,7 @@ for url in pages:
     </p>
 <hr />
 
-#{_content}
+#{{_content}}
 
 </body>
 

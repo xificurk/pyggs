@@ -1,1 +1,1 @@
-<a href="${url}">Statistics</a>
+<a href="${{url}}">Statistics</a>

@@ -57,7 +57,7 @@ class myFindsTopPeriods(base):
                 ret["day"]["date"]  = day
 
         ret["weekend"] = {"date":"", "count":0}
-        weekends = fetchAssoc(result, "weekend,sunday,#")[1]
+        weekends = fetchAssoc(result, "weekend,sunday,#").get(1, [])
         for weekend in weekends:
             if len(weekends[weekend]) > ret["weekend"]["count"]:
                 ret["weekend"]["count"] = len(weekends[weekend])

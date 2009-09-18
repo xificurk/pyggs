@@ -25,8 +25,8 @@ from collections import OrderedDict
 
 import Configurator
 
-import tenjin
-from tenjin.helpers import *
+import libs.tenjin as tenjin
+from libs.tenjin.helpers import *
 
 
 # Double the brackets

@@ -26,7 +26,7 @@ from collections import OrderedDict
 from optparse import OptionParser
 
 from ColorConsole import ColorConsole
-from gcparser import GCparser
+from libs.gcparser import GCparser
 from Templar import Templar
 import Configurator
 import plugins

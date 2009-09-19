@@ -23,16 +23,17 @@
 
 from .base import base
 
+
 class gcczRatingsTop(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["general", "myFinds", "gcczRatings", "cache"]
-        self.about        = _("Adds rows about worst/best rated cache found into General statistics section.")
+        self.about = _("Adds rows about worst/best rated cache found into General statistics section.")
 
 
     def run(self):
         templateData = self.getTopRated()
-        if templateData:
+        if templateData is not None:
             self.general.registerTemplate(":stats.general.gcczRatingsTop", templateData)
 
 
@@ -42,10 +43,10 @@ class gcczRatingsTop(base):
         myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
         myFinds = fetchAssoc(myFinds, "guid")
 
-        caches  = self.cache.storage.select(myFinds.keys())
+        caches = self.cache.storage.select(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
-        caches  = fetchAssoc(caches, "waypoint")
+        caches = fetchAssoc(caches, "waypoint")
 
         ratings = self.gcczRatings.storage.select(caches.keys(), min=3)
         ratings = fetchAssoc(ratings, "waypoint")
@@ -53,10 +54,10 @@ class gcczRatingsTop(base):
         for wpt in caches:
             try:
                 caches[wpt].update(ratings[wpt])
-            except:
+            except KeyError:
                 pass
 
-        if len(ratings):
+        if len(ratings) > 0:
             result = {}
             result["best"] = {"rating":-1,"count":0}
             result["worst"] = {"rating":101,"count":0}

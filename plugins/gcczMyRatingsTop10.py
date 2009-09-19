@@ -22,16 +22,17 @@
 
 from .base import base
 
+
 class gcczMyRatingsTop10(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["stats", "myFinds", "gcczRatings", "gcczMyRatings", "cache"]
-        self.about        = _("List of top 10 user rated caches.")
+        self.about = _("List of top 10 user rated caches.")
 
 
     def run(self):
         templateData = {"top10":self.getMyRatingsTop()}
-        if len(templateData["top10"]):
+        if len(templateData["top10"]) > 0:
             self.stats.registerTemplate(":stats.gcczMyRatingsTop10", templateData)
 
 
@@ -41,10 +42,10 @@ class gcczMyRatingsTop10(base):
         myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
         myFinds = fetchAssoc(myFinds, "guid")
 
-        caches  = self.cache.storage.select(myFinds.keys())
+        caches = self.cache.storage.select(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
-        caches  = fetchAssoc(caches, "waypoint")
+        caches = fetchAssoc(caches, "waypoint")
 
         ratings = self.gcczRatings.storage.select(caches.keys())
         ratings = fetchAssoc(ratings, "waypoint")
@@ -54,13 +55,14 @@ class gcczMyRatingsTop10(base):
 
         for wpt in list(caches.keys()):
             try:
-                caches[wpt].update(ratings[wpt])
-            except:
-                caches[wpt].update({"rating":0,"count":0})
-            try:
                 caches[wpt].update(myratings[wpt])
-            except:
+            except KeyError:
                 del(caches[wpt])
+                continue
+            try:
+                caches[wpt].update(ratings[wpt])
+            except KeyError:
+                caches[wpt].update({"rating":0,"count":0})
 
         caches = list(caches.values())
         caches.sort(key=lambda x: int(x["myrating"]) + int(x["rating"])/1000 + int(x["count"])/10000000)

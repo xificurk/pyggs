@@ -20,14 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, os.path, sys, re, datetime, locale, math
 from collections import OrderedDict
-
-import Configurator
+import datetime
+import locale
+import logging
+import math
+import os.path
+import re
+import sys
 
 import libs.tenjin as tenjin
-from libs.tenjin.helpers import *
 
+import Configurator
 
 # Double the brackets
 tenjin.Template.EXPR_PATTERN = re.compile(r'([#$])\{\{(.*?)\}\}', re.S)
@@ -36,30 +40,30 @@ tenjin.Preprocessor.EXPR_PATTERN = re.compile(r'([#$])\{\{\{(.*?)\}\}\}', re.S)
 
 class Templar(tenjin.Engine):
     def __init__(self, master):
-        self.log    = logging.getLogger("Pyggs.Templar")
+        self.log = logging.getLogger("Pyggs.Templar")
 
         templateDir = None
         template = master.config.get("output", "template")
-        if os.path.isdir("%s/pyggs/templates/%s" % (master.workDir, template)):
-            templateDir = "%s/pyggs/templates/%s" % (master.workDir, template)
-        elif os.path.isdir("%s/templates/%s" % (os.path.dirname(__file__), template)):
-            templateDir = "%s/templates/%s" % (os.path.dirname(__file__), template)
+        if os.path.isdir(os.path.join(master.workDir, "pyggs/templates", template)):
+            templateDir = os.path.join(master.workDir, "pyggs/templates", template)
+        elif os.path.isdir(os.path.join(os.path.dirname(__file__), "templates", template)):
+            templateDir = os.path.join(os.path.dirname(__file__), "templates", template)
         if templateDir is None:
-            self.log.error(_("Template '%s' not found.") % template)
+            self.log.error(_("Template '{0}' not found.").format(template))
             master.die()
 
-        tenjin.Engine.__init__(self, postfix = ".pyhtml", layout = ":@layout", path = [templateDir])
-        self.theme  = Theme(master)
+        tenjin.Engine.__init__(self, postfix=".pyhtml", layout=":@layout", path=[templateDir])
+        self.theme = Theme(master)
         self.outdir = os.path.expanduser(master.config.get("output", "directory"))
         if not os.path.isdir(self.outdir):
-            self.log.error(_("Invalid output directory '%s'.") % self.outdir)
+            self.log.error(_("Invalid output directory '{0}'.").format(self.outdir))
             master.die()
 
 
     def include(self, template_name, append_to_buf=True, context = None):
         """This allows to pass different context to the subtemplate"""
         frame = sys._getframe(1)
-        locals  = frame.f_locals
+        locals = frame.f_locals
         globals = frame.f_globals
         assert '_context' in locals
         if context is None:
@@ -68,17 +72,19 @@ class Templar(tenjin.Engine):
             self.hook_context(context)
         # context and globals are passed to get_template() only for preprocessing.
         template = self.get_template(template_name, context, globals)
-        if append_to_buf:  _buf = locals['_buf']
-        else:              _buf = None
+        if append_to_buf:
+            _buf = locals['_buf']
+        else:
+            _buf = None
         return template.render(context, globals, _buf=_buf)
 
 
     def outputPages(self, pages):
         """Render and save all pages"""
         for output in pages:
-            globals = { "escape":escape,
-                        "to_str":to_str,
-                        "echo":echo,
+            globals = { "escape":tenjin.helpers.escape,
+                        "to_str":tenjin.helpers.to_str,
+                        "echo":tenjin.helpers.echo,
                         "css_header":self.theme.cssHeader,
                         "css":self.theme.css,
                         "gradient":self.theme.cssGradient,
@@ -94,16 +100,16 @@ class Templar(tenjin.Engine):
             context = pages[output]["context"]
             context["pages"] = pages
             result = self.render(pages[output]["template"], context, globals = globals, layout = pages[output]["layout"])
-            with open("%s/%s" % (self.outdir, output), "w") as fp:
+            with open(os.path.join(self.outdir, output), "w") as fp:
                 fp.write(result)
                 fp.flush()
 
 
     def formatDate(self, value = None, format = "{day:d}.&nbsp;{month:d}.&nbsp;{year:d}"):
         """Return date in string fromat"""
-        if type(value) is str:
+        if isinstance(value, str):
             value = datetime.datetime.strptime(value, "%Y-%m-%d")
-        elif type(value) is int:
+        elif isinstance(value, int):
             value = datetime.datetime.fromtimestamp(value)
         elif value is None:
             value = datetime.datetime.today()
@@ -113,20 +119,20 @@ class Templar(tenjin.Engine):
 
     def dateRange(self, start, end = None):
         """Returns date range in string format"""
-        if type(start) is str:
+        if isinstance(start, str):
             start = datetime.datetime.strptime(start, "%Y-%m-%d")
-        elif type(start) is int:
+        elif isinstance(start, int):
             start = datetime.datetime.fromtimestamp(start)
         elif start is None:
             start = datetime.datetime.today()
 
         if end is None:
             return self.formatDate(start, "{day:d}.&nbsp;{month:d}.&nbsp;{year:d}")
-        elif type(end) is datetime.timedelta:
+        elif isinstance(end, datetime.timedelta):
             end = start + end
-        elif type(end) is str:
+        elif isinstance(end, str):
             end = datetime.datetime.strptime(end, "%Y-%m-%d")
-        elif type(end) is int:
+        elif isinstance(end, int):
             end = datetime.datetime.fromtimestamp(end)
 
         if start > end:
@@ -160,8 +166,8 @@ class Templar(tenjin.Engine):
         else:
             pre = "S"
         lat = abs(lat)
-        dg  = math.floor(lat)
-        mi  = (lat-dg)*60
+        dg = math.floor(lat)
+        mi = (lat-dg)*60
         return "{0} {1:02d}° {2:06.3f}".format(pre, dg, mi)
 
 
@@ -172,8 +178,8 @@ class Templar(tenjin.Engine):
         else:
             pre = "W"
         lon = abs(lon)
-        dg  = math.floor(lon)
-        mi  = (lon-dg)*60
+        dg = math.floor(lon)
+        mi = (lon-dg)*60
         return "{0} {1:03d}° {2:06.3f}".format(pre, dg, mi)
 
 
@@ -203,12 +209,12 @@ class Theme(Configurator.Theme):
     def __init__(self, master):
         themeFile = None
         theme = master.config.get("output", "theme")
-        if os.path.isfile("%s/pyggs/themes/%s.theme" % (master.workDir, theme)):
-            themeFile = "%s/pyggs/themes/%s.theme" % (master.workDir, theme)
-        elif os.path.isfile("%s/themes/%s.theme" % (os.path.dirname(__file__), theme)):
-            themeFile = "%s/themes/%s.theme" % (os.path.dirname(__file__), theme)
+        if os.path.isfile(os.path.join(master.workDir, "pyggs/themes", theme + ".theme")):
+            themeFile = os.path.join(master.workDir, "pyggs/themes", theme + ".theme")
+        elif os.path.isfile(os.path.join(os.path.dirname(__file__), "themes", theme + ".theme")):
+            themeFile = os.path.join(os.path.dirname(__file__), "themes", theme + ".theme")
         if themeFile is None:
-            self.log.error(_("Theme '%s' not found.") % theme)
+            self.log.error(_("Theme '{0}' not found.").format(theme))
             master.die()
 
         Configurator.Theme.__init__(self, themeFile)
@@ -219,7 +225,7 @@ class Theme(Configurator.Theme):
         all = OrderedDict()
         for cl in classes:
             tomerge = {}
-            if type(cl) is dict:
+            if isinstance(cl, dict):
                 tomerge = cl
             else:
                 for property in self.options(cl):
@@ -232,17 +238,17 @@ class Theme(Configurator.Theme):
 
         ret = ""
         for property in all:
-            ret = "%s%s:%s;" % (ret, property, all[property])
+            ret = ret + "{0}:{1};".format(property, all[property])
 
-        if len(ret):
-            return " style=\"%s\"" % ret 
+        if len(ret) > 0:
+            return " style=\"{0}\"".format(ret)
 
 
     def cssHeader(self):
         """Render common styles in the header"""
         ret = ""
         for option in self.options("@screen"):
-            ret = "%s\n%s {%s}" % (ret, option, self.get("@screen", option))
+            ret = ret + "\n" + option + " {" + self.get("@screen", option) + "}"
         return ret
 
 
@@ -257,17 +263,17 @@ class Theme(Configurator.Theme):
         match1 = re.search("rgb\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)", color1)
         match2 = re.search("rgb\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)", color2)
 
-        if not match1:
-            self.log.error("Cannost parse color '%s'." % color1)
+        if match1 is None:
+            self.log.error("Cannost parse color '{0}'.".format(color1))
             return "inherit"
-        if not match2:
-            self.log.error("Cannost parse color '%s'." % color2)
+        if match2 is None:
+            self.log.error("Cannost parse color '{0}'.".format(color2))
             return "inherit"
 
         share = max(0, min(float(share), 1))
 
-        red   = (1-share)*float(match1.group(1)) + share*float(match2.group(1))
+        red = (1-share)*float(match1.group(1)) + share*float(match2.group(1))
         green = (1-share)*float(match1.group(2)) + share*float(match2.group(2))
-        blue  = (1-share)*float(match1.group(3)) + share*float(match2.group(3))
+        blue = (1-share)*float(match1.group(3)) + share*float(match2.group(3))
 
-        return "#%02x%02x%02x" % (red, green, blue)
+        return "#{0:02x}{1:02x}{2:02x}".format(red, green, blue)

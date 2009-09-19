@@ -20,14 +20,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+import logging
+import time
+
 from .base import base
 from pyggs import Storage
-import logging, time
+
 
 class myFinds(base):
     def __init__(self, master):
         base.__init__(self, master)
-        self.about        = _("Storage for My Finds data from geocaching.com profile.")
+        self.about = _("Storage for My Finds data from geocaching.com profile.")
 
 
     def setup(self):
@@ -40,6 +43,7 @@ class myFinds(base):
 
 
     def prepare(self):
+        base.prepare(self)
         self.master.registerHandler("myFinds", self.parseMyFinds)
         self.storage = myFindsDatabase(self, self.master.profileStorage)
 
@@ -48,19 +52,18 @@ class myFinds(base):
         """Update MyFinds database"""
         self.log.info("Updating MyFinds database.")
         myFinds = myFinds.getList()
-        #TODO: user corrections
         self.storage.update(myFinds)
 
 
 
 class myFindsDatabase(Storage):
     def __init__(self, plugin, database):
-        self.NS       = "%s.db" % plugin.NS
-        self.log      = logging.getLogger("Pyggs.%s" % self.NS)
-        self.plugin   = plugin
+        self.NS = plugin.NS + ".db"
+        self.log = logging.getLogger("Pyggs." + self.NS)
+        self.plugin = plugin
         self.filename = database.filename
 
-        self.valid    = None
+        self.valid = None
 
         self.createTables()
 
@@ -81,8 +84,8 @@ class myFindsDatabase(Storage):
         if self.valid is not None:
             return self.valid
 
-        lastCheck = self.getEnv("%s.lastcheck" % self.NS)
-        timeout   = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*3600
+        lastCheck = self.getEnv(self.NS + ".lastcheck")
+        timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*3600
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
         else:
@@ -101,13 +104,13 @@ class myFindsDatabase(Storage):
             cur.execute("INSERT INTO myFinds(guid, sequence, date) VALUES(?,?,?)", (find["guid"], find["sequence"], find["f_date"]))
         db.commit()
         db.close()
-        self.setEnv("%s.lastcheck" % self.NS, time.time())
+        self.setEnv(self.NS + ".lastcheck", time.time())
 
 
     def select(self, query):
         """Selects data from database, performs update if neccessary"""
         self.checkValidity()
-        db     = self.getDb()
+        db = self.getDb()
         result = db.cursor().execute(query).fetchall()
         db.close()
         return result
@@ -115,7 +118,7 @@ class myFindsDatabase(Storage):
 
     def getList(self):
         """Get list of guids of MyFinds"""
-        result  = self.select("SELECT guid FROM myFinds")
+        result = self.select("SELECT guid FROM myFinds")
         myFinds = []
         for row in result:
             myFinds.append(row["guid"])

@@ -20,24 +20,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging
+from .base import base
 
-class base(object):
+
+class example(base):
     def __init__(self, master):
-        # For convinience, define namespace used by this plugin (logger, config etc.)
-        self.NS  = "plugin.example"
-
-        # Let's define logging facility in Pyggs way.
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
-
-        # Save reference to the Pyggs object.
-        self.master = master
+        # Run base.__init__
+        base.__init__(self, master)
 
         # Define list of all plugin names that we need to run this one.
-        self.dependencies = []
+        self.dependencies = ["stats", "myFinds"]
 
-        # Prepare place for template data
-        self.templateData = {}
+        # Brief info about plugin's function
+        self.about = _("This plugin is just simple example.")
 
 
     def setup(self):
@@ -64,8 +59,8 @@ class base(object):
 
     def prepare(self):
         """Setup everything needed before actual run"""
-        # Log this
-        self.log.debug("Preparing...")
+        # Run base.prepare
+        base.prepare(self)
 
         # Register custom parsers
         self.master.registerParser("myParserName", MyParserClass)
@@ -78,15 +73,12 @@ class base(object):
         self.storage = MyStorage()
 
         # Register pages you want to render to output directory
-        self.master.registerPage("page.html", ":page_template", ":page_menu_template", self.templateData, layout = False):
+        self.master.registerPage("page.html", ":page_template", ":page_menu_template", self.templateData, layout=False):
 
-        # You can also interact with other plugins via self.master.plugins[name]
+        # You can also interact with dependency plugins via self.pluginName
 
 
     def run(self):
         """Run the plugin's code"""
-        # Log this
-        self.log.info("Running...")
-
         # Do whatever you need to prepare data for rendering
-        # You can also interact with other plugins via self.master.plugins[name]
+        # You can also interact with dependency plugins via self.pluginName

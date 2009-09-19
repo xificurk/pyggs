@@ -22,17 +22,18 @@
 
 from .base import base
 
+
 class stats(base):
     def __init__(self, master):
         base.__init__(self, master)
-        self.about        = _("Generates statistics html page.")
+        self.about = _("Generates statistics html page.")
 
         self.templateData = {"templates":{}}
 
 
     def run(self):
         self.master.registerPage("index.html", ":stats", ":menu.stats", self.templateData)
-        self.master.registerPage("export.html", ":stats", ":menu.export", self.templateData, layout = False)
+        self.master.registerPage("export.html", ":stats", ":menu.export", self.templateData, layout=False)
 
 
     def registerTemplate(self, template, context):

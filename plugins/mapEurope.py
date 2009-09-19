@@ -22,17 +22,18 @@
 
 from .base import base
 
+
 class mapEurope(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["stats", "myFinds", "cache", "gccz"]
-        self.about        = _("Maps of Czech Republic from geocaching.cz.")
+        self.about = _("Maps of Czech Republic from geocaching.cz.")
 
 
     def run(self):
         myFinds = self.myFinds.storage.getList()
-        caches  = self.cache.storage.select(myFinds)
-        caches  = self.master.globalStorage.fetchAssoc(caches, "country,#")
+        caches = self.cache.storage.select(myFinds)
+        caches = self.master.globalStorage.fetchAssoc(caches, "country,#")
         europe = {}
         europe["Albania"] = "AL"
         europe["Andorra"] = "AN"
@@ -88,14 +89,14 @@ class mapEurope(base):
             if country not in europe.keys():
                 del(caches[country])
             else:
-                id = "%s%s" % (id, europe[country])
+                id = id + europe[country]
 
-        if caches:
+        if len(caches) > 0:
             total = {"countries":len(caches), "caches":0}
             for country in caches:
                 total["caches"] = total["caches"] + len(caches[country])
-            templateData          = {}
+            templateData = {}
             templateData["total"] = total
-            templateData["id"]    = id
-            templateData["uid"]    = self.master.config.get(self.gccz.NS, "uid")
+            templateData["id"] = id
+            templateData["uid"] = self.master.config.get(self.gccz.NS, "uid")
             self.stats.registerTemplate(":stats.mapEurope", templateData)

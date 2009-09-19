@@ -22,10 +22,11 @@
 
 import logging
 
+
 class base(object):
     def __init__(self, master):
-        self.NS  = "plug.%s"  % self.__class__.__name__
-        self.log = logging.getLogger("Pyggs.%s" % self.NS)
+        self.NS = "plug." + self.__class__.__name__
+        self.log = logging.getLogger("Pyggs." + self.NS)
         self.master = master
         self.about = ""
         self.dependencies = []

@@ -20,7 +20,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import sys, os, logging, configparser
+import configparser
+import logging
+import os.path
+
 
 class BaseConfig(configparser.RawConfigParser):
     def __init__(self, configFile):
@@ -53,10 +56,10 @@ class BaseConfig(configparser.RawConfigParser):
         """Get section->option, from config, or self.defaults"""
         try:
             value = configparser.RawConfigParser.get(self, section, option)
-        except:
+        except (configparser.NoSectionError, configparser.NoOptionError):
             try:
                 value = self.defaults[section][option]
-            except:
+            except KeyError:
                 value = ""
         return value
 
@@ -65,7 +68,7 @@ class BaseConfig(configparser.RawConfigParser):
         """Add section, if not present"""
         try:
             self.add_section(section)
-        except:
+        except configparser.DuplicateSectionError:
             pass
 
 
@@ -73,14 +76,14 @@ class BaseConfig(configparser.RawConfigParser):
         """Update option via user input"""
         default = self.get(section, option)
         choice = ""
-        if type(validate) is list:
-            choice = " (%s)" % ", ".join(validate)
-        value = input("    %s%s [%s]: " % (prompt, choice, default))
+        if isinstance(validate, list):
+            choice = " ({0})".format(", ".join(validate))
+        value = input("    {0}{1} [{2}]: ".format(prompt, choice, default))
         if len(value) == 0:
             value = default
 
-        if type(validate) is list and value not in validate:
-            print(_("ERROR: You have to input a value from %s.") % validate)
+        if isinstance(validate, list) and value not in validate:
+            print(_("ERROR: You have to input a value from {0}.").format(validate))
             self.update(section, option, prompt, validate)
         elif validate is not None and len(value) == 0:
             print(_("ERROR: You have to input a non-empty string."))
@@ -119,5 +122,5 @@ class Theme(BaseConfig):
         try:
             return BaseConfig.options(self, section)
         except configparser.NoSectionError:
-            self.log.warn("This theme has no section '%s'." % section)
+            self.log.warn("This theme has no section '{0}'.".format(section))
             return []

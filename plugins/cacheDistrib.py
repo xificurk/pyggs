@@ -21,14 +21,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
 from collections import OrderedDict
+
+from .base import base
+
 
 class cacheDistrib(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["stats", "myFinds", "cache"]
-        self.about        = _("Statistics of found caches by type, size and country.")
+        self.about = _("Statistics of found caches by type, size and country.")
 
 
     def prepare(self):
@@ -38,13 +40,13 @@ class cacheDistrib(base):
 
     def run(self):
         myFinds = self.myFinds.storage.getList()
-        caches  = self.cache.storage.select(myFinds)
+        caches = self.cache.storage.select(myFinds)
 
-        templateData              = {}
-        templateData["total"]     = len(myFinds)
+        templateData = {}
+        templateData["total"] = len(myFinds)
         templateData["countries"] = self.getCountries(caches)
-        templateData["types"]     = self.getTypes(caches)
-        templateData["sizes"]     = self.getSizes(caches)
+        templateData["types"] = self.getTypes(caches)
+        templateData["sizes"] = self.getSizes(caches)
         self.stats.registerTemplate(":stats.cacheDistrib", templateData)
 
 

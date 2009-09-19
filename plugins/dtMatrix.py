@@ -22,29 +22,30 @@
 
 from .base import base
 
+
 class dtMatrix(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["stats", "cache", "myFinds"]
-        self.about        = _("Difficulty / Terrain matrix of found caches.")
+        self.about = _("Difficulty / Terrain matrix of found caches.")
 
 
     def run(self):
-        myFinds      = self.myFinds.storage.getList()
-        caches       = self.cache.storage.select(myFinds)
+        myFinds = self.myFinds.storage.getList()
+        caches = self.cache.storage.select(myFinds)
         templateData = self.getMatrix(caches)
         self.stats.registerTemplate(":stats.dtMatrix", templateData)
 
 
     def getMatrix(self, caches):
         totalfinds = len(caches)
-        caches     = self.cache.storage.fetchAssoc(caches, "terrain,difficulty,#")
+        caches = self.cache.storage.fetchAssoc(caches, "terrain,difficulty,#")
 
-        top        = {"matrix":0, "sum":0}
-        terrain    = {}
+        top = {"matrix":0, "sum":0}
+        terrain = {}
         difficulty = {}
-        mean       = {"terrain":0, "difficulty":0}
-        dt         = {}
+        mean = {"terrain":0, "difficulty":0}
+        dt = {}
 
         t = 0.5
         while t < 5:
@@ -56,7 +57,7 @@ class dtMatrix(base):
                 d = d+0.5
                 try:
                     dt[t][d] = len(caches[t][d])
-                except:
+                except KeyError:
                     dt[t][d] = 0
                 if dt[t][d] > top["matrix"]:
                     top["matrix"] = dt[t][d]
@@ -80,10 +81,10 @@ class dtMatrix(base):
             mean["difficulty"] = mean["difficulty"] + difficulty[d]*d;
         mean["difficulty"] = mean["difficulty"]/totalfinds
 
-        result               = {}
-        result["matrix"]     = dt
+        result = {}
+        result["matrix"] = dt
         result["difficulty"] = difficulty
-        result["terrain"]    = terrain
-        result["top"]        = top
-        result["mean"]       = mean
+        result["terrain"] = terrain
+        result["top"] = top
+        result["mean"] = mean
         return result

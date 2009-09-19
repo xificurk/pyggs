@@ -20,15 +20,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
-import os
 from hashlib import md5
+import os.path
+
+from .base import base
+
 
 class gccomUpdater(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["stats"]
-        self.about        = _("Updates geocaching.com profile with generated statistics.")
+        self.about = _("Updates geocaching.com profile with generated statistics.")
 
 
     def setup(self):
@@ -41,12 +43,12 @@ class gccomUpdater(base):
 
 
     def finish(self):
-        file = "%s/%s" % (self.master.templar.outdir, "export.html")
+        file = os.path.join(self.master.templar.outdir, "export.html")
         if not os.path.isfile(file):
             self.log.error("Export file not found.")
             return
 
-        with open(file, "r") as fp:
+        with open(file, "r", encoding="utf-8") as fp:
             data = fp.read()
 
         config = self.master.config
@@ -56,9 +58,9 @@ class gccomUpdater(base):
             if line.find("<!-- pyggs[hashRemove] -->") != -1:
                 hash.remove(line)
         hash = "\n".join(hash)
-        hash = md5(hash.encode()).hexdigest()
+        hash = md5(hash.encode("utf-8")).hexdigest()
         if config.get(self.NS, "force") != "y":
-            hash_old = self.master.profileStorage.getEnv("%s.hash" % self.NS)
+            hash_old = self.master.profileStorage.getEnv(self.NS + ".hash")
             if hash == hash_old:
                 self.log.info("Geocaching.com profile seems already up to date, skipping update.")
                 return
@@ -67,7 +69,7 @@ class gccomUpdater(base):
 
         self.master.registerHandler("editProfile", self.update)
         self.master.parse("editProfile", data)
-        self.master.profileStorage.setEnv("%s.hash" % self.NS, hash)
+        self.master.profileStorage.setEnv(self.NS + ".hash", hash)
 
 
     def update(self, parser):

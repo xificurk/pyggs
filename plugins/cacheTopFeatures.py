@@ -23,25 +23,26 @@
 
 from .base import base
 
+
 class cacheTopFeatures(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["general", "cache", "myFinds"]
-        self.about        = _("Adds rows about most distant, most southern, oldest etc. caches found into General statistics section.")
+        self.about = _("Adds rows about most distant, most southern, oldest etc. caches found into General statistics section.")
 
 
     def run(self):
         myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
         myFinds = self.myFinds.storage.fetchAssoc(myFinds, "guid")
-        caches  = self.cache.storage.select(myFinds.keys())
+        caches = self.cache.storage.select(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
 
         templateData = {}
-        templateData["distances"]  = self.getTopDistances(caches)
+        templateData["distances"] = self.getTopDistances(caches)
         templateData["directions"] = self.getTopDirections(caches)
-        templateData["age"]        = self.getTopAge(caches)
-        templateData["archived"]   = self.getArchived(caches)
+        templateData["age"] = self.getTopAge(caches)
+        templateData["archived"] = self.getArchived(caches)
         self.general.registerTemplate(":stats.general.cacheTopFeatures", templateData)
 
 

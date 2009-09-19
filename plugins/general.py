@@ -22,11 +22,12 @@
 
 from .base import base
 
+
 class general(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["stats"]
-        self.about        = _("Container for General statistics table.")
+        self.about = _("Container for General statistics table.")
 
         self.templateData = {"templates":{}}
 

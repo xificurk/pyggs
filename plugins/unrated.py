@@ -22,11 +22,12 @@
 
 from .base import base
 
+
 class unrated(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["myFinds", "gcczMyRatings", "cache"]
-        self.about        = _("Generates page with the list of found but unrated caches by user.")
+        self.about = _("Generates page with the list of found but unrated caches by user.")
 
 
     def run(self):
@@ -40,10 +41,10 @@ class unrated(base):
         myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
         myFinds = fetchAssoc(myFinds, "guid")
 
-        caches  = self.cache.storage.select(myFinds.keys())
+        caches = self.cache.storage.select(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
-        caches  = fetchAssoc(caches, "waypoint")
+        caches = fetchAssoc(caches, "waypoint")
 
         myratings = self.gcczMyRatings.storage.select(caches.keys())
         myratings = list(fetchAssoc(myratings, "waypoint").keys())

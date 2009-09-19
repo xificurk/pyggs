@@ -21,14 +21,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
 import datetime
+
+from .base import base
+
 
 class myFindsTopPeriods(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["general", "myFinds"]
-        self.about        = _("Adds rows about user's top day, week, month etc. into General statistics section.")
+        self.about = _("Adds rows about user's top day, week, month etc. into General statistics section.")
 
 
     def run(self):
@@ -54,35 +56,35 @@ class myFindsTopPeriods(base):
         for day in days:
             if len(days[day]) > ret["day"]["count"]:
                 ret["day"]["count"] = len(days[day])
-                ret["day"]["date"]  = day
+                ret["day"]["date"] = day
 
         ret["weekend"] = {"date":"", "count":0}
         weekends = fetchAssoc(result, "weekend,sunday,#").get(1, [])
         for weekend in weekends:
             if len(weekends[weekend]) > ret["weekend"]["count"]:
                 ret["weekend"]["count"] = len(weekends[weekend])
-                ret["weekend"]["date"]  = weekend
+                ret["weekend"]["date"] = weekend
 
         ret["week"] = {"date":"", "count":0}
         weeks = fetchAssoc(result, "sunday,#")
         for week in weeks:
             if len(weeks[week]) > ret["week"]["count"]:
                 ret["week"]["count"] = len(weeks[week])
-                ret["week"]["date"]  = week
+                ret["week"]["date"] = week
 
         ret["month"] = {"date":"", "count":0}
         months = fetchAssoc(result, "month,#")
         for month in months:
             if len(months[month]) > ret["month"]["count"]:
                 ret["month"]["count"] = len(months[month])
-                ret["month"]["date"]  = months[month][0]["date"]
+                ret["month"]["date"] = months[month][0]["date"]
 
         ret["year"] = {"date":"", "count":0}
         years = fetchAssoc(result, "year,#")
         for year in years:
             if len(years[year]) > ret["year"]["count"]:
                 ret["year"]["count"] = len(years[year])
-                ret["year"]["date"]  = years[year][0]["date"]
+                ret["year"]["date"] = years[year][0]["date"]
 
         gcperiod = {"count":0, "start":"NA", "end":"NA"}
         ended = True
@@ -105,15 +107,15 @@ class myFindsTopPeriods(base):
 
         nongcperiod = {"count":0, "start":"NA", "end":"NA"}
         (last,foo) = days.popitem()
-        last    = datetime.datetime.strptime(last, "%Y-%m-%d")
+        last = datetime.datetime.strptime(last, "%Y-%m-%d")
         while len(days):
             (first,foo) = days.popitem()
-            first    = datetime.datetime.strptime(first, "%Y-%m-%d")
+            first = datetime.datetime.strptime(first, "%Y-%m-%d")
             period = (last-first).days - 1
             if period > nongcperiod["count"]:
                 nongcperiod["count"] = period
                 nongcperiod["start"] = first + datetime.timedelta(1)
-                nongcperiod["end"]   = last - datetime.timedelta(1)
+                nongcperiod["end"] = last - datetime.timedelta(1)
             last = first
         ret["nongcperiod"] = nongcperiod
 

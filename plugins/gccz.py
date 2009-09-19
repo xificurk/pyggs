@@ -22,10 +22,11 @@
 
 from .base import base
 
+
 class gccz(base):
     def __init__(self, master):
         base.__init__(self, master)
-        self.about        = _("Storage for geocaching.cz credentials etc.")
+        self.about = _("Storage for geocaching.cz credentials etc.")
 
 
     def setup(self):

@@ -20,18 +20,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
 import datetime
+
+from .base import base
+
 
 class myFindsHistory(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["myFinds", "myFindsAverages", "stats"]
-        self.about        = _("Adds graph and average find values for every user's caching year.")
+        self.about = _("Adds graph and average find values for every user's caching year.")
 
 
     def run(self):
-        myFinds  = self.myFinds.storage.select("""SELECT
+        myFinds = self.myFinds.storage.select("""SELECT
                 COUNT(DISTINCT date) AS gcdays,
                 COUNT(guid) AS finds,
                 STRFTIME('%Y', date) AS year,
@@ -54,9 +56,9 @@ class myFindsHistory(base):
             myFinds[year] = {
                     "top":yearstop,
                     "data":myFinds[year],
-                    "averages":self.myFindsAverages.getAverages("STRFTIME('%%Y', date) = '%d'" % int(year), int(datetime.date(int(year), 12, 31).strftime("%j")))}
+                    "averages":self.myFindsAverages.getAverages("STRFTIME('%Y', date) = '{0}'".format(year), int(datetime.date(int(year), 12, 31).strftime("%j")))}
 
-        templateData            = {}
+        templateData = {}
         templateData["history"] = myFinds
-        templateData["top"]     = top
+        templateData["top"] = top
         self.stats.registerTemplate(":stats.myFindsHistory", templateData)

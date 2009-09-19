@@ -20,15 +20,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
-import urllib
 from hashlib import md5
+import urllib
+
+from .base import base
+
 
 class gcczUpdater(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["myFinds", "cache", "gccz"]
-        self.about        = _("Updates user's finds in geocaching.cz database.")
+        self.about = _("Updates user's finds in geocaching.cz database.")
 
 
     def setup(self):
@@ -43,16 +45,16 @@ class gcczUpdater(base):
     def finish(self):
         finds = ""
         for row in self.myFinds.storage.select("SELECT date, guid FROM myFinds"):
-            if len(finds):
-                finds = "%s|" %finds
+            if len(finds) > 0:
+                finds = finds + "|"
             details = self.cache.storage.select([row["guid"]])[0]
-            finds = "%s%s;%s;%s;%s" % (finds,details["waypoint"], row["date"], details["lat"], details["lon"])
+            finds = finds + "{1};{2};{3};{4}".format(details["waypoint"], row["date"], details["lat"], details["lon"])
         config = self.master.config
 
-        hash = "%s" % finds
-        hash = md5(hash.encode()).hexdigest()
+        hash = str(finds)
+        hash = md5(hash.encode("utf-8")).hexdigest()
         if config.get(self.NS, "force") != "y":
-            hash_old = self.master.profileStorage.getEnv("%s.hash" % self.NS)
+            hash_old = self.master.profileStorage.getEnv(self.NS + ".hash")
             if hash == hash_old:
                 self.log.info("Geocaching.cz database seems already up to date, skipping update.")
                 return
@@ -61,7 +63,7 @@ class gcczUpdater(base):
         result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
         result = result.read().decode().splitlines()
 
-        succ   = False
+        succ = False
         for row in result:
             row = row.split(":")
             if row[0] == "info" and row[1] == "ok":
@@ -70,7 +72,7 @@ class gcczUpdater(base):
 
         if succ is False:
             self.log.error("Unable to update Geocaching.cz database.")
-            self.log.debug("Response: %s" % result)
+            self.log.debug("Response: {0}".format(result))
         else:
-            self.master.profileStorage.setEnv("%s.hash" % self.NS, hash)
+            self.master.profileStorage.setEnv(self.NS + ".hash", hash)
             self.log.info("Geocaching.cz database successfully updated.")

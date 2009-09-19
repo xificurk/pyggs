@@ -20,15 +20,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+import logging
+import time
+import urllib
+
 from .base import base
 from pyggs import Storage
-import logging, urllib, time
+
 
 class gcczMyRatings(base):
     def __init__(self, master):
         base.__init__(self, master)
         self.dependencies = ["gccz"]
-        self.about        = _("Storage for user's ratings of caches from geocaching.cz.")
+        self.about = _("Storage for user's ratings of caches from geocaching.cz.")
 
 
     def setup(self):
@@ -48,12 +52,12 @@ class gcczMyRatings(base):
 
 class gcczMyRatingsDatabase(Storage):
     def __init__(self, plugin, database):
-        self.NS       = "%s.db" % plugin.NS
-        self.log      = logging.getLogger("Pyggs.%s" % self.NS)
-        self.plugin   = plugin
+        self.NS = plugin.NS + ".db"
+        self.log = logging.getLogger("Pyggs." + self.NS)
+        self.plugin = plugin
         self.filename = database.filename
 
-        self.valid    = None
+        self.valid = None
 
         self.createTables()
 
@@ -73,8 +77,8 @@ class gcczMyRatingsDatabase(Storage):
         if self.valid is not None:
             return self.valid
 
-        lastCheck = self.getEnv("%s.lastcheck" % self.NS)
-        timeout   = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*3600
+        lastCheck = self.getEnv(self.NS + ".lastcheck")
+        timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*3600
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
         else:
@@ -91,7 +95,7 @@ class gcczMyRatingsDatabase(Storage):
         result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
         result = result.read().decode("utf-8","replace").splitlines()
 
-        succ   = False
+        succ = False
         for row in result:
             row = row.split(":")
             if row[0] == "info" and row[1] == "ok":
@@ -102,7 +106,7 @@ class gcczMyRatingsDatabase(Storage):
         cur = db.cursor()
         if succ is False:
             self.log.error("Unable to load Geocaching.cz MyRatings, extending validity of current data.")
-            self.log.debug("Response: %s" % result)
+            self.log.debug("Response: {0}".format(result))
         else:
             cur.execute("DELETE FROM gcczMyRatings")
             result = result[2].split(":",1)[-1]
@@ -114,14 +118,14 @@ class gcczMyRatingsDatabase(Storage):
 
         db.commit()
         db.close()
-        self.setEnv("%s.lastcheck" % self.NS, time.time())
+        self.setEnv(self.NS + ".lastcheck", time.time())
 
 
     def select(self, waypoints):
         """Selects data from database, performs update if neccessary"""
         self.checkValidity()
         result = []
-        db  = self.getDb()
+        db = self.getDb()
         cur = db.cursor()
         for wpt in waypoints:
             row = cur.execute("SELECT * FROM gcczMyRatings WHERE waypoint = ?", (wpt,)).fetchone()

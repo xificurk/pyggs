@@ -20,9 +20,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import logging, platform, sys
+import logging
+import platform
+import sys
+
 if platform.system() == "Windows":
     from ctypes import windll
+
 
 class ColorConsole(logging.StreamHandler):
     def __init__(self, use_color = True, fmt="%(levelname)-8s %(name)-15s %(message)s", datefmt=None):

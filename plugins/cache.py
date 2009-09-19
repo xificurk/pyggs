@@ -20,14 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+import logging
+import math
+import time
+
 from .base import base
 from pyggs import Storage
-import logging, time, math
+
 
 class cache(base):
     def __init__(self, master):
         base.__init__(self, master)
-        self.about        = _("Global storage for detailed info about caches.")
+        self.about = _("Global storage for detailed info about caches.")
 
 
     def setup(self):
@@ -53,7 +57,7 @@ class cache(base):
     def parseCache(self, cache):
         """Update Cache database"""
         details = cache.getDetails()
-        self.log.info("Updating Cache database for %s: %s." % (details.get("waypoint"), details.get("name")))
+        self.log.info("Updating Cache database for {0}: {1}.".format(details.get("waypoint"), details.get("name")))
         self.storage.update(details)
 
 
@@ -69,17 +73,17 @@ class cache(base):
         lon2 = math.radians(lon2)
         lat2 = math.radians(lat2)
         d_lon = lon1 - lon2
-        dist  = math.sin(lat1) * math.sin(lat2) + math.cos(lat1) * math.cos(lat2) * math.cos(d_lon)
-        dist  = math.acos(dist) * 6371
+        dist = math.sin(lat1) * math.sin(lat2) + math.cos(lat1) * math.cos(lat2) * math.cos(d_lon)
+        dist = math.acos(dist) * 6371
         return dist
 
 
 
 class cacheDatabase(Storage):
     def __init__(self, plugin, database):
-        self.NS       = "%s.db" % plugin.NS
-        self.log      = logging.getLogger("Pyggs.%s" % self.NS)
-        self.plugin   = plugin
+        self.NS = plugin.NS + ".db"
+        self.log = logging.getLogger("Pyggs." + self.NS)
+        self.plugin = plugin
         self.filename = database.filename
 
         self.createTables()
@@ -129,7 +133,7 @@ class cacheDatabase(Storage):
             self.log.debug("No guid passed, not updating.")
             return
 
-        db  = self.getDb()
+        db = self.getDb()
         cur = db.cursor()
         cur.execute("SELECT * FROM cache WHERE guid=?", (data["guid"],))
         if (len(cur.fetchall()) > 0):
@@ -153,19 +157,19 @@ class cacheDatabase(Storage):
                 cur.execute("INSERT INTO cache(guid,lastCheck) VALUES(?,?)", (data["guid"],time.time()))
         db.commit()
         db.close()
-        self.setEnv("%s.lastcheck" % self.NS, time.time())
+        self.setEnv(self.NS + ".lastcheck", time.time())
 
 
     def select(self, guids):
         """Selects data from database, performs update if neccessary"""
         timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*24*3600
         result = []
-        db  = self.getDb()
+        db = self.getDb()
         cur = db.cursor()
         for guid in guids:
             row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
             if row is None or (timeout + float(row["lastCheck"])) <= time.time():
-                self.log.debug("Data about guid '%s' out of date, initiating refresh." % guid)
+                self.log.debug("Data about guid '{0}' out of date, initiating refresh.".format(guid))
                 self.plugin.master.parse("cache", guid=guid)
                 row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
             row = dict(row)

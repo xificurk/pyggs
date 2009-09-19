@@ -32,10 +32,9 @@ for year in history:
         else:
             share = 0
         #
-        bar  = {"height":"{0}px".format(count*5),"background":gradient("lightmin","lightmax",share),"border-color":gradient("bordermin","bordermax",share)}
-        cell = {"height":"{0}px".format(top*5+20)}
+        bar  = {"height":"{0}px".format(round(count/top*140)),"background":gradient("lightmin","lightmax",share),"border-color":gradient("bordermin","bordermax",share)}
 ?>
-    <td#{{css("td","graph-cell",cell)}}>#{{count}}<br /><div#{{css("graph-bar",bar)}}>&nbsp;</div></td>
+    <td#{{css("td","graph-cell",{"height":"160px"})}}>#{{count}}<br /><div#{{css("graph-bar",bar)}}>&nbsp;</div></td>
 <?py
     #endfor
 ?>

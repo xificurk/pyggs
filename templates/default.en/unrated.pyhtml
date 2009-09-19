@@ -15,6 +15,6 @@ except:
 
 <ul>
 <?py for cache in unrated: ?>
-    <li><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{cache["waypoint"]}}">${{cache["name"]}}</a> (#{{date(cache["date"])}})</li>
+    <li><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{cache["guid"]}}">${{cache["name"]}}</a> (#{{date(cache["date"])}})</li>
 <?py #endfor ?>
 </ul>

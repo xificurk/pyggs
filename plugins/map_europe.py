@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/mapEurope.py - Map of caches found in Europe.
+    plugins/map_europe.py - Map of caches found in Europe.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -20,18 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+from . import base
 
 
-class mapEurope(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["stats", "myFinds", "cache", "gccz"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["stats", "myfinds", "cache", "gccz"]
         self.about = _("Maps of Czech Republic from geocaching.cz.")
 
 
     def run(self):
-        myFinds = self.myFinds.storage.getList()
+        myFinds = self.myfinds.storage.getList()
         caches = self.cache.storage.select(myFinds)
         caches = self.master.globalStorage.fetchAssoc(caches, "country,#")
         europe = {}
@@ -99,4 +99,4 @@ class mapEurope(base):
             templateData["total"] = total
             templateData["id"] = id
             templateData["uid"] = self.master.config.get(self.gccz.NS, "uid")
-            self.stats.registerTemplate(":stats.mapEurope", templateData)
+            self.stats.registerTemplate(":stats.map_europe", templateData)

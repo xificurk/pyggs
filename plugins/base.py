@@ -23,9 +23,9 @@
 import logging
 
 
-class base(object):
+class Plugin(object):
     def __init__(self, master):
-        self.NS = "plug." + self.__class__.__name__
+        self.NS = "plug." + self.__class__.__module__.split(".")[-1]
         self.log = logging.getLogger("Pyggs." + self.NS)
         self.master = master
         self.about = ""

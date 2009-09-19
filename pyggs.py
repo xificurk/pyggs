@@ -257,7 +257,7 @@ class Pyggs(GCparser):
         if name not in globals()["plugins"].__dict__:
             self.log.info("Loading plugin '{0}'.".format(name))
             __import__(self.pluginModule(name))
-        self.plugins[name] = getattr(globals()["plugins"].__dict__[name], name)(self)
+        self.plugins[name] = getattr(globals()["plugins"].__dict__[name], "Plugin")(self)
         return True
 
 

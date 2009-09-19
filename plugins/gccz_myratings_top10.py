@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/gcczMyRatingsTop10.py - Your Top10 rated caches.
+    plugins/gccz_myratings_top10.py - Your Top10 rated caches.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -20,26 +20,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+from . import base
 
 
-class gcczMyRatingsTop10(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["stats", "myFinds", "gcczRatings", "gcczMyRatings", "cache"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["stats", "myfinds", "gccz_ratings", "gccz_myratings", "cache"]
         self.about = _("List of top 10 user rated caches.")
 
 
     def run(self):
         templateData = {"top10":self.getMyRatingsTop()}
         if len(templateData["top10"]) > 0:
-            self.stats.registerTemplate(":stats.gcczMyRatingsTop10", templateData)
+            self.stats.registerTemplate(":stats.gccz_myratings_top10", templateData)
 
 
     def getMyRatingsTop(self):
         fetchAssoc = self.master.globalStorage.fetchAssoc
 
-        myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
+        myFinds = self.myfinds.storage.select("SELECT * FROM myFinds")
         myFinds = fetchAssoc(myFinds, "guid")
 
         caches = self.cache.storage.select(myFinds.keys())
@@ -47,10 +47,10 @@ class gcczMyRatingsTop10(base):
             cache.update(myFinds[cache["guid"]])
         caches = fetchAssoc(caches, "waypoint")
 
-        ratings = self.gcczRatings.storage.select(caches.keys())
+        ratings = self.gccz_ratings.storage.select(caches.keys())
         ratings = fetchAssoc(ratings, "waypoint")
 
-        myratings = self.gcczMyRatings.storage.select(caches.keys())
+        myratings = self.gccz_myratings.storage.select(caches.keys())
         myratings = fetchAssoc(myratings, "waypoint")
 
         for wpt in list(caches.keys()):

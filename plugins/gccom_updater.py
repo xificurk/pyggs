@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/gccomUpdater.py - Updates generated profile at geocaching.com.
+    plugins/gccom_updater.py - Updates generated profile at geocaching.com.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -23,12 +23,12 @@
 from hashlib import md5
 import os.path
 
-from .base import base
+from . import base
 
 
-class gccomUpdater(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
+        base.Plugin.__init__(self, master)
         self.dependencies = ["stats"]
         self.about = _("Updates geocaching.com profile with generated statistics.")
 

@@ -20,16 +20,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+from . import base
 
 
-class example(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
         # Run base.__init__
-        base.__init__(self, master)
+        base.Plugin.__init__(self, master)
 
         # Define list of all plugin names that we need to run this one.
-        self.dependencies = ["stats", "myFinds"]
+        self.dependencies = ["stats", "myfinds"]
 
         # Brief info about plugin's function
         self.about = _("This plugin is just simple example.")
@@ -60,7 +60,7 @@ class example(base):
     def prepare(self):
         """Setup everything needed before actual run"""
         # Run base.prepare
-        base.prepare(self)
+        base.Plugin.prepare(self)
 
         # Register custom parsers
         self.master.registerParser("myParserName", MyParserClass)

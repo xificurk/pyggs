@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/cacheTopFeatures.py - Add top features of found caches (most distant
+    plugins/cache_topfeatures.py - Add top features of found caches (most distant
       cache, most southern cache, etc.) to general statistics.
     Copyright (C) 2009 Petr Morávek
 
@@ -21,19 +21,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+from . import base
 
 
-class cacheTopFeatures(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["general", "cache", "myFinds"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["general", "cache", "myfinds"]
         self.about = _("Adds rows about most distant, most southern, oldest etc. caches found into General statistics section.")
 
 
     def run(self):
-        myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
-        myFinds = self.myFinds.storage.fetchAssoc(myFinds, "guid")
+        myFinds = self.myfinds.storage.select("SELECT * FROM myFinds")
+        myFinds = self.myfinds.storage.fetchAssoc(myFinds, "guid")
         caches = self.cache.storage.select(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
@@ -43,7 +43,7 @@ class cacheTopFeatures(base):
         templateData["directions"] = self.getTopDirections(caches)
         templateData["age"] = self.getTopAge(caches)
         templateData["archived"] = self.getArchived(caches)
-        self.general.registerTemplate(":stats.general.cacheTopFeatures", templateData)
+        self.general.registerTemplate(":stats.general.cache_topfeatures", templateData)
 
 
     def getTopDistances(self, caches):

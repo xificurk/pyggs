@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/myFindsHistory.py - Show year after year myFinds history data.
+    plugins/myfinds_history.py - Show year after year myFinds history data.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -22,18 +22,18 @@
 
 import datetime
 
-from .base import base
+from . import base
 
 
-class myFindsHistory(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["myFinds", "myFindsAverages", "stats"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["myfinds", "myfinds_averages", "stats"]
         self.about = _("Adds graph and average find values for every user's caching year.")
 
 
     def run(self):
-        myFinds = self.myFinds.storage.select("""SELECT
+        myFinds = self.myfinds.storage.select("""SELECT
                 COUNT(DISTINCT date) AS gcdays,
                 COUNT(guid) AS finds,
                 STRFTIME('%Y', date) AS year,
@@ -43,7 +43,7 @@ class myFindsHistory(base):
             GROUP BY ym
             ORDER BY ym ASC
             """)
-        myFinds = self.myFinds.storage.fetchAssoc(myFinds, "year,month")
+        myFinds = self.myfinds.storage.fetchAssoc(myFinds, "year,month")
 
         top = 0
         for year in myFinds:
@@ -56,9 +56,9 @@ class myFindsHistory(base):
             myFinds[year] = {
                     "top":yearstop,
                     "data":myFinds[year],
-                    "averages":self.myFindsAverages.getAverages("STRFTIME('%Y', date) = '{0}'".format(year), int(datetime.date(int(year), 12, 31).strftime("%j")))}
+                    "averages":self.myfinds_averages.getAverages("STRFTIME('%Y', date) = '{0}'".format(year), int(datetime.date(int(year), 12, 31).strftime("%j")))}
 
         templateData = {}
         templateData["history"] = myFinds
         templateData["top"] = top
-        self.stats.registerTemplate(":stats.myFindsHistory", templateData)
+        self.stats.registerTemplate(":stats.myfinds_history", templateData)

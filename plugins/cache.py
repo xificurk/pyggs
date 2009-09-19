@@ -24,13 +24,13 @@ import logging
 import math
 import time
 
-from .base import base
+from . import base
 from pyggs import Storage
 
 
-class cache(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
+        base.Plugin.__init__(self, master)
         self.about = _("Global storage for detailed info about caches.")
 
 
@@ -44,14 +44,14 @@ class cache(base):
 
 
     def prepare(self):
-        base.prepare(self)
+        base.Plugin.prepare(self)
 
         self.homecoord = {}
         self.homecoord["lat"] = float(self.master.config.get("general", "homelat"))
         self.homecoord["lon"] = float(self.master.config.get("general", "homelon"))
 
         self.master.registerHandler("cache", self.parseCache)
-        self.storage = cacheDatabase(self, self.master.globalStorage)
+        self.storage = CacheDatabase(self, self.master.globalStorage)
 
 
     def parseCache(self, cache):
@@ -79,7 +79,7 @@ class cache(base):
 
 
 
-class cacheDatabase(Storage):
+class CacheDatabase(Storage):
     def __init__(self, plugin, database):
         self.NS = plugin.NS + ".db"
         self.log = logging.getLogger("Pyggs." + self.NS)

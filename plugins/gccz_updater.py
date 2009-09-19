@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/gcczUpdater.py - Updates MyFinds database at geocaching.cz.
+    plugins/gccz_updater.py - Updates MyFinds database at geocaching.cz.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -23,13 +23,13 @@
 from hashlib import md5
 import urllib
 
-from .base import base
+from . import base
 
 
-class gcczUpdater(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["myFinds", "cache", "gccz"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["myfinds", "cache", "gccz"]
         self.about = _("Updates user's finds in geocaching.cz database.")
 
 
@@ -44,7 +44,7 @@ class gcczUpdater(base):
 
     def finish(self):
         finds = ""
-        for row in self.myFinds.storage.select("SELECT date, guid FROM myFinds"):
+        for row in self.myfinds.storage.select("SELECT date, guid FROM myFinds"):
             if len(finds) > 0:
                 finds = finds + "|"
             details = self.cache.storage.select([row["guid"]])[0]

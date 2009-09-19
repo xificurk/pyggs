@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/myFinds.py - handles myFinds database for each profile.
+    plugins/myfinds.py - handles myFinds database for each profile.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -23,13 +23,13 @@
 import logging
 import time
 
-from .base import base
+from . import base
 from pyggs import Storage
 
 
-class myFinds(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
+        base.Plugin.__init__(self, master)
         self.about = _("Storage for My Finds data from geocaching.com profile.")
 
 
@@ -43,9 +43,9 @@ class myFinds(base):
 
 
     def prepare(self):
-        base.prepare(self)
+        base.Plugin.prepare(self)
         self.master.registerHandler("myFinds", self.parseMyFinds)
-        self.storage = myFindsDatabase(self, self.master.profileStorage)
+        self.storage = MyFindsDatabase(self, self.master.profileStorage)
 
 
     def parseMyFinds(self, myFinds):
@@ -56,7 +56,7 @@ class myFinds(base):
 
 
 
-class myFindsDatabase(Storage):
+class MyFindsDatabase(Storage):
     def __init__(self, plugin, database):
         self.NS = plugin.NS + ".db"
         self.log = logging.getLogger("Pyggs." + self.NS)

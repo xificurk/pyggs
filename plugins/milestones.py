@@ -22,13 +22,13 @@
 
 import re
 
-from .base import base
+from . import base
 
 
-class milestones(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["stats", "cache", "myFinds"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["stats", "cache", "myfinds"]
         self.about = _("List of accomplished milestones.")
 
 
@@ -49,7 +49,7 @@ class milestones(base):
 
     def getMilestones(self):
         result = []
-        myFinds = self.myFinds.storage.select("SELECT * FROM myFinds ORDER BY date ASC, sequence ASC")
+        myFinds = self.myfinds.storage.select("SELECT * FROM myFinds ORDER BY date ASC, sequence ASC")
         milestones = self.master.config.get(self.NS, "milestones").split(",")
         for i in range(0, len(milestones)):
             if milestones[i] == "LAST":

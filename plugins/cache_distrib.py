@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/cacheDistrib.py - Tables with distribution of finds by type,
+    plugins/cache_distrib.py - Tables with distribution of finds by type,
       container and country.
     Copyright (C) 2009 Petr Morávek
 
@@ -23,23 +23,23 @@
 
 from collections import OrderedDict
 
-from .base import base
+from . import base
 
 
-class cacheDistrib(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["stats", "myFinds", "cache"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["stats", "myfinds", "cache"]
         self.about = _("Statistics of found caches by type, size and country.")
 
 
     def prepare(self):
-        base.prepare(self)
+        base.Plugin.prepare(self)
         self.fetchAssoc = self.master.globalStorage.fetchAssoc
 
 
     def run(self):
-        myFinds = self.myFinds.storage.getList()
+        myFinds = self.myfinds.storage.getList()
         caches = self.cache.storage.select(myFinds)
 
         templateData = {}
@@ -47,7 +47,7 @@ class cacheDistrib(base):
         templateData["countries"] = self.getCountries(caches)
         templateData["types"] = self.getTypes(caches)
         templateData["sizes"] = self.getSizes(caches)
-        self.stats.registerTemplate(":stats.cacheDistrib", templateData)
+        self.stats.registerTemplate(":stats.cache_distrib", templateData)
 
 
     def getCountries(self, caches):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/myFindsTopPeriods.py - Add top periods of geocacher
+    plugins/myfinds_topperiods.py - Add top periods of geocacher
       to general statistics.
     Copyright (C) 2009 Petr Morávek
 
@@ -23,25 +23,25 @@
 
 import datetime
 
-from .base import base
+from . import base
 
 
-class myFindsTopPeriods(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["general", "myFinds"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["general", "myfinds"]
         self.about = _("Adds rows about user's top day, week, month etc. into General statistics section.")
 
 
     def run(self):
         templateData = self.getTopPeriods()
-        self.general.registerTemplate(":stats.general.myFindsTopPeriods", templateData)
+        self.general.registerTemplate(":stats.general.myfinds_topperiods", templateData)
 
 
     def getTopPeriods(self):
         """return top periods stats"""
-        fetchAssoc = self.myFinds.storage.fetchAssoc
-        result = self.myFinds.storage.select("""SELECT
+        fetchAssoc = self.myfinds.storage.fetchAssoc
+        result = self.myfinds.storage.select("""SELECT
                 date,
                 (STRFTIME('%w', date) = "0" OR STRFTIME('%w', date) = "6") AS weekend,
                 DATE(date, "weekday 0") AS sunday,

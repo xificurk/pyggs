@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/gcczRatingsTop.py - Add best/worst found cache to general
+    plugins/gccz_ratings_top.py - Add best/worst found cache to general
       statistics.
     Copyright (C) 2009 Petr Morávek
 
@@ -21,26 +21,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+from . import base
 
 
-class gcczRatingsTop(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["general", "myFinds", "gcczRatings", "cache"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["general", "myfinds", "gccz_ratings", "cache"]
         self.about = _("Adds rows about worst/best rated cache found into General statistics section.")
 
 
     def run(self):
         templateData = self.getTopRated()
         if templateData is not None:
-            self.general.registerTemplate(":stats.general.gcczRatingsTop", templateData)
+            self.general.registerTemplate(":stats.general.gccz_ratings_top", templateData)
 
 
     def getTopRated(self):
         fetchAssoc = self.master.globalStorage.fetchAssoc
 
-        myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
+        myFinds = self.myfinds.storage.select("SELECT * FROM myFinds")
         myFinds = fetchAssoc(myFinds, "guid")
 
         caches = self.cache.storage.select(myFinds.keys())
@@ -48,7 +48,7 @@ class gcczRatingsTop(base):
             cache.update(myFinds[cache["guid"]])
         caches = fetchAssoc(caches, "waypoint")
 
-        ratings = self.gcczRatings.storage.select(caches.keys(), min=3)
+        ratings = self.gccz_ratings.storage.select(caches.keys(), min=3)
         ratings = fetchAssoc(ratings, "waypoint")
 
         for wpt in caches:

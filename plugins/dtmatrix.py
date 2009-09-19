@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/dtMatrix.py - difficulty-terrain matrix.
+    plugins/dtmatrix.py - difficulty-terrain matrix.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -20,21 +20,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+from . import base
 
 
-class dtMatrix(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["stats", "cache", "myFinds"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["stats", "cache", "myfinds"]
         self.about = _("Difficulty / Terrain matrix of found caches.")
 
 
     def run(self):
-        myFinds = self.myFinds.storage.getList()
+        myFinds = self.myfinds.storage.getList()
         caches = self.cache.storage.select(myFinds)
         templateData = self.getMatrix(caches)
-        self.stats.registerTemplate(":stats.dtMatrix", templateData)
+        self.stats.registerTemplate(":stats.dtmatrix", templateData)
 
 
     def getMatrix(self, caches):

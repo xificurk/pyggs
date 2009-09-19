@@ -20,12 +20,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+from . import base
 
 
-class gccz(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
+        base.Plugin.__init__(self, master)
         self.about = _("Storage for geocaching.cz credentials etc.")
 
 

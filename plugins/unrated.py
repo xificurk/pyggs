@@ -20,13 +20,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+from . import base
 
 
-class unrated(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["myFinds", "gcczMyRatings", "cache"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["myfinds", "gccz_myratings", "cache"]
         self.about = _("Generates page with the list of found but unrated caches by user.")
 
 
@@ -38,7 +38,7 @@ class unrated(base):
     def getUnrated(self):
         fetchAssoc = self.master.globalStorage.fetchAssoc
 
-        myFinds = self.myFinds.storage.select("SELECT * FROM myFinds")
+        myFinds = self.myfinds.storage.select("SELECT * FROM myFinds")
         myFinds = fetchAssoc(myFinds, "guid")
 
         caches = self.cache.storage.select(myFinds.keys())
@@ -46,7 +46,7 @@ class unrated(base):
             cache.update(myFinds[cache["guid"]])
         caches = fetchAssoc(caches, "waypoint")
 
-        myratings = self.gcczMyRatings.storage.select(caches.keys())
+        myratings = self.gccz_myratings.storage.select(caches.keys())
         myratings = list(fetchAssoc(myratings, "waypoint").keys())
 
         unrated = []

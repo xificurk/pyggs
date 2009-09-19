@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/mapCR.py - Map of caches found in Czech Republic.
+    plugins/map_cr.py - Map of caches found in Czech Republic.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -20,18 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from .base import base
+from . import base
 
 
-class mapCR(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["stats", "myFinds", "cache", "gccz"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["stats", "myfinds", "cache", "gccz"]
         self.about = _("Maps of Czech Republic from geocaching.cz.")
 
 
     def run(self):
-        myFinds = self.myFinds.storage.getList()
+        myFinds = self.myfinds.storage.getList()
         caches = self.cache.storage.select(myFinds)
         caches = self.master.globalStorage.fetchAssoc(caches, "country,province,#")
         caches = caches.get("Czech Republic")
@@ -69,8 +69,8 @@ class mapCR(base):
                 if len(tmp1) > 0 or len(tmp2) > 0:
                     tmp1 = tmp1 + ","
                     tmp2 = tmp2 + ","
-                tmp1 = tmp1 + provinces[province]
-                tmp2 = "{0}{1}".format(tmp2, round(100*provinces[province]/tot))
+                tmp1 = tmp1 + str(provinces[province])
+                tmp2 = tmp2 + str(round(100*provinces[province]/tot))
 
             templateData = {}
             templateData["map"] = {}
@@ -78,4 +78,4 @@ class mapCR(base):
             templateData["map"]["chd"] = tmp1 + "|" + tmp2
             templateData["total"] = total
             templateData["uid"] = self.master.config.get(self.gccz.NS, "uid")
-            self.stats.registerTemplate(":stats.mapCR", templateData)
+            self.stats.registerTemplate(":stats.map_cr", templateData)

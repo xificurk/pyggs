@@ -2,7 +2,7 @@
 <caption#{{css("caption")}}>General Statistics</caption>
 <?py
 rendered = []
-order    = [":stats.general.myFindsAverages", ":stats.general.myFindsTopPeriods", ":stats.general.gcczRatingsTop", ":stats.general.cacheTopFeatures"]
+order    = [":stats.general.myfinds_averages", ":stats.general.myfinds_topperiods", ":stats.general.gccz_ratings_top", ":stats.general.cache_topfeatures"]
 for template in order:
     if template in templates:
         rendered.append(template)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/myFindsAverages.py - Add average values to general statistics.
+    plugins/myfinds_averages.py - Add average values to general statistics.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.
@@ -23,13 +23,13 @@
 import math
 import time
 
-from .base import base
+from . import base
 
 
-class myFindsAverages(base):
+class Plugin(base.Plugin):
     def __init__(self, master):
-        base.__init__(self, master)
-        self.dependencies = ["general", "myFinds"]
+        base.Plugin.__init__(self, master)
+        self.dependencies = ["general", "myfinds"]
         self.about = _("Adds rows about average finds (overall, in last 365 days) into General statistics section.")
 
 
@@ -37,14 +37,14 @@ class myFindsAverages(base):
         templateData = {}
         templateData["overall"] = self.getAverages()
         templateData["last365"] = self.getAverages("date > DATE('now', '-365 days')", 365);
-        self.general.registerTemplate(":stats.general.myFindsAverages", templateData)
+        self.general.registerTemplate(":stats.general.myfinds_averages", templateData)
 
 
     def getAverages(self, where = "1", period = None):
         """return averages stats"""
-        result = self.myFinds.storage.select("SELECT * FROM myFinds WHERE {0} ORDER BY date ASC, sequence ASC".format(where))
-        all = self.myFinds.storage.fetchAssoc(result)
-        days = self.myFinds.storage.fetchAssoc(result, "date")
+        result = self.myfinds.storage.select("SELECT * FROM myFinds WHERE {0} ORDER BY date ASC, sequence ASC".format(where))
+        all = self.myfinds.storage.fetchAssoc(result)
+        days = self.myfinds.storage.fetchAssoc(result, "date")
 
         ret = {}
         ret["finds"] = len(all);

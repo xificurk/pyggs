@@ -29,8 +29,7 @@ import os
 import sqlite3
 
 from libs.gcparser import GCparser
-
-from ColorConsole import ColorConsole
+from libs.colorer import ColorConsole
 import Configurator
 import plugins
 from Templar import Templar
@@ -47,9 +46,9 @@ gettext.install("pyggs", localedir=localeDir, codeset="utf-8")
 class Pyggs(GCparser):
     def __init__(self):
         # Setup console output logging
-        console = ColorConsole(fmt="%(levelname)-8s %(name)-30s %(message)s")
+        self.console = ColorConsole(fmt="%(levelname)-8s %(name)s >> %(message)s")
         rootlog = logging.getLogger("")
-        rootlog.addHandler(console)
+        rootlog.addHandler(self.console)
         rootlog.setLevel(logging.WARN)
 
         # Parse command line arguements
@@ -255,7 +254,7 @@ class Pyggs(GCparser):
     def loadPlugin(self, name):
         """ Load a plugin - name is the file and class name"""
         if name not in globals()["plugins"].__dict__:
-            self.log.info("Loading plugin '{0}'.".format(name))
+            self.log.info("Loading plugin {0}.".format(name))
             __import__(self.pluginModule(name))
         self.plugins[name] = getattr(globals()["plugins"].__dict__[name], "Plugin")(self)
         return True

@@ -272,8 +272,8 @@ class Theme(Configurator.Theme):
 
         share = max(0, min(float(share), 1))
 
-        red = (1-share)*float(match1.group(1)) + share*float(match2.group(1))
-        green = (1-share)*float(match1.group(2)) + share*float(match2.group(2))
-        blue = (1-share)*float(match1.group(3)) + share*float(match2.group(3))
+        red = round((1-share)*float(match1.group(1)) + share*float(match2.group(1)))
+        green = round((1-share)*float(match1.group(2)) + share*float(match2.group(2)))
+        blue = round((1-share)*float(match1.group(3)) + share*float(match2.group(3)))
 
         return "#{0:02x}{1:02x}{2:02x}".format(red, green, blue)

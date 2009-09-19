@@ -25,7 +25,6 @@ import time
 import urllib
 
 from . import base
-from pyggs import Storage
 
 
 class Plugin(base.Plugin):
@@ -45,31 +44,24 @@ class Plugin(base.Plugin):
 
     def prepare(self):
         base.Plugin.prepare(self)
-        self.storage = GcczRatingsDatabase(self, self.master.globalStorage)
+        self.storage = Storage(self.master.globalStorage.filename, self)
 
 
 
-class GcczRatingsDatabase(Storage):
-    def __init__(self, plugin, database):
-        self.NS = plugin.NS + ".db"
-        self.log = logging.getLogger("Pyggs." + self.NS)
-        self.plugin = plugin
-        self.filename = database.filename
-
+class Storage(base.Storage):
+    def __init__(self, filename, plugin):
+        base.Storage.__init__(self, filename, plugin)
         self.valid = None
-
-        self.createTables()
 
 
     def createTables(self):
-        """If Ratings table doesn't exist, create it"""
-        db = self.getDb()
-        db.execute("""CREATE TABLE IF NOT EXISTS gcczRatings (
+        """Create necessary tables"""
+        base.Storage.createTables(self)
+        self.query("""CREATE TABLE IF NOT EXISTS gccz_ratings (
                 waypoint varchar(9) NOT NULL,
                 rating int(3) NOT NULL,
                 count int(5) NOT NULL,
                 PRIMARY KEY (waypoint))""")
-        db.close()
 
 
     def checkValidity(self):
@@ -77,18 +69,18 @@ class GcczRatingsDatabase(Storage):
         if self.valid is not None:
             return self.valid
 
-        lastCheck = self.getEnv(self.NS + ".lastcheck")
+        lastCheck = self.getEnv("lastcheck")
         timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*3600*24
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
         else:
             self.log.info("Geocaching.cz Ratings database out of date, initiating refresh.")
-            self.refresh()
+            self.update()
 
         return self.valid
 
 
-    def refresh(self):
+    def update(self):
         """Re-download ragings data"""
         data = {"a":"ctihodnoceni","v":"1"}
         result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
@@ -107,17 +99,17 @@ class GcczRatingsDatabase(Storage):
             self.log.error("Unable to load Geocaching.cz Ratings, extending validity of current data.")
             self.log.debug("Response: {0}".format(result))
         else:
-            cur.execute("DELETE FROM gcczRatings")
+            cur.execute("DELETE FROM gccz_ratings")
             result = result[2].split(":",1)[-1]
             for row in result.split("|"):
                 row = row.split(";")
                 if len(row) >= 3:
-                    cur.execute("INSERT INTO gcczRatings(waypoint, rating, count) VALUES(?,?,?)", (row[0], row[1], row[2]))
+                    cur.execute("INSERT INTO gccz_ratings(waypoint, rating, count) VALUES(?,?,?)", (row[0], row[1], row[2]))
             self.log.info("Geocaching.cz Ratings database successfully updated.")
 
         db.commit()
         db.close()
-        self.setEnv(self.NS + ".lastcheck", time.time())
+        self.setEnv("lastcheck", time.time())
 
 
     def select(self, waypoints, min=0):
@@ -127,7 +119,7 @@ class GcczRatingsDatabase(Storage):
         db = self.getDb()
         cur = db.cursor()
         for wpt in waypoints:
-            row = cur.execute("SELECT * FROM gcczRatings WHERE waypoint = ? AND count >= ?", (wpt,min)).fetchone()
+            row = cur.execute("SELECT * FROM gccz_ratings WHERE waypoint = ? AND count >= ?", (wpt,min)).fetchone()
             if row is not None:
                 row = dict(row)
                 result.append(row)

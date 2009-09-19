@@ -26,10 +26,10 @@ import gettext
 import logging
 from optparse import OptionParser
 import os
-import sqlite3
 
 from libs.gcparser import GCparser
 from libs.colorer import ColorConsole
+from plugins.base import Storage
 import Configurator
 import plugins
 from Templar import Templar
@@ -197,8 +197,8 @@ class Pyggs(GCparser):
         GCparser.__init__(self, username=config.get("geocaching.com", "username"), password=config.get("geocaching.com", "password"), dataDir=parserDir)
         self.log = logging.getLogger("Pyggs")
 
-        self.globalStorage = Storage(os.path.join(pyggsDir, "storage.db"))
-        self.profileStorage = Storage(os.path.join(profileDir, "storage.db"))
+        self.globalStorage = Storage(os.path.join(pyggsDir, "storage.sqlite"))
+        self.profileStorage = Storage(os.path.join(profileDir, "storage.sqlite"))
 
         self.handlers = {}
         self.pages = {}
@@ -346,101 +346,6 @@ class Pyggs(GCparser):
 
 
 
-class Storage(object):
-    def __init__(self, filename):
-        self.log = logging.getLogger("Pyggs.Storage")
-        self.filename = filename
-        self.createEnvironment()
-
-
-    def getDb(self):
-        """Return a new DB connection"""
-        con = sqlite3.connect(self.filename)
-        con.row_factory = sqlite3.Row
-        return con
-
-
-    def fetchAssoc(self, result, format="#"):
-        """Fetch result to a dictionary"""
-        if format == "":
-            format = "#"
-        format = format.split(",")
-
-        if len(result) == 0:
-            if format[0] == "#":
-                return []
-            else:
-                return OrderedDict()
-
-        for field in format:
-            if field != "#" and field not in result[0].keys():
-                self.log.error("There is no field '{0}' in the result set.".format(field))
-                return []
-
-        # make associative tree
-        data = OrderedDict()
-        data["result"] = None
-        for row in result:
-            x = data
-            i = "result"
-            for field in format:
-                if field == "#":
-                    if x[i] is None:
-                        x[i] = []
-                    x[i].append(None)
-                    x = x[i]
-                    i = len(x)-1
-                else:
-                    if x[i] is None:
-                        x[i] = OrderedDict()
-                    if x[i].get(row[field]) is None:
-                        x[i][row[field]] = None
-                    x = x[i]
-                    i = row[field]
-            x[i] = dict(row)
-
-        return data["result"]
-
-
-    def createEnvironment(self):
-        """If Environment table doesn't exist, create it"""
-        db = self.getDb()
-        db.execute("CREATE TABLE IF NOT EXISTS environment (variable VARCHAR(256) PRIMARY KEY, value VARCHAR(256))")
-        db.close()
-
-
-    def setEnv(self, variable, value):
-        """insert or update env variale"""
-        db = self.getDb()
-        cur = db.cursor()
-        cur.execute("SELECT * FROM environment WHERE variable=?", (variable,))
-        if (len(cur.fetchall()) > 0):
-            cur.execute("UPDATE environment SET value=? WHERE variable=?", (value, variable))
-        else:
-            cur.execute("INSERT INTO environment(variable, value) VALUES(?,?)", (variable, value))
-        db.commit()
-        db.close()
-
-
-    def getEnv(self, variable):
-        """get env variable"""
-        db = self.getDb()
-        cur = db.cursor()
-        cur.execute("SELECT value FROM environment WHERE variable=? LIMIT 1", (variable,))
-        value = cur.fetchone()
-        db.close()
-        if value is not None:
-            value = value[0]
-        return value
-
-
-    def delEnv(self, variable):
-        """delete env variale"""
-        db = self.getDb()
-        cur = db.cursor()
-        cur.execute("DELETE FROM environment WHERE variable=? LIMIT 1", (variable,))
-        db.commit()
-        db.close()
 
 
 

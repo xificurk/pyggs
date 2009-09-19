@@ -25,7 +25,6 @@ import math
 import time
 
 from . import base
-from pyggs import Storage
 
 
 class Plugin(base.Plugin):
@@ -51,7 +50,7 @@ class Plugin(base.Plugin):
         self.homecoord["lon"] = float(self.master.config.get("general", "homelon"))
 
         self.master.registerHandler("cache", self.parseCache)
-        self.storage = CacheDatabase(self, self.master.globalStorage)
+        self.storage = Storage(self.master.globalStorage.filename, self)
 
 
     def parseCache(self, cache):
@@ -79,20 +78,11 @@ class Plugin(base.Plugin):
 
 
 
-class CacheDatabase(Storage):
-    def __init__(self, plugin, database):
-        self.NS = plugin.NS + ".db"
-        self.log = logging.getLogger("Pyggs." + self.NS)
-        self.plugin = plugin
-        self.filename = database.filename
-
-        self.createTables()
-
-
+class Storage(base.Storage):
     def createTables(self):
-        """If Cache table doesn't exist, create it"""
-        db = self.getDb()
-        db.execute("""CREATE TABLE IF NOT EXISTS cache (
+        """Create necessary tables"""
+        base.Storage.createTables(self)
+        self.query("""CREATE TABLE IF NOT EXISTS cache (
                 guid varchar(36) NOT NULL,
                 waypoint varchar(9) NOT NULL,
                 name varchar(255) NOT NULL,
@@ -114,23 +104,22 @@ class CacheDatabase(Storage):
                 lastCheck date NOT NULL,
                 PRIMARY KEY (guid),
                 UNIQUE (waypoint))""")
-        db.execute("""CREATE TABLE IF NOT EXISTS cache_visits (
+        self.query("""CREATE TABLE IF NOT EXISTS cache_visits (
                 guid varchar(36) NOT NULL,
                 type varchar(30) NOT NULL,
                 count int(4),
                 PRIMARY KEY (guid,type))""")
-        db.execute("""CREATE TABLE IF NOT EXISTS cache_inventory (
+        self.query("""CREATE TABLE IF NOT EXISTS cache_inventory (
                 guid varchar(36) NOT NULL,
                 tbid varchar(36) NOT NULL,
                 name varchar(100) NOT NULL,
                 PRIMARY KEY (guid,tbid))""")
-        db.close()
 
 
     def update(self, data):
         """Update Cache database by data"""
         if "guid" not in data:
-            self.log.debug("No guid passed, not updating.")
+            self.log.error("No guid passed, not updating.")
             return
 
         db = self.getDb()
@@ -157,7 +146,6 @@ class CacheDatabase(Storage):
                 cur.execute("INSERT INTO cache(guid,lastCheck) VALUES(?,?)", (data["guid"],time.time()))
         db.commit()
         db.close()
-        self.setEnv(self.NS + ".lastcheck", time.time())
 
 
     def select(self, guids):
@@ -169,12 +157,10 @@ class CacheDatabase(Storage):
         for guid in guids:
             row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
             if row is None or (timeout + float(row["lastCheck"])) <= time.time():
-                self.log.debug("Data about guid '{0}' out of date, initiating refresh.".format(guid))
+                self.log.debug("Data about cache guid {0} out of date, initiating refresh.".format(guid))
                 self.plugin.master.parse("cache", guid=guid)
                 row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
             row = dict(row)
-            row["lat"] = float(row["lat"])
-            row["lon"] = float(row["lon"])
             row["inventory"] = {}
             for inv in cur.execute("SELECT tbid, name FROM cache_inventory WHERE guid = ?", (guid,)).fetchall():
                 row["inventory"][inv["tbid"]] = inv["name"]

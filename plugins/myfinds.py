@@ -24,7 +24,6 @@ import logging
 import time
 
 from . import base
-from pyggs import Storage
 
 
 class Plugin(base.Plugin):
@@ -45,7 +44,7 @@ class Plugin(base.Plugin):
     def prepare(self):
         base.Plugin.prepare(self)
         self.master.registerHandler("myFinds", self.parseMyFinds)
-        self.storage = MyFindsDatabase(self, self.master.profileStorage)
+        self.storage = Storage(self.master.profileStorage.filename, self)
 
 
     def parseMyFinds(self, myFinds):
@@ -56,27 +55,21 @@ class Plugin(base.Plugin):
 
 
 
-class MyFindsDatabase(Storage):
-    def __init__(self, plugin, database):
-        self.NS = plugin.NS + ".db"
-        self.log = logging.getLogger("Pyggs." + self.NS)
-        self.plugin = plugin
-        self.filename = database.filename
-
+class Storage(base.Storage):
+    def __init__(self, filename, plugin):
+        base.Storage.__init__(self, filename, plugin)
         self.valid = None
-
-        self.createTables()
 
 
     def createTables(self):
-        """If MyFinds table doesn't exist, create it"""
-        db = self.getDb()
-        db.execute("""CREATE TABLE IF NOT EXISTS myFinds (
+        """Create necessary tables"""
+        base.Storage.createTables(self)
+        self.query("""CREATE TABLE IF NOT EXISTS myfinds (
                 guid varchar(36) NOT NULL,
                 sequence int(4) NOT NULL,
                 date date NOT NULL,
+                luid VARCHAR(36) NOT NULL,
                 PRIMARY KEY (guid,sequence))""")
-        db.close()
 
 
     def checkValidity(self):
@@ -84,7 +77,7 @@ class MyFindsDatabase(Storage):
         if self.valid is not None:
             return self.valid
 
-        lastCheck = self.getEnv(self.NS + ".lastcheck")
+        lastCheck = self.getEnv("lastcheck")
         timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*3600
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
@@ -99,26 +92,23 @@ class MyFindsDatabase(Storage):
         """Update MyFinds database by data"""
         db = self.getDb()
         cur = db.cursor()
-        cur.execute("DELETE FROM myFinds")
+        cur.execute("DELETE FROM myfinds")
         for find in data:
-            cur.execute("INSERT INTO myFinds(guid, sequence, date) VALUES(?,?,?)", (find["guid"], find["sequence"], find["f_date"]))
+            cur.execute("INSERT INTO myfinds(guid, sequence, date, luid) VALUES(?,?,?,?)", (find["guid"], find["sequence"], find["f_date"], find["f_luid"]))
         db.commit()
         db.close()
-        self.setEnv(self.NS + ".lastcheck", time.time())
+        self.setEnv("lastcheck", time.time())
 
 
     def select(self, query):
         """Selects data from database, performs update if neccessary"""
         self.checkValidity()
-        db = self.getDb()
-        result = db.cursor().execute(query).fetchall()
-        db.close()
-        return result
+        return self.query(query)
 
 
     def getList(self):
         """Get list of guids of MyFinds"""
-        result = self.select("SELECT guid FROM myFinds")
+        result = self.select("SELECT guid FROM myfinds")
         myFinds = []
         for row in result:
             myFinds.append(row["guid"])

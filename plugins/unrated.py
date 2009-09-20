@@ -38,7 +38,7 @@ class Plugin(base.Plugin):
     def getUnrated(self):
         fetchAssoc = self.master.globalStorage.fetchAssoc
 
-        myFinds = self.myfinds.storage.select("SELECT * FROM myFinds")
+        myFinds = self.myfinds.storage.select()
         myFinds = fetchAssoc(myFinds, "guid")
 
         caches = self.cache.storage.select(myFinds.keys())

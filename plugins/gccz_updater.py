@@ -44,7 +44,7 @@ class Plugin(base.Plugin):
 
     def finish(self):
         finds = ""
-        for row in self.myfinds.storage.select("SELECT date, guid FROM myFinds"):
+        for row in self.myfinds.storage.select():
             if len(finds) > 0:
                 finds = finds + "|"
             details = self.cache.storage.select([row["guid"]])[0]

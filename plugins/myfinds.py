@@ -100,7 +100,7 @@ class Storage(base.Storage):
         self.setEnv("lastcheck", time.time())
 
 
-    def select(self, query):
+    def select(self, query="SELECT * FROM myfinds"):
         """Selects data from database, performs update if neccessary"""
         self.checkValidity()
         return self.query(query)

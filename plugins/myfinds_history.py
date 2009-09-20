@@ -39,7 +39,7 @@ class Plugin(base.Plugin):
                 STRFTIME('%Y', date) AS year,
                 STRFTIME('%m', date) AS month,
                 STRFTIME('%Y%m', date) AS ym
-            FROM myFinds
+            FROM myfinds
             GROUP BY ym
             ORDER BY ym ASC
             """)

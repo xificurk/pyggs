@@ -49,7 +49,7 @@ class Plugin(base.Plugin):
 
     def getMilestones(self):
         result = []
-        myFinds = self.myfinds.storage.select("SELECT * FROM myFinds ORDER BY date ASC, sequence ASC")
+        myFinds = self.myfinds.storage.select("SELECT * FROM myfinds ORDER BY date ASC, sequence ASC")
         milestones = self.master.config.get(self.NS, "milestones").split(",")
         for i in range(0, len(milestones)):
             if milestones[i] == "LAST":

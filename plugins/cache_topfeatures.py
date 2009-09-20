@@ -32,7 +32,7 @@ class Plugin(base.Plugin):
 
 
     def run(self):
-        myFinds = self.myfinds.storage.select("SELECT * FROM myFinds")
+        myFinds = self.myfinds.storage.select()
         myFinds = self.myfinds.storage.fetchAssoc(myFinds, "guid")
         caches = self.cache.storage.select(myFinds.keys())
         for cache in caches:

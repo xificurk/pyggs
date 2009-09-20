@@ -47,7 +47,7 @@ class Plugin(base.Plugin):
                 DATE(date, "weekday 0") AS sunday,
                 STRFTIME('%Y-%m', date) AS month,
                 STRFTIME('%Y', date) AS year
-            FROM myFinds
+            FROM myfinds
             ORDER BY date ASC""")
 
         ret = {}

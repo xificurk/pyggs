@@ -33,6 +33,7 @@ import logging
 import math
 from optparse import OptionParser
 import os
+import platform
 import re
 from shutil import rmtree
 import sys
@@ -805,6 +806,10 @@ if __name__ == "__main__":
     rootlog.setLevel(opts.loglevel)
     console.useColor = opts.color
     setup = opts.setup
+
+    # Check requirements
+    if float(platform.python_version()) < 3.1:
+        rootlog.critical(_("You need at least Python {0} to run this script.").format(3.1))
 
     workDir = os.path.expanduser(opts.workdir)
     parserDir = os.path.join(workDir, "parser")

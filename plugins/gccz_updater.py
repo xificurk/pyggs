@@ -39,7 +39,7 @@ class Plugin(base.Plugin):
         config.assertSection(self.NS)
         config.defaults[self.NS] = {}
         config.defaults[self.NS]["force"] = "n"
-        config.update(self.NS, "force", _("Force my finds update on every run"), validate=["y","n"])
+        config.update(self.NS, "force", _("Force my finds update on every run ({CHOICES})?"), validate=["y", "n"])
 
 
     def finish(self):

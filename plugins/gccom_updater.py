@@ -39,11 +39,11 @@ class Plugin(base.Plugin):
         config.assertSection(self.NS)
         config.defaults[self.NS] = {}
         config.defaults[self.NS]["force"] = "n"
-        config.update(self.NS, "force", _("Force geocaching.com profile update on every run"), validate=["y","n"])
+        config.update(self.NS, "force", _("Force geocaching.com profile update on every run ({CHOICES})?"), validate=["y", "n"])
 
 
     def finish(self):
-        file = os.path.join(self.master.templar.outdir, "export.html")
+        file = os.path.join(self.master.outDir, "export.html")
         if not os.path.isfile(file):
             self.log.error("Export file not found.")
             return

@@ -38,8 +38,8 @@ class Plugin(base.Plugin):
         config.assertSection(self.NS)
         config.defaults[self.NS] = {}
         config.defaults[self.NS]["milestones"] = "1,50,[0-9]+00,LAST"
-        print("    {0}:".format(_("Please specify milestones as coma separeted list. You can also use regular expressions, e.g. '[0-9]+00' matches 100, 200, 300, ... and magic word LAST means the last found cache.")))
-        config.update(self.NS, "milestones", _("Milestones"), validate=True)
+        print("    " + _("Please specify milestones as coma separeted list. You can also use regular expressions, e.g. '[0-9]+00' matches 100, 200, 300, ... and magic word LAST means the last found cache."))
+        config.update(self.NS, "milestones", _("Milestones:"), validate=True)
 
 
     def run(self):

@@ -54,7 +54,7 @@ class Plugin(base.Plugin):
         # You can add validate argument - if it is a list, value has to be from
         #   that list; if it is anything else then None, value has to be
         #   non-empty string
-        config.update(self.NS, "optionName", "Text shown to user: ")
+        config.update(self.NS, "optionName", "Text shown to user:")
 
 
     def prepare(self):

@@ -39,7 +39,7 @@ class Plugin(base.Plugin):
         config.assertSection(self.NS)
         config.defaults[self.NS] = {}
         config.defaults[self.NS]["timeout"] = "7"
-        config.update(self.NS, "timeout", _("Timeout for stored geocaching.cz ratings in days"))
+        config.update(self.NS, "timeout", _("Timeout for stored geocaching.cz ratings in days:"), validate=lambda val: None if val.isdigit() else _("Use only digits, please."))
 
 
     def prepare(self):

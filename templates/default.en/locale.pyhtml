@@ -1,0 +1,18 @@
+<?py
+try:
+    locale.setlocale(locale.LC_ALL, ("en", "UTF-8"))
+#
+except:
+    try:
+        locale.setlocale(locale.LC_ALL, ("en", ""))
+    #
+    except:
+        try:
+            locale.setlocale(locale.LC_ALL, "english")
+        #
+        except:
+            locale.setlocale(locale.LC_ALL, "")
+        #
+    #
+#
+?>

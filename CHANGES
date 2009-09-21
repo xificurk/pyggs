@@ -1,6 +1,26 @@
 CHANGES
 ============================================================================
 
+Release 0.2 (2009-09-21)
+--------------------------
+
+[Bugfixes]
+
+  * Config file encoding problem.
+
+  * Event and Webcam logs are now in MyFinds.
+
+[Enhancements]
+
+  * New version of GCparser.
+
+  * New more intuitive setup system.
+
+  * A lot of code cleaning:
+      - a lot of minor improvements in plugin system
+      - better colored output handling
+      - working directory is unfortunately backwards incompatible
+
 
 Release 0.1.1 (2009-09-11)
 --------------------------

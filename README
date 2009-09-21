@@ -16,14 +16,13 @@ Author:
 Requirements
 ============================================================================
 * Python 3.1 or newer
-* GCparser lib v0.2 or newer
 
 Installation
 ============================================================================
-Just put the Pyggs (with GCparser lib) whereever you want, then run script:
-$ ./setup.py -p profilename
-And input your settings. Then you can run:
-$ ./pyggs.py -p profilename
+Just put the Pyggs whereever you want, then run script:
+$ ./pyggs
+and folow the instructions.
+
 There are more options available, see:
 $ ./pyggs.py --help
 

@@ -808,7 +808,9 @@ if __name__ == "__main__":
     setup = opts.setup
 
     # Check requirements
-    if float(platform.python_version()) < 3.1:
+    version = platform.python_version().split(".")
+    version = float(version[0] + "." + version[1])
+    if version < 3.1:
         rootlog.critical(_("You need at least Python {0} to run this script.").format(3.1))
 
     workDir = os.path.expanduser(opts.workdir)

@@ -56,17 +56,17 @@ class Plugin(base.Plugin):
             if len(finds) > 0:
                 finds = finds + "|"
             details = self.cache.storage.select([row["guid"]])[0]
-            finds = finds + "{1};{2};{3};{4}".format(details["waypoint"], row["date"], details["lat"], details["lon"])
+            finds = finds + "{0};{1};{2};{3}".format(details["waypoint"], row["date"], details["lat"], details["lon"])
 
         hash = str(finds)
         hash = md5(hash.encode("utf-8")).hexdigest()
-        if self.plugin.config["force"]:
+        if not self.config["force"]:
             hash_old = self.master.profileStorage.getEnv(self.NS + ".hash")
             if hash == hash_old:
                 self.log.info("Geocaching.cz database seems already up to date, skipping update.")
                 return
 
-        data = {"a":"nalezy","u":self.plugin.gccz.config["username"],"p":self.plugin.gccz.config["password"],"d":finds}
+        data = {"a":"nalezy","u":self.gccz.config["username"],"p":self.gccz.config["password"],"d":finds}
         result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
         result = result.read().decode().splitlines()
 

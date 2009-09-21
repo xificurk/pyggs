@@ -42,7 +42,7 @@ class Plugin(base.Plugin):
         config.update(self.NS, "force", _("Force geocaching.com profile update on every run ({CHOICES})?"), validate=["y", "n"])
 
 
-    def setup(self):
+    def prepare(self):
         base.Plugin.prepare(self)
         if self.config["force"] == "y":
             self.config["force"] = True
@@ -65,7 +65,7 @@ class Plugin(base.Plugin):
                 hash.remove(line)
         hash = "\n".join(hash)
         hash = md5(hash.encode("utf-8")).hexdigest()
-        if self.config["force"]:
+        if not self.config["force"]:
             hash_old = self.master.profileStorage.getEnv(self.NS + ".hash")
             if hash == hash_old:
                 self.log.info("Geocaching.com profile seems already up to date, skipping update.")

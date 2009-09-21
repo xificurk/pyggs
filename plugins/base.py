@@ -38,8 +38,9 @@ class Plugin(object):
         for plugin in self.dependencies:
             self.__dict__[plugin] = self.master.plugins[plugin]
         self.config = {}
-        for option in self.master.config.options(self.NS):
-            self.config[option] = self.master.config.get(self.NS, option)
+        if self.master.config.has_section(self.NS):
+            for option in self.master.config.options(self.NS):
+                self.config[option] = self.master.config.get(self.NS, option)
 
 
 class Storage(object):

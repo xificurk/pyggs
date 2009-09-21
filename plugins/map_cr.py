@@ -77,5 +77,5 @@ class Plugin(base.Plugin):
             templateData["map"]["chld"] = "".join(prsorted)
             templateData["map"]["chd"] = tmp1 + "|" + tmp2
             templateData["total"] = total
-            templateData["uid"] = self.master.config.get(self.gccz.NS, "uid")
+            templateData["uid"] = self.gccz.config["uid"]
             self.stats.registerTemplate(":stats.map_cr", templateData)

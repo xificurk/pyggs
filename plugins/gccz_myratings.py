@@ -45,6 +45,7 @@ class Plugin(base.Plugin):
 
     def prepare(self):
         base.Plugin.prepare(self)
+        self.config["timeout"] = int(self.config["timeout"])
         self.storage = Storage(self.master.profileStorage.filename, self)
 
 
@@ -70,7 +71,7 @@ class Storage(base.Storage):
             return self.valid
 
         lastCheck = self.getEnv("lastcheck")
-        timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*3600
+        timeout = self.plugin.config["timeout"]*3600
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
         else:
@@ -82,8 +83,7 @@ class Storage(base.Storage):
 
     def update(self):
         """Re-download ragings data"""
-        config = self.plugin.master.config
-        data = {"a":"ctivlastnihodnoceni","v":"1","u":config.get(self.plugin.gccz.NS, "username"),"p":config.get(self.plugin.gccz.NS, "password")}
+        data = {"a":"ctivlastnihodnoceni","v":"1","u":self.plugin.gccz.config["username"],"p":self.plugin.gccz.config["password"]}
         result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
         result = result.read().decode("utf-8","replace").splitlines()
 

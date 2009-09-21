@@ -43,6 +43,7 @@ class Plugin(base.Plugin):
 
     def prepare(self):
         base.Plugin.prepare(self)
+        self.config["timeout"] = int(self.config["timeout"])
         self.master.registerHandler("myFinds", self.parseMyFinds)
         self.storage = Storage(self.master.profileStorage.filename, self)
 
@@ -78,7 +79,7 @@ class Storage(base.Storage):
             return self.valid
 
         lastCheck = self.getEnv("lastcheck")
-        timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*3600
+        timeout = self.plugin.config["timeout"]*3600
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
         else:

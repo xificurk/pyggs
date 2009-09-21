@@ -98,5 +98,5 @@ class Plugin(base.Plugin):
             templateData = {}
             templateData["total"] = total
             templateData["id"] = id
-            templateData["uid"] = self.master.config.get(self.gccz.NS, "uid")
+            templateData["uid"] = self.gccz.config["uid"]
             self.stats.registerTemplate(":stats.map_europe", templateData)

@@ -42,6 +42,14 @@ class Plugin(base.Plugin):
         config.update(self.NS, "force", _("Force geocaching.com profile update on every run ({CHOICES})?"), validate=["y", "n"])
 
 
+    def setup(self):
+        base.Plugin.prepare(self)
+        if self.config["force"] == "y":
+            self.config["force"] = True
+        else:
+            self.config["force"] = False
+
+
     def finish(self):
         file = os.path.join(self.master.outDir, "export.html")
         if not os.path.isfile(file):
@@ -51,15 +59,13 @@ class Plugin(base.Plugin):
         with open(file, "r", encoding="utf-8") as fp:
             data = fp.read()
 
-        config = self.master.config
-
         hash = data.splitlines()
         for line in hash:
             if line.find("<!-- pyggs[hashRemove] -->") != -1:
                 hash.remove(line)
         hash = "\n".join(hash)
         hash = md5(hash.encode("utf-8")).hexdigest()
-        if config.get(self.NS, "force") != "y":
+        if self.config["force"]:
             hash_old = self.master.profileStorage.getEnv(self.NS + ".hash")
             if hash == hash_old:
                 self.log.info("Geocaching.com profile seems already up to date, skipping update.")

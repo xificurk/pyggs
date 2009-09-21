@@ -37,7 +37,9 @@ class Plugin(object):
     def prepare(self):
         for plugin in self.dependencies:
             self.__dict__[plugin] = self.master.plugins[plugin]
-
+        self.config = {}
+        for option in self.master.config.options(self.NS):
+            self.config[option] = self.master.config.get(self.NS, option)
 
 
 class Storage(object):

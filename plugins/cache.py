@@ -44,6 +44,7 @@ class Plugin(base.Plugin):
 
     def prepare(self):
         base.Plugin.prepare(self)
+        self.config["timeout"] = int(self.config["timeout"])
 
         self.homecoord = {}
         self.homecoord["lat"] = float(self.master.config.get("general", "homelat"))
@@ -150,7 +151,7 @@ class Storage(base.Storage):
 
     def select(self, guids):
         """Selects data from database, performs update if neccessary"""
-        timeout = int(self.plugin.master.config.get(self.plugin.NS, "timeout"))*24*3600
+        timeout = self.plugin.config["timeout"]*24*3600
         result = []
         db = self.getDb()
         cur = db.cursor()

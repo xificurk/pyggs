@@ -42,6 +42,14 @@ class Plugin(base.Plugin):
         config.update(self.NS, "force", _("Force my finds update on every run ({CHOICES})?"), validate=["y", "n"])
 
 
+    def prepare(self):
+        base.Plugin.prepare(self)
+        if self.config["force"] == "y":
+            self.config["force"] = True
+        else:
+            self.config["force"] = False
+
+
     def finish(self):
         finds = ""
         for row in self.myfinds.storage.select():
@@ -49,17 +57,16 @@ class Plugin(base.Plugin):
                 finds = finds + "|"
             details = self.cache.storage.select([row["guid"]])[0]
             finds = finds + "{1};{2};{3};{4}".format(details["waypoint"], row["date"], details["lat"], details["lon"])
-        config = self.master.config
 
         hash = str(finds)
         hash = md5(hash.encode("utf-8")).hexdigest()
-        if config.get(self.NS, "force") != "y":
+        if self.plugin.config["force"]:
             hash_old = self.master.profileStorage.getEnv(self.NS + ".hash")
             if hash == hash_old:
                 self.log.info("Geocaching.cz database seems already up to date, skipping update.")
                 return
 
-        data = {"a":"nalezy","u":config.get(self.gccz.NS, "username"),"p":config.get(self.gccz.NS, "password"),"d":finds}
+        data = {"a":"nalezy","u":self.plugin.gccz.config["username"],"p":self.plugin.gccz.config["password"],"d":finds}
         result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
         result = result.read().decode().splitlines()
 

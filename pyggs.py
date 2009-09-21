@@ -604,7 +604,7 @@ class Templar(tenjin.Engine):
             context = pages[output]["context"]
             context["pages"] = pages
             result = self.render(pages[output]["template"], context, globals=globals, layout=pages[output]["layout"])
-            with open(os.path.join(self.outDir, output), "w") as fp:
+            with open(os.path.join(self.outDir, output), "w", encoding="utf-8") as fp:
                 fp.write(result)
                 fp.flush()
 

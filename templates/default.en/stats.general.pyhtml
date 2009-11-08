@@ -1,5 +1,5 @@
 <table#{{css("table")}}>
-<caption#{{css("caption")}}>General Statistics</caption>
+<caption#{{css("caption")}}>General statistics</caption>
 <?py
 rendered = []
 order    = [":stats.general.myfinds_averages", ":stats.general.myfinds_topperiods", ":stats.general.gccz_ratings_top", ":stats.general.cache_topfeatures"]

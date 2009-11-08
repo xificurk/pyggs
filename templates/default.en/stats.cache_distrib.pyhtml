@@ -38,7 +38,7 @@ for size in ["Large", "Regular", "Small", "Micro", "Other", "Not chosen", "Virtu
 
 <td#{{css("td","td-layouttable","endsection-bold-v")}}>
 <table#{{css("table")}}>
-<caption#{{css("caption")}}>Found caches by Country</caption>
+<caption#{{css("caption")}}>Found caches by country</caption>
 <tr><th#{{css("th")}}>Country</th><th#{{css("th")}}>Finds</th><th#{{css("th")}}>Percent</th></tr>
 <?py
 for country in countries:

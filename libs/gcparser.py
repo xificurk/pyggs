@@ -443,8 +443,15 @@ class CacheParser(BaseParser):
             self.details["hidden"] = "{0:04d}-{1:02d}-{2:02d}".format(int(match.group(3)), int(match.group(1)), int(match.group(2)))
             self.log.log(5, "hidden = {0}".format(self.details["hidden"]))
         else:
-            self.details["hidden"] = "0000-00-00"
-            self.log.error("Hidden date not found.")
+            match = re.search("<span id=['\"]DateHidden['\"]>[A-Za-z]+, ([A-Za-z]+) ([0-9]+), ([0-9]+)</span>", self.data, re.I)
+            if match is not None:
+                #Saturday, July 26, 2008
+                month = {"January":1, "February":2, "March":3, "April":4, "May":5, "June":6, "July":7, "August":8, "September":9, "October":10, "November":11, "December":12}[match.group(1)]
+                self.details["hidden"] = "{0:04d}-{1:02d}-{2:02d}".format(int(match.group(3)), month, int(match.group(2)))
+                self.log.log(5, "hidden = {0}".format(self.details["hidden"]))
+            else:
+                self.details["hidden"] = "1980-01-01"
+                self.log.error("Hidden date not found.")
 
         match = re.search("<span id=['\"]CacheOwner['\"]>([^<]+)<br />Size: ([^<]+)<br />by <a href=['\"]http://www.geocaching.com/profile/\?guid=([a-z0-9-]+)&wid=([a-z0-9-]+)[^'\"]*['\"]>([^<]+)</a></span>", self.data, re.I)
         if match is not None:

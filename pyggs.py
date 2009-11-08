@@ -41,6 +41,7 @@ import sys
 import libs.console as console
 from libs.gcparser import GCparser
 import libs.tenjin as tenjin
+from libs.versioning import VersionInfo
 
 from plugins.base import Storage
 import plugins
@@ -808,10 +809,10 @@ if __name__ == "__main__":
     setup = opts.setup
 
     # Check requirements
-    version = platform.python_version().split(".")
-    version = float(version[0] + "." + version[1])
-    if version < 3.1:
-        rootlog.critical(_("You need at least Python {0} to run this script.").format(3.1))
+    version = VersionInfo(platform.python_version())
+    minVersion = "3.1"
+    if version < minVersion:
+        rootlog.critical(_("You need at least Python {0} to run this script.").format(minVersion))
 
     workDir = os.path.expanduser(opts.workdir)
     parserDir = os.path.join(workDir, "parser")
@@ -822,11 +823,11 @@ if __name__ == "__main__":
     if os.path.isdir(pyggsDir):
         if os.path.isfile(os.path.join(pyggsDir, "version")):
             with open(os.path.join(pyggsDir, "version")) as fp:
-                version = float(fp.read())
+                version = VersionInfo(fp.read())
         else:
-            version = 0.1
-        if version < float(__version__):
-            if version < 0.2:
+            version = VersionInfo("0.1")
+        if version < __version__:
+            if version < "0.2":
                 rootlog.error(_("Detected incompatible version of working directory {0}. Please, delete the directory and set up your profiles from start.").format(workDir))
                 delete = console.prompt(_("Do you want to delete the working directory and enter the setup script now ({CHOICES})?"), validate=["y", "n"], default="y")
                 if delete == "n":

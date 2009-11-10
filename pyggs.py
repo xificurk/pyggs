@@ -845,6 +845,8 @@ if __name__ == "__main__":
                         rootlog.info(_("Fixing change of cache type name Unknown -> Mystery/Puzzle SUCCESSFUL."))
                     except:
                         rootlog.warn(_("Fixing change of cache type name Unknown -> Mystery/Puzzle FAILED."))
+            with open(os.path.join(pyggsDir, "version"), "w") as fp:
+                fp.write(__version__)
 
     # Check directory structure
     if setup is None and (not os.path.isdir(workDir) or not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir) or not os.path.isdir(profilesDir)):

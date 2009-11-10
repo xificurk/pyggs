@@ -1,13 +1,13 @@
 # Pyggs English translation.
 # Copyright (C) 2009
-# Petr Morávek <xificurk@centrum.cz>, 2009.
+# Petr Morávek <xificurk@gmail.com>, 2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pyggs 0.1\n"
+"Project-Id-Version: Pyggs 0.2.2\n"
 "POT-Creation-Date: 2009-09-09 20:46+CEST\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Petr Morávek <xificurk@centrum.cz>\n"
+"Last-Translator: Petr Morávek <xificurk@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"

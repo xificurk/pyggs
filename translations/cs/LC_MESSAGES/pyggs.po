@@ -5,9 +5,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Pyggs 0.1\n"
-"POT-Creation-Date: 2009-09-21 02:09+CEST\n"
+"POT-Creation-Date: 2009-11-10 14:15+CET\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Petr Morávek <xificurk@centrum.cz>\n"
+"Last-Translator: Petr Morávek <xificurk@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -154,250 +154,262 @@ msgstr "Generuje HTML stránku se statistikami."
 msgid "Generates page with the list of found but unrated caches by user."
 msgstr "Vygeneruje stránku se seznamem nalezených, ale neohodnocených keší uživatele."
 
-#: pyggs.py:76
+#: pyggs.py:77
 msgid "Entering setup menu for profile {0}."
 msgstr "Otevírám menu s nastavením pro profil {0}."
 
-#: pyggs.py:81
-#: pyggs.py:197
-#: pyggs.py:249
+#: pyggs.py:82
+#: pyggs.py:198
+#: pyggs.py:250
 msgid "Exit"
 msgstr "Konec"
 
-#: pyggs.py:82
-#: pyggs.py:150
+#: pyggs.py:83
+#: pyggs.py:151
 msgid "General options"
 msgstr "Obecná nastavení"
 
-#: pyggs.py:84
-#: pyggs.py:179
+#: pyggs.py:85
+#: pyggs.py:180
 msgid "Output"
 msgstr "Výstup"
 
-#: pyggs.py:85
+#: pyggs.py:86
 msgid "Enable/Disable plugins"
 msgstr "Zapnout/Vypnout pluginy"
 
-#: pyggs.py:86
+#: pyggs.py:87
 msgid "Plugins settings"
 msgstr "Nastavení pluginů"
 
-#: pyggs.py:89
+#: pyggs.py:90
 msgid "Main menu"
 msgstr "Hlavní nabídka"
 
-#: pyggs.py:90
+#: pyggs.py:91
 msgid "Action:"
 msgstr "Akce:"
 
-#: pyggs.py:107
+#: pyggs.py:108
 msgid "Entering full setup for profile {0}."
 msgstr "Zahajuji kompletní nastavení profilu {0}."
 
-#: pyggs.py:122
+#: pyggs.py:123
 msgid "Unable to create working directory {0}."
 msgstr "Nepodařilo se vytvořit pracovní adresář {0}."
 
-#: pyggs.py:134
+#: pyggs.py:135
 msgid "Unable to set up base directory structure in working directory {0}."
 msgstr "Nepodařilo se vytvořit základní adresářovou strukturu v pracovním adresáři {0}."
 
-#: pyggs.py:142
+#: pyggs.py:143
 msgid "Unable to create profile directory {0}."
 msgstr "Nepodařilo se vytvořit adresář profilu {0}."
 
-#: pyggs.py:153
+#: pyggs.py:154
 msgid "Please, select user interface language ({CHOICES})."
 msgstr "Vyberte prosím jazyk uživatelského rozhraní ({CHOICES})."
 
-#: pyggs.py:156
+#: pyggs.py:157
 msgid "Enter your home coordinates in degrees as deciamal number (N means positive value, S negative; E means positive value, W negative)."
 msgstr "Zadejte domovské souřadnice jako desetinné číslo ve stupních (N je jsou kladné hodnoty, S záporné; E jsou kladné hodnoty, W záporné)."
 
-#: pyggs.py:157
+#: pyggs.py:158
 msgid "Latitude:"
 msgstr "Zeměpisná šířka:"
 
-#: pyggs.py:157
 #: pyggs.py:158
+#: pyggs.py:159
 msgid "Please, use decimal number."
 msgstr "Vložte prosím desetinné číslo (s desetinnou tečkou)."
 
-#: pyggs.py:158
+#: pyggs.py:159
 msgid "Longitude:"
 msgstr "Zeměpisná délka:"
 
-#: pyggs.py:169
+#: pyggs.py:170
 msgid "Username:"
 msgstr "Uživatelské jméno:"
 
-#: pyggs.py:170
+#: pyggs.py:171
 msgid "Password:"
 msgstr "Heslo:"
 
-#: pyggs.py:182
+#: pyggs.py:183
 msgid "Templates are looked up in these directories (consecutively):"
 msgstr "Šablony se hledají v těchto adresářích (popořadě):"
 
-#: pyggs.py:183
+#: pyggs.py:184
 msgid "Template ({CHOICES}):"
 msgstr "Šablona ({CHOICES}):"
 
-#: pyggs.py:186
+#: pyggs.py:187
 msgid "Themes are looked up in these directories (consecutively):"
 msgstr "Motivy se hledají v těchto adresářích (popořadě):"
 
-#: pyggs.py:187
+#: pyggs.py:188
 msgid "Theme ({CHOICES}):"
 msgstr "Motiv ({CHOICES}):"
 
-#: pyggs.py:189
+#: pyggs.py:190
 msgid "Directory:"
 msgstr "Adresář:"
 
-#: pyggs.py:189
+#: pyggs.py:190
 msgid "You have to input existing directory."
 msgstr "Musíte zadat existující adreář."
 
-#: pyggs.py:210
+#: pyggs.py:211
 msgid "Plugins settings menu"
 msgstr "Nastavení jednotlivých pluginů"
 
-#: pyggs.py:211
-#: pyggs.py:258
+#: pyggs.py:212
+#: pyggs.py:259
 msgid "Plugins:"
 msgstr "Pluginy:"
 
-#: pyggs.py:215
-#: pyggs.py:282
+#: pyggs.py:216
+#: pyggs.py:283
 msgid "Configuration of"
 msgstr "Nastavení"
 
-#: pyggs.py:226
+#: pyggs.py:227
 msgid "Plugins"
 msgstr "Pluginy"
 
-#: pyggs.py:238
+#: pyggs.py:239
 msgid "Plugin"
 msgstr "Plugin"
 
-#: pyggs.py:239
+#: pyggs.py:240
 msgid "Enable"
 msgstr "Aktivovat"
 
-#: pyggs.py:257
+#: pyggs.py:258
 msgid "Enable/Disable plugins menu"
 msgstr "Nabídka zapnout/vypnout pluginy"
 
-#: pyggs.py:268
+#: pyggs.py:269
 msgid "Cannot disable plugin {0}, because {1} depend on it."
 msgstr "Není možné vypnout plugin {0}, jelikož na něm závisí {1}."
 
-#: pyggs.py:270
+#: pyggs.py:271
 msgid "Disabling plugin {0}."
 msgstr "Vypínám plugin {0}."
 
-#: pyggs.py:273
+#: pyggs.py:274
 msgid "Enabling plugin {0}."
 msgstr "Zapínám plugin {0}."
 
-#: pyggs.py:292
+#: pyggs.py:293
 msgid "Plugin {0} pulled in as dependency."
 msgstr "Plugin {0} přidán jako závislost."
 
-#: pyggs.py:305
+#: pyggs.py:306
 msgid "Note: You can always edit these setings by running pyggs with --setup (-s) switch."
 msgstr "Poznámka: Tato nastavení můžete kdykoliv změnit spuštěním pyggs se --setup (-s) přepínačem."
 
-#: pyggs.py:338
+#: pyggs.py:339
 msgid "Invalid ouput directory {0}."
 msgstr "Chybný adresář {0} pro výstup."
 
-#: pyggs.py:388
+#: pyggs.py:389
 msgid "Missing dependencies {0}."
 msgstr "Chybějící závislosti {0}."
 
-#: pyggs.py:448
+#: pyggs.py:449
 msgid "Cannot find template {0}."
 msgstr "Šablona {0} nenalezena."
 
-#: pyggs.py:469
+#: pyggs.py:470
 msgid "Cannot find theme {0}."
 msgstr "Motiv {0} nenalezen."
 
-#: pyggs.py:796
+#: pyggs.py:797
 msgid "choose profile"
 msgstr "nastavit profil"
 
-#: pyggs.py:797
+#: pyggs.py:798
 msgid "disable usage of colored output"
 msgstr "vypne používání barevného výstupu"
 
-#: pyggs.py:798
+#: pyggs.py:799
 msgid "run setup script"
 msgstr "spustí nastavení"
 
-#: pyggs.py:799
+#: pyggs.py:800
 msgid "set working directory, default is {0}"
 msgstr "nastavení pracovního adresáře, výchozí je {0}"
 
-#: pyggs.py:800
+#: pyggs.py:801
 msgid "set logging to ERROR"
 msgstr "nastavit logování na ERROR"
 
-#: pyggs.py:801
+#: pyggs.py:802
 msgid "set logging to INFO"
 msgstr "nastavit logování na INFO"
 
-#: pyggs.py:802
+#: pyggs.py:803
 msgid "set logging to DEBUG"
 msgstr "nastavit logování na DEBUG"
 
-#: pyggs.py:803
+#: pyggs.py:804
 msgid "set logging to ALL"
 msgstr "nastavit logování na ALL"
 
-#: pyggs.py:814
+#: pyggs.py:815
 msgid "You need at least Python {0} to run this script."
 msgstr "Pro běh tohot skriptu potřebujete Python verze {0} nebo vyšší."
 
-#: pyggs.py:830
+#: pyggs.py:831
 msgid "Detected incompatible version of working directory {0}. Please, delete the directory and set up your profiles from start."
 msgstr "Nalezena nekompatibilní verze pracovního adresáře {0}. Prosím, vymažte adresář a znovu nastavte své profily."
 
-#: pyggs.py:831
+#: pyggs.py:832
 msgid "Do you want to delete the working directory and enter the setup script now ({CHOICES})?"
 msgstr "Chcete nyní vymazat pracovní adresář a spustit nastavení profilu ({CHOICES})?"
 
-#: pyggs.py:835
+#: pyggs.py:836
 msgid "Deleting content of working directory {0}."
 msgstr "Mažu obsah pracovního adresáře {0}."
 
 #: pyggs.py:841
+msgid "Fixing change of cache type name Unknown -> Mystery/Puzzle."
+msgstr "Upravuji název typu keší Uknown -> Mystery/Puzzle."
+
+#: pyggs.py:845
+msgid "Fixing change of cache type name Unknown -> Mystery/Puzzle SUCCESSFUL."
+msgstr "Změna názvu typu keší Uknown -> Mystery/Puzzle ÚSPĚŠNÁ."
+
+#: pyggs.py:847
+msgid "Fixing change of cache type name Unknown -> Mystery/Puzzle FAILED."
+msgstr "Změna názvu typu keší Uknown -> Mystery/Puzzle SELHALA."
+
+#: pyggs.py:851
 msgid "Working directory is not set up properly, initiating setup script."
 msgstr "Pracovní adresář není připraven, spouštím nastavení."
 
-#: pyggs.py:853
+#: pyggs.py:863
 msgid "No profile name given, auto-chosing the only available profile '{0}'."
 msgstr "Nebylo zadáno žádné jméno profilu, automaticky předpokládám jediný dostupný profil '{0}'."
 
-#: pyggs.py:856
+#: pyggs.py:866
 msgid "Create new"
 msgstr "Vytvořit nový"
 
-#: pyggs.py:857
+#: pyggs.py:867
 msgid "No profile name given, please select your profile."
 msgstr "Nebylo zadáno žádné jméno profilu, vyberte prosím profil."
 
-#: pyggs.py:859
+#: pyggs.py:869
 msgid "Please, use only alpha-numeric characters."
 msgstr "Používejte prosím pouze písmena a číslice."
 
-#: pyggs.py:859
+#: pyggs.py:869
 msgid "Profile name"
 msgstr "Jméno profilu"
 
-#: pyggs.py:864
+#: pyggs.py:874
 msgid "Profile '{0}' does not exist, creating profile directory and initiating setup script."
 msgstr "Profil '{0}' neexistuje, vytvářím adresář profilu a zahajuji nastavení."
 

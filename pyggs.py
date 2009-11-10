@@ -697,6 +697,7 @@ class Templar(tenjin.Engine):
         ctypes["Traditional Cache"] = 2
         ctypes["Multi-cache"] = 3
         ctypes["Unknown Cache"] = 8
+        ctypes["Mystery/Puzzle Cache"] = 8
         ctypes["Letterbox Hybrid"] = 5
         ctypes["Earthcache"] = "earthcache"
         ctypes["Wherigo Cache"] = 1858

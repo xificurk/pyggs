@@ -56,12 +56,15 @@ class Plugin(base.Plugin):
                 milestones[i] = "^{0:d}$".format(len(myFinds))
             else:
                 milestones[i] = "^{0}$".format(milestones[i].strip())
+        guids = []
         for cache in myFinds:
             for milestone in milestones:
                 match = re.match(milestone, str(cache["sequence"]))
                 if match is not None:
                     self.log.debug("Cache {0} matches expr {1}.".format(cache["sequence"], milestone))
-                    row = dict(cache)
-                    row.update(self.cache.storage.select([cache["guid"]])[0])
-                    result.append(row)
+                    guids.append(cache["guid"])
+                    result.append(dict(cache))
+        caches = self.cache.storage.fetchAssoc(self.cache.storage.select(guids), "guid")
+        for cache in result:
+            cache.update(caches[cache["guid"]])
         return result

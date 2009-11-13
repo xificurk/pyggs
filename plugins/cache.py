@@ -144,7 +144,7 @@ class Storage(base.Storage):
             if exists:
                 cur.execute("UPDATE cache SET lastCheck = ? WHERE guid = ?", (time.time(), data["guid"]))
             else:
-                cur.execute("INSERT INTO cache(guid,lastCheck) VALUES(?,?)", (data["guid"],time.time()))
+                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck) VALUES(?,'','','','','','','','','','','','','','','','','',?)", (data["guid"], time.time()))
         db.commit()
         db.close()
 

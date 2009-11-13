@@ -82,6 +82,8 @@ class Fetcher(object):
         self.firstFetch = 0
         self.lastFetch = 0
         self.fetchCount = 0
+        # Desired average fetch sleep time
+        self.fetchAvgTime = 600
 
 
     def fetch(self, url, authenticate=False, data=None, check=True):
@@ -99,7 +101,12 @@ class Fetcher(object):
         headers.append(("Accept-Charset", "utf-8,*;q=0.5"))
         opener.addheaders = headers
 
-        self.wait()
+        if authenticate:
+            self.wait()
+        else:
+            time.sleep(max(0, self.lastFetch + 1 - time.time()))
+            self.lastFetch = time.time()
+
         self.log.debug("Fetching page '{0}'.".format(url))
         if data is not None:
             web = opener.open(url, urllib.parse.urlencode(data))
@@ -222,22 +229,25 @@ class Fetcher(object):
     def wait(self):
         """Waits for random number of seconds to lessen the load on geocaching.com"""
         # no fetch for a long time => reset firstFetch value using desired average
-        self.firstFetch = max(time.time() - self.fetchCount*20, self.firstFetch)
-        # Desired average: fetch page every 20 seconds
-        count = self.fetchCount - int((time.time() - self.firstFetch)/20)
+        self.firstFetch = max(time.time() - self.fetchCount*self.fetchAvgTime, self.firstFetch)
+        # Compute count
+        count = self.fetchCount - int((time.time() - self.firstFetch)/self.fetchAvgTime)
 
-        # sleep time 1s: 63/63s => overall 63/1min
-        if count < 60:
+        # sleep time 1s: 10/10s => overall 10/10s
+        if count < 10:
             sleepTime = 1
-        # sleep time 1-5s: 164/492s => overall 227/9min
+        # sleep time 2-8s: 40/3.3m => overall 50/3.5min
+        elif count < 50:
+            sleepTime = random.randint(2,8)
+        # sleep time 5-35s: 155/51.6m => overall 205/55.1min
         elif count < 200:
-            sleepTime = random.randint(1,5)
-        # sleep time 2-10s: 428/2568s => overall 665/52min
+            sleepTime = random.randint(5,35)
+        # sleep time 10-50s: 315/2.6h => overall 520/3.5h
         elif count < 500:
-            sleepTime = random.randint(2,10)
-        # sleep time 10-20s
+            sleepTime = random.randint(10,50)
+        # sleep time 20-80s
         else:
-            sleepTime = random.randint(10,20)
+            sleepTime = random.randint(20,80)
         time.sleep(max(0, self.lastFetch + sleepTime - time.time()))
         self.fetchCount = self.fetchCount + 1
         self.lastFetch = time.time()
@@ -295,6 +305,9 @@ class Fetcher(object):
         logged = True
         if data is not None:
             for line in data.splitlines():
+                if line.find("Sorry, the owner of this listing has made it viewable to subscribers only") != -1:
+                    self.log.debug("Subscribers only cache.")
+                    break
                 if line.find("You are not logged in.") != -1:
                     logged = False
                     break

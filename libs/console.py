@@ -108,7 +108,7 @@ else:
 
 
 colors = {}
-colors["reset"] = color()
+colors["reset"] = color("RGB", False, "")
 colors["notset"] = color("GB")
 colors["debug"] = color("RB")
 colors["info"] = color("RGB", True)

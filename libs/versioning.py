@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    versioning.py - interface for version comparing.
+    versioning.py - interface for version comparison.
     Based on http://code.activestate.com/recipes/521888/
     Copyright (C) 2007 Alexander Belchenko
     Copyright (C) 2009 Petr Morávek

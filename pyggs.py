@@ -813,7 +813,9 @@ if __name__ == "__main__":
     setup = opts.setup
 
     # Check requirements
-    version = VersionInfo(platform.python_version())
+    # NOTE: Ubuntu modifies version string by '+', OMG :-(, so we drop all but numbers and dots
+    version = re.sub("[^0-9.]+", "", platform.python_version())
+    version = VersionInfo(version)
     minVersion = "3.1"
     if version < minVersion:
         rootlog.critical(_("You need at least Python {0} to run this script.").format(minVersion))

@@ -1,6 +1,22 @@
 CHANGES
 ============================================================================
 
+Release 0.2.3 (2009-11-27)
+--------------------------
+
+[Enhancements]
+
+  * GCparser update: lessen the load on geocaching servers.
+
+  * Change console text color on startup.
+
+[Bugfixes]
+
+  * Refresh version info in pyggsDir.
+
+  * PM cache.
+
+
 Release 0.2.2 (2009-11-10)
 --------------------------
 

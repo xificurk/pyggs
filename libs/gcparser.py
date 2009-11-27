@@ -469,6 +469,9 @@ class CacheParser(BaseParser):
         match = re.search("<span id=['\"]CacheOwner['\"]>([^<]+)<br />Size: ([^<]+)<br />by <a href=['\"]http://www.geocaching.com/profile/\?guid=([a-z0-9-]+)&wid=([a-z0-9-]+)[^'\"]*['\"]>([^<]+)</a></span>", self.data, re.I)
         if match is not None:
             self.details["type"] = self.unescape(match.group(1)).strip()
+            # GS weird changes bug
+            if self.details["type"] == "Mystery/Puzzle Cache":
+                self.details["type"] = "Unknown Cache"
             self.details["guid"] = match.group(4)
             self.details["owner"] = self.unescape(match.group(5)).strip()
             self.details["owner_id"] = match.group(3)

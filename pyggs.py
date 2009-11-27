@@ -31,6 +31,7 @@ import gettext
 import locale
 import logging
 import math
+from optparse import IndentedHelpFormatter
 from optparse import OptionParser
 import os
 import platform
@@ -793,7 +794,7 @@ if __name__ == "__main__":
     rootlog.setLevel(logging.WARN)
 
     # Parse command line arguements
-    optp = OptionParser()
+    optp = OptionParser(formatter=IndentedHelpFormatter(max_help_position=40), conflict_handler="resolve", version="%prog "+__version__)
     optp.add_option("-p", "--profile", help=_("choose profile"), dest="profile", default=None)
     optp.add_option("-n", "--no-color", help=_("disable usage of colored output"), dest="color", action="store_false", default=True)
     optp.add_option("-s", "--setup", help=_("run setup script"), dest="setup", action="store_const", const="interactive", default=False)

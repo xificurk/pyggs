@@ -806,6 +806,9 @@ if __name__ == "__main__":
     opts,args = optp.parse_args()
     rootlog.setLevel(opts.loglevel)
     console.useColor = opts.color
+    console.changeColor(console.colors["reset"], sys.stdout)
+    console.changeColor(console.colors["reset"], sys.stderr)
+    print("")
     setup = opts.setup
 
     # Check requirements

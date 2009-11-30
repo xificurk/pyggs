@@ -96,6 +96,10 @@ else:
             color = color + "0"
 
         color = color + "m"
+
+        if not bold:
+            color = "\x1b[0m" + color
+
         return color
 
 
@@ -109,11 +113,11 @@ else:
 
 colors = {}
 colors["reset"] = color("RGB", False, "")
-colors["notset"] = color("GB")
-colors["debug"] = color("RB")
-colors["info"] = color("RGB", True)
-colors["warn"] = color("RG", True)
-colors["error"] = color("R", True)
+colors["notset"] = color("GB", False, "")
+colors["debug"] = color("RB", False, "")
+colors["info"] = color("RGB", True, "")
+colors["warn"] = color("RG", True, "")
+colors["error"] = color("R", True, "")
 colors["critical"] = color("RG", True, "R")
 
 

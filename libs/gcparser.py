@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.3"
+__version__ = "0.3.1"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -476,22 +476,28 @@ class CacheParser(BaseParser):
             # GS weird changes bug
             if self.details["type"] == "Unknown Cache":
                 self.details["type"] = "Mystery/Puzzle Cache"
-            self.details["size"] = self.unescape(match.group(2)).strip()
             self.details["guid"] = match.group(4)
             self.details["owner"] = self.unescape(match.group(5)).strip()
             self.details["owner_id"] = match.group(3)
             self.log.log(5, "guid = {0}".format(self.details["guid"]))
             self.log.log(5, "type = {0}".format(self.details["type"]))
-            self.log.log(5, "size = {0}".format(self.details["size"]))
             self.log.log(5, "owner = {0}".format(self.details["owner"]))
             self.log.log(5, "owner_id = {0}".format(self.details["owner_id"]))
         else:
             self.details["type"] = ""
-            self.details["size"] = ""
             self.details["guid"] = ""
             self.details["owner"] = ""
             self.details["owner_id"] = ""
-            self.log.error("Type, size, guid, owner, owner_id not found.")
+            self.log.error("Type, guid, owner, owner_id not found.")
+
+        # <img src="/images/icons/container/not_chosen.gif" alt="Size: Not chosen" />
+        match = re.search("<img[^>]*src=['\"][^'\"]*/icons/container/[^'\"]*['\"][^>]*alt=['\"]Size: ([^'\"]+)['\"][^>]*>", self.data, re.I)
+        if match is not None:
+            self.details["size"] = self.unescape(match.group(1)).strip()
+            self.log.log(5, "size = {0}".format(self.details["size"]))
+        else:
+            self.details["size"] = ""
+            self.log.error("Size not found.")
 
         # <span id="ctl00_ContentBody_Difficulty"><img src="http://www.geocaching.com/images/stars/stars3.gif" alt="3 out of 5" /></span>
         match = re.search("<span id=['\"]ctl00_ContentBody_Difficulty['\"]><img src=['\"]http://www.geocaching.com/images/stars/[^\"']*['\"] alt=['\"]([0-9.]+) out of 5['\"]", self.data, re.I)

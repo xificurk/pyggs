@@ -75,7 +75,7 @@ class Pyggs(GCparser):
     def interactiveSetup(self):
         """Interactive setup script"""
         print()
-        console.writeln(_("Entering setup menu for profile {0}.").format(self.profile), console.color("G", True))
+        console.writeln(_("Entering setup menu for profile {0}.").format(self.profile), console.color("G", True, ""))
         self.setupWorkDir()
 
         choice = ""
@@ -88,7 +88,7 @@ class Pyggs(GCparser):
         choices.append(_("Plugins settings"))
         while choice != choices[0]:
             print()
-            console.writeln(_("Main menu"), console.color("RB", True))
+            console.writeln(_("Main menu"), console.color("RB", True, ""))
             choice = console.menu(_("Action:"), choices)
             if choice == choices[1]:
                 self.setupGeneral()
@@ -106,7 +106,7 @@ class Pyggs(GCparser):
     def fullSetup(self):
         """Full setup script"""
         print()
-        console.writeln(_("Entering full setup for profile {0}.").format(self.profile), console.color("G", True))
+        console.writeln(_("Entering full setup for profile {0}.").format(self.profile), console.color("G", True, ""))
         self.setupWorkDir()
         self.setupGeneral()
         self.setupGeocachingCom()
@@ -149,7 +149,7 @@ class Pyggs(GCparser):
         config = self.config
         config.assertSection("general")
         print()
-        console.writeln(_("General options"), console.color("G", True))
+        console.writeln(_("General options"), console.color("G", True, ""))
 
         langs = globals()["langs"]
         config.update("general", "language", _("Please, select user interface language ({CHOICES})."), validate=list(langs.keys()))
@@ -166,7 +166,7 @@ class Pyggs(GCparser):
         config = self.config
         config.assertSection("geocaching.com")
         print()
-        console.writeln("Geocaching.com", console.color("G", True))
+        console.writeln("Geocaching.com", console.color("G", True, ""))
 
         config.update("geocaching.com", "username", _("Username:"), validate=True)
         config.update("geocaching.com", "password", _("Password:"), validate=True)
@@ -178,7 +178,7 @@ class Pyggs(GCparser):
         config = self.config
         config.assertSection("output")
         print()
-        console.writeln(_("Output"), console.color("G", True))
+        console.writeln(_("Output"), console.color("G", True, ""))
 
         templates = self.detectTemplates()
         print("    " + _("Templates are looked up in these directories (consecutively):") + "\n      * " + "\n      * ".join(self.templateDirs))
@@ -209,13 +209,13 @@ class Pyggs(GCparser):
         print(choices)
         while True:
             print()
-            console.writeln("  " + _("Plugins settings menu"), console.color("RB"))
+            console.writeln("  " + _("Plugins settings menu"), console.color("RB", False, ""))
             choice = console.menu(_("Plugins:"), choices, padding=1)
             if choice == choices[0]:
                 break
             plugin = plugins[choices.index(choice) - 1]
-            console.write("  " + _("Configuration of") + " ", console.color("GB"))
-            console.writeln(plugin, console.color("GB", True))
+            console.write("  " + _("Configuration of") + " ", console.color("GB", False, ""))
+            console.writeln(plugin, console.color("GB", True, ""))
             self.plugins[plugin].setup()
             config.save()
 
@@ -225,7 +225,7 @@ class Pyggs(GCparser):
         config = self.config
         config.assertSection("plugins")
         print()
-        console.writeln(_("Plugins"), console.color("G", True))
+        console.writeln(_("Plugins"), console.color("G", True, ""))
 
         # Remove not installed plugins
         installedPlugins = self.detectPlugins()
@@ -237,7 +237,7 @@ class Pyggs(GCparser):
         for plugin in installedPlugins:
             self.loadPlugin(plugin)
             if plugin not in config.options("plugins"):
-                console.writeln("  " + _("Plugin") + " " + plugin + ": " + self.plugins[plugin].about, console.color("G"))
+                console.writeln("  " + _("Plugin") + " " + plugin + ": " + self.plugins[plugin].about, console.color("G", False, ""))
                 config.update("plugins", plugin, _("Enable") + " " + plugin + " ({CHOICES})?", validate=["y", "n"])
                 if config.get("plugins", plugin) == "y":
                     self.setupPluginsEnable(plugin)
@@ -256,7 +256,7 @@ class Pyggs(GCparser):
                 else:
                     choices.append("[ ] {0:25s} {1}".format(plugin, self.plugins[plugin].about))
             print()
-            console.writeln("  " + _("Enable/Disable plugins menu"), console.color("RB"))
+            console.writeln("  " + _("Enable/Disable plugins menu"), console.color("RB", False, ""))
             choice = console.menu(_("Plugins:"), choices, padding=1)
             if choice == choices[0]:
                 break
@@ -281,8 +281,8 @@ class Pyggs(GCparser):
     def setupPluginsEnable(self, plugin):
         """Enable and setup plugin with all dependencies"""
         if hasattr(self.plugins[plugin], "setup"):
-            console.write("  " + _("Configuration of") + " ", console.color("GB"))
-            console.writeln(plugin, console.color("GB", True))
+            console.write("  " + _("Configuration of") + " ", console.color("GB", False, ""))
+            console.writeln(plugin, console.color("GB", True, ""))
             self.plugins[plugin].setup()
 
         loaded = []
@@ -304,7 +304,7 @@ class Pyggs(GCparser):
         with open(os.path.join(self.workDir, "pyggs", "version"), "w") as fp:
             fp.write(__version__)
         print()
-        console.writeln(_("Note: You can always edit these setings by running pyggs with --setup (-s) switch."), console.color("G", True))
+        console.writeln(_("Note: You can always edit these setings by running pyggs with --setup (-s) switch."), console.color("G", True, ""))
 
 
     def run(self):

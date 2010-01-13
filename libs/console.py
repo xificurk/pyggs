@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2"
+__version__ = "0.2.1"
 __all__ = ["ColorLogging"]
 
 
@@ -146,7 +146,7 @@ def prompt(question, padding=0, default=None, validate=None):
             message = message + " [{0}]".format(default)
         if isinstance(validate, list):
             message = message.format(CHOICES=", ".join(validate))
-        write(message, color("RGB", True))
+        write(message, color("RGB", True, ""))
         value = input(" ")
         if len(value) == 0 and default is not None:
             value = default
@@ -162,7 +162,7 @@ def prompt(question, padding=0, default=None, validate=None):
                 error = _("You have to input a non-empty string.")
 
         if error is not None:
-            writeln("{0}{1}: {2}".format("  "*padding, _("ERROR"), error), color("R"))
+            writeln("{0}{1}: {2}".format("  "*padding, _("ERROR"), error), color("R", False, ""))
             value = prompt(question, padding, default, validate)
 
         return value
@@ -174,7 +174,7 @@ def menuValidator(choices, value):
 
 
 def menu(header, choices, padding=0, default=None):
-    writeln("{0}{1}".format("  "*padding, header), color("RGB", True))
+    writeln("{0}{1}".format("  "*padding, header), color("RGB", True, ""))
     for i in range(0,len(choices)):
         print("{0}{1:2d}) {2}".format("  "*(padding+1), i+1, choices[i]))
     value = prompt(_("Select") + ":", padding+1, default, lambda val: menuValidator(choices, val))

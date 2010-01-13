@@ -45,6 +45,7 @@ font-size = 9pt
 font-family = Verdana,'Geneva CE',lucida,sans-serif
 color = black
 background = white
+line-height = normal
 
 # Some basic classes, that should be used on every element of that kind
 [caption]
@@ -58,6 +59,8 @@ color = white
 [table]
 width = 100%
 margin = 0 auto 0.5em auto
+border-collapse = separate
+border-spacing = 2px
 
 [td]
 background = rgb(220,220,220)

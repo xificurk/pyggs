@@ -1,6 +1,18 @@
 CHANGES
 ============================================================================
 
+Release 0.2.5 (2010-01-13)
+--------------------------
+
+[Bugfixes]
+
+  * GS webpage design update -> GCParser update.
+
+  * Minor fixes in colored console output.
+
+  * Fixed PM-only cache bug.
+
+
 Release 0.2.4 (2009-11-27)
 --------------------------
 

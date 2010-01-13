@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.4"
+__version__ = "0.2.5"
 
 
 from collections import OrderedDict
@@ -697,7 +697,7 @@ class Templar(tenjin.Engine):
         ctypes = {}
         ctypes["Traditional Cache"] = 2
         ctypes["Multi-cache"] = 3
-        ctypes["Unknown Cache"] = 8
+        ctypes["Mystery/Puzzle Cache"] = 8
         ctypes["Letterbox Hybrid"] = 5
         ctypes["Earthcache"] = "earthcache"
         ctypes["Wherigo Cache"] = 1858
@@ -842,12 +842,12 @@ if __name__ == "__main__":
                     rootlog.warn(_("Deleting content of working directory {0}.").format(workDir))
                     rmtree(workDir)
                     setup = "full"
-            elif version < "0.2.4":
+            elif version < "0.2.5":
                 if os.path.isfile(os.path.join(os.path.dirname(__file__), "plugins", "cache.py")):
                     rootlog.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle."))
                     cacheStorage = Storage(os.path.join(workDir, "pyggs", "storage.sqlite"))
                     try:
-                        cacheStorage.query("UPDATE [cache] SET [type]='Unknown Cache' WHERE [type]='Mystery/Puzzle Cache'")
+                        cacheStorage.query("UPDATE [cache] SET [type]='Mystery/Puzzle Cache' WHERE [type]='Unknown Cache'")
                         rootlog.info(_("Fixing change of cache type name Unknown - Mystery/Puzzle SUCCESSFUL."))
                     except:
                         rootlog.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle FAILED."))

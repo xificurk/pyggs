@@ -47,6 +47,10 @@ class Plugin(base.Plugin):
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
         caches = fetchAssoc(caches, "waypoint")
+        try:
+            del(caches[""])
+        except KeyError:
+            pass
 
         ratings = self.gccz_ratings.storage.select(caches.keys(), min=3)
         ratings = fetchAssoc(ratings, "waypoint")

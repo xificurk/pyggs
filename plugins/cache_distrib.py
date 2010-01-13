@@ -54,6 +54,8 @@ class Plugin(base.Plugin):
         result = self.fetchAssoc(caches, "country,#")
         tmp = []
         for country in result:
+            if country == "":
+                continue
             tmp.append({"country":country, "count":len(result[country])})
         tmp.sort(key=lambda x: x["count"])
         tmp.reverse()
@@ -67,6 +69,8 @@ class Plugin(base.Plugin):
         result = self.fetchAssoc(caches, "type,#")
         tmp = []
         for type in result:
+            if type == "":
+                continue
             tmp.append({"type":type, "count":len(result[type])})
         tmp.sort(key=lambda x: x["count"])
         tmp.reverse()

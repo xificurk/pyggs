@@ -49,6 +49,8 @@ class Plugin(base.Plugin):
     def getTopDistances(self, caches):
         distances = {"min":caches[0], "max":caches[0]}
         for cache in caches:
+            if isinstance(cache["lat"], str) or isinstance(cache["lon"], str):
+                continue
             cache["distance"] = self.cache.distance(cache["lat"], cache["lon"])
             if cache["distance"] > distances["max"]["distance"] or (cache["distance"] == distances["max"]["distance"] and cache["date"] < distances["max"]["date"]):
                 distances["max"] = cache
@@ -61,6 +63,8 @@ class Plugin(base.Plugin):
     def getTopDirections(self, caches):
         directions = {"north":caches[0], "south":caches[0],"east":caches[0], "west":caches[0]}
         for cache in caches:
+            if isinstance(cache["lat"], str) or isinstance(cache["lon"], str):
+                continue
             if cache["lat"] > directions["north"]["lat"] or (cache["lat"] == directions["north"]["lat"] and cache["date"] < directions["north"]["date"]):
                 directions["north"] = cache
             if cache["lat"] < directions["south"]["lat"] or (cache["lat"] == directions["south"]["lat"] and cache["date"] < directions["south"]["date"]):
@@ -76,6 +80,8 @@ class Plugin(base.Plugin):
     def getTopAge(self, caches):
         age = {"min":caches[0], "max":caches[0]}
         for cache in caches:
+            if cache["hidden"] == "":
+                continue
             if cache["hidden"] > age["max"]["hidden"] or (cache["hidden"] == age["max"]["hidden"] and cache["date"] < age["max"]["date"]):
                 age["max"] = cache
             if cache["hidden"] < age["min"]["hidden"] or (cache["hidden"] == age["min"]["hidden"] and cache["date"] < age["min"]["date"]):
@@ -87,6 +93,8 @@ class Plugin(base.Plugin):
     def getArchived(self, caches):
         archived = {"absolute":0, "relative":0}
         for cache in caches:
+            if isinstance(cache["archived"], str):
+                continue
             if cache["archived"] > 0:
                 archived["absolute"] = archived["absolute"]+1
 

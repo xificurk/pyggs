@@ -85,7 +85,7 @@ class Plugin(base.Plugin):
         europe["Vatican City State"] = "VC"
 
         id = ""
-        for country in caches:
+        for country in list(caches.keys()):
             if country not in europe.keys():
                 del(caches[country])
             else:

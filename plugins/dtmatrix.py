@@ -33,6 +33,9 @@ class Plugin(base.Plugin):
     def run(self):
         myFinds = self.myfinds.storage.getList()
         caches = self.cache.storage.select(myFinds)
+        for cache in list(caches):
+            if isinstance(cache["difficulty"], str) or isinstance(cache["terrain"], str):
+                caches.remove(cache)
         templateData = self.getMatrix(caches)
         self.stats.registerTemplate(":stats.dtmatrix", templateData)
 

@@ -67,4 +67,6 @@ class Plugin(base.Plugin):
         caches = self.cache.storage.fetchAssoc(self.cache.storage.select(guids), "guid")
         for cache in result:
             cache.update(caches[cache["guid"]])
+            if cache["name"] == "":
+                cache["name"] = "[PM-only cache]"
         return result

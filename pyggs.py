@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.5"
+__version__ = "0.2.6"
 
 
 from collections import OrderedDict
@@ -300,6 +300,8 @@ class Pyggs(GCparser):
         """Save config etc"""
         self.config.save()
         with open(os.path.join(self.workDir, "pyggs", "version"), "w") as fp:
+            fp.write(__version__)
+        with open(os.path.join(self.workDir, "pyggs" , "profiles", self.profile, "version"), "w") as fp:
             fp.write(__version__)
         print()
         console.writeln(_("Note: You can always edit these setings by running pyggs with --setup (-s) switch."), console.color("G", True, ""))
@@ -844,9 +846,9 @@ if __name__ == "__main__":
                     rmtree(workDir)
                     setup = "full"
             elif version < "0.2.5":
-                if os.path.isfile(os.path.join(os.path.dirname(__file__), "plugins", "cache.py")):
+                if os.path.isfile(os.path.join(os.path.dirname(__file__), "plugins", "cache.py")) and os.path.isfile(os.path.join(pyggsDir, "storage.sqlite")):
                     rootlog.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle."))
-                    cacheStorage = Storage(os.path.join(workDir, "pyggs", "storage.sqlite"))
+                    cacheStorage = Storage(os.path.join(pyggsDir, "storage.sqlite"))
                     try:
                         cacheStorage.query("UPDATE [cache] SET [type]='Mystery/Puzzle Cache' WHERE [type]='Unknown Cache'")
                         rootlog.info(_("Fixing change of cache type name Unknown - Mystery/Puzzle SUCCESSFUL."))
@@ -883,6 +885,24 @@ if __name__ == "__main__":
             rootlog.warn(_("Profile '{0}' does not exist, creating profile directory and initiating setup script.").format(profile))
             setup = "full"
 
+    # Check if the upgrade script for profile data is needed
+    if os.path.isdir(os.path.join(profilesDir, profile)):
+        if os.path.isfile(os.path.join(profilesDir, profile, "version")):
+            with open(os.path.join(profilesDir, profile, "version")) as fp:
+                version = VersionInfo(fp.read())
+        else:
+            version = VersionInfo("0.2.5")
+        if version < __version__:
+            # Force update of myFinds database
+            if os.path.isfile(os.path.join(os.path.dirname(__file__), "plugins", "myfinds.py")) and os.path.isfile(os.path.join(profilesDir, profile, "storage.sqlite")):
+                rootlog.warn(_("Detected new version of Pyggs: forcing myFinds database update."))
+                myFindsStorage = Storage(os.path.join(profilesDir, profile, "storage.sqlite"))
+                try:
+                    myFindsStorage.query("DELETE FROM [environment] WHERE [variable]='plug.myfinds.db.lastcheck'")
+                except:
+                    pass
+            with open(os.path.join(profilesDir, profile, "version"), "w") as fp:
+                fp.write(__version__)
 
     pyggs = Pyggs(workDir, profile)
     if setup == "full":

@@ -205,8 +205,6 @@ class Pyggs(GCparser):
                 choices.append("{0:25s} {1}".format(plugin, self.plugins[plugin].about))
             else:
                 plugins.remove(plugin)
-        print(plugins)
-        print(choices)
         while True:
             print()
             console.writeln("  " + _("Plugins settings menu"), console.color("RB", False, ""))

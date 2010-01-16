@@ -27,7 +27,7 @@ class Plugin(base.Plugin):
     def __init__(self, master):
         base.Plugin.__init__(self, master)
         self.dependencies = ["stats", "myfinds", "cache", "gccz"]
-        self.about = _("Maps of Czech Republic from geocaching.cz.")
+        self.about = _("Map of Europe from geocaching.cz & world66.com.")
 
 
     def run(self):

@@ -11,7 +11,7 @@ http://www.geocaching.com/profile/?guid=71db7de9-2edc-4ca1-a255-784057c8973e
 Author:
     Petr Morávek [Xificurk]
     jabber id: xificurk [at] jabber.cz
-    email: xificurk [at] centrum.cz
+    email: xificurk [at] gmail.com
 
 Requirements
 ============================================================================
@@ -19,7 +19,7 @@ Requirements
 
 Installation
 ============================================================================
-Just put the Pyggs whereever you want, then run script:
+Just put the Pyggs wherever you want, then run script:
 $ ./pyggs
 and folow the instructions.
 

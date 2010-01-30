@@ -19,8 +19,8 @@ Requirements
 
 Installation
 ============================================================================
-Just put the Pyggs wherever you want, then run script:
-$ ./pyggs
+Just put the Pyggs wherever you want, then run the script:
+$ ./pyggs.py
 and folow the instructions.
 
 There are more options available, see:

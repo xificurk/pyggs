@@ -52,6 +52,8 @@ class Plugin(base.Plugin):
         """Update MyFinds database"""
         self.log.info("Updating MyFinds database.")
         myFinds = myFinds.getList()
+        if len(myFinds) == 0:
+            self.log.error("Got zero myFinds records (bug?), leaving old database in place.")
         self.storage.update(myFinds)
 
 

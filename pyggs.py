@@ -773,10 +773,10 @@ class Theme(BaseConfig):
         match2 = re.search("rgb\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)", color2)
 
         if match1 is None:
-            self.log.error("Cannost parse color {0}.".format(color1))
+            self.log.error("Cannot parse color {0}.".format(color1))
             return "inherit"
         if match2 is None:
-            self.log.error("Cannost parse color {0}.".format(color2))
+            self.log.error("Cannot parse color {0}.".format(color2))
             return "inherit"
 
         share = max(0, min(float(share), 1))

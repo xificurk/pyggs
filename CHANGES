@@ -1,6 +1,21 @@
 CHANGES
 ============================================================================
 
+Release 0.2.6 (2010-02-01)
+--------------------------
+
+[Enhancements]
+
+  * Prevent myFinds databse update by empty list and force myFinds databse
+    update on new version of Pyggs.
+
+  * Update GCparser to v0.4.
+
+[Bugfixes]
+
+  * Several typos.
+
+
 Release 0.2.5 (2010-01-13)
 --------------------------
 

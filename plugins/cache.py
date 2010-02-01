@@ -132,7 +132,7 @@ class Storage(base.Storage):
             exists = False
 
         cur.execute("DELETE FROM cache_inventory WHERE guid = ?", (data["guid"],))
-        if len(data) > 1:
+        if "name" in data:
             for tbid in data["inventory"]:
                 cur.execute("INSERT INTO cache_inventory(guid, tbid, name) VALUES(?,?,?)", (data["guid"], tbid, data["inventory"][tbid]))
             cur.execute("DELETE FROM cache WHERE guid = ?", (data["guid"],))
@@ -144,7 +144,7 @@ class Storage(base.Storage):
             if exists:
                 cur.execute("UPDATE cache SET lastCheck = ? WHERE guid = ?", (time.time(), data["guid"]))
             else:
-                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck) VALUES(?,'','','','','','','','','','','','','','','','','',?)", (data["guid"], time.time()))
+                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck) VALUES(?,?,'','','','','','','','','','','','','','','','',?)", (data["guid"], data["waypoint"], time.time()))
         db.commit()
         db.close()
 

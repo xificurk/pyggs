@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.4"
+__version__ = "0.4.1"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "SeekParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -113,10 +113,7 @@ class Fetcher(object):
             self.lastFetch = time.time()
 
         self.log.debug("Fetching page '{0}'.".format(url))
-        if data is not None:
-            web = opener.open(url, urllib.parse.urlencode(data))
-        else:
-            web = opener.open(url)
+        web = self.fetchData(opener, url, data)
 
         self.saveUserAgent()
         if authenticate:
@@ -128,6 +125,22 @@ class Fetcher(object):
             self.login()
             self.fetch(url, authenticate, data)
 
+        return web
+
+
+    def fetchData(self, opener, url, data, retry=1):
+        """ Performs download of the page.
+        """
+        try:
+            if data is not None:
+                web = opener.open(url, urllib.parse.urlencode(data))
+            else:
+                web = opener.open(url)
+        except:
+            self.log.error("An error occured while downloading '{0}', will retry in {1} seconds.".format(url, retry))
+            time.sleep(retry)
+            retry = min(5*retry, 600)
+            return self.fetchData(opener, url, data, retry)
         return web
 
 
@@ -986,7 +999,7 @@ class SeekParser(BaseParser):
             self.loadNext()
 
         self.parseTotals()
-        return self.cacheCount()
+        return self.cacheCount
 
 
     def parseTotals(self):

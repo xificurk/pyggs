@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.6"
+__version__ = "0.2.7"
 
 
 from collections import OrderedDict
@@ -845,15 +845,21 @@ if __name__ == "__main__":
                     rootlog.warn(_("Deleting content of working directory {0}.").format(workDir))
                     rmtree(workDir)
                     setup = "full"
-            elif version < "0.2.5":
-                if os.path.isfile(os.path.join(os.path.dirname(__file__), "plugins", "cache.py")) and os.path.isfile(os.path.join(pyggsDir, "storage.sqlite")):
-                    rootlog.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle."))
-                    cacheStorage = Storage(os.path.join(pyggsDir, "storage.sqlite"))
-                    try:
-                        cacheStorage.query("UPDATE [cache] SET [type]='Mystery/Puzzle Cache' WHERE [type]='Unknown Cache'")
-                        rootlog.info(_("Fixing change of cache type name Unknown - Mystery/Puzzle SUCCESSFUL."))
-                    except:
-                        rootlog.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle FAILED."))
+            else:
+                if version < "0.2.5":
+                    if os.path.isfile(os.path.join(os.path.dirname(__file__), "plugins", "cache.py")) and os.path.isfile(os.path.join(pyggsDir, "storage.sqlite")):
+                        rootlog.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle."))
+                        cacheStorage = Storage(os.path.join(pyggsDir, "storage.sqlite"))
+                        try:
+                            cacheStorage.query("UPDATE [cache] SET [type]='Mystery/Puzzle Cache' WHERE [type]='Unknown Cache'")
+                            rootlog.info(_("Fixing change of cache type name Unknown - Mystery/Puzzle SUCCESSFUL."))
+                        except:
+                            rootlog.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle FAILED."))
+                if version < "0.2.7":
+                    if os.path.isfile(os.path.join(pyggsDir, "storage.sqlite")):
+                        globalStorage = Storage(os.path.join(pyggsDir, "storage.sqlite"))
+                        globalStorage.query("UPDATE environment SET variable = REPLACE(variable, '.db.', '.') WHERE variable LIKE 'plug.%.db.%'")
+                        rootlog.info(_("Updating environment variables in global storage."))
             with open(os.path.join(pyggsDir, "version"), "w") as fp:
                 fp.write(__version__)
 
@@ -892,6 +898,12 @@ if __name__ == "__main__":
                 version = VersionInfo(fp.read())
         else:
             version = VersionInfo("0.2.5")
+        if version < "0.2.7":
+            if os.path.isfile(os.path.join(profilesDir, profile, "storage.sqlite")):
+                globalStorage = Storage(os.path.join(profilesDir, profile, "storage.sqlite"))
+                globalStorage.query("UPDATE environment SET variable = REPLACE(variable, '.db.', '.') WHERE variable LIKE 'plug.%.db.%'")
+                globalStorage.query("UPDATE environment SET variable = REPLACE(variable, 'Storage.plug.', 'plug.') WHERE variable LIKE 'Storage.plug.%'")
+                rootlog.info(_("Updating environment variables in profile storage."))
         if version < __version__:
             # Force update of myFinds database
             if os.path.isfile(os.path.join(profilesDir, profile, "storage.sqlite")):

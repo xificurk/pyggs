@@ -66,8 +66,8 @@ class Plugin(base.Plugin):
         hash = "\n".join(hash)
         hash = md5(hash.encode("utf-8")).hexdigest()
         if not self.config["force"]:
-            hash_old = self.master.profileStorage.getEnv(self.NS + ".hash")
-            if hash == hash_old:
+            hashOld = self.master.profileStorage.getEnv(self.NS + ".hash")
+            if hash == hashOld:
                 self.log.info("Geocaching.com profile seems already up to date, skipping update.")
                 return
 

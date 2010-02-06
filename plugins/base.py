@@ -35,8 +35,12 @@ class Plugin(object):
 
 
     def prepare(self):
+        # Do we need to run upgrade script?
+        #pyggsVersion, pluginVersion = self.master.profileStorage.getOldVersions(self.NS)
+        # Map the dependencies
         for plugin in self.dependencies:
             self.__dict__[plugin] = self.master.plugins[plugin]
+        # Load config
         self.config = {}
         if self.master.config.has_section(self.NS):
             for option in self.master.config.options(self.NS):
@@ -46,11 +50,12 @@ class Plugin(object):
 class Storage(object):
     def __init__(self, filename, plugin=None):
         if plugin is None:
-            self.NS = "Storage"
+            self.log = logging.getLogger("Pyggs.db")
+            self.NS = ""
         else:
             self.plugin = plugin
-            self.NS = plugin.NS + ".db"
-        self.log = logging.getLogger("Pyggs." + self.NS)
+            self.log = logging.getLogger("Pyggs." + plugin.NS + ".db")
+            self.NS = plugin.NS + "."
         self.filename = filename
         self.createTables()
 
@@ -120,36 +125,20 @@ class Storage(object):
 
     def setEnv(self, variable, value):
         """insert or update env variale"""
-        variable = self.NS + "." + variable
-        db = self.getDb()
-        cur = db.cursor()
-        cur.execute("SELECT * FROM environment WHERE variable=?", (variable,))
-        if (len(cur.fetchall()) > 0):
-            cur.execute("UPDATE environment SET value=? WHERE variable=?", (value, variable))
-        else:
-            cur.execute("INSERT INTO environment(variable, value) VALUES(?, ?)", (variable, value))
-        db.commit()
-        db.close()
+        variable = self.NS + variable
+        self.query("INSERT OR REPLACE INTO environment(variable, value) VALUES(?, ?)", (variable, value))
 
 
     def getEnv(self, variable):
         """get env variable"""
-        variable = self.NS + "." + variable
-        db = self.getDb()
-        cur = db.cursor()
-        cur.execute("SELECT value FROM environment WHERE variable=? LIMIT 1", (variable,))
-        value = cur.fetchone()
-        db.close()
-        if value is not None:
-            value = value[0]
+        variable = self.NS + variable
+        value = self.query("SELECT value FROM environment WHERE variable=? LIMIT 1", (variable,))
+        if len(value) > 0:
+            value = value[0]["value"]
         return value
 
 
     def delEnv(self, variable):
         """delete env variale"""
-        variable = self.NS + "." + variable
-        db = self.getDb()
-        cur = db.cursor()
-        cur.execute("DELETE FROM environment WHERE variable=? LIMIT 1", (variable,))
-        db.commit()
-        db.close()
+        variable = self.NS + variable
+        self.query("DELETE FROM environment WHERE variable=? LIMIT 1", (variable,))

@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "SeekParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -136,7 +136,7 @@ class Fetcher(object):
                 web = opener.open(url, urllib.parse.urlencode(data))
             else:
                 web = opener.open(url)
-        except:
+        except(IOError):
             self.log.error("An error occured while downloading '{0}', will retry in {1} seconds.".format(url, retry))
             time.sleep(retry)
             retry = min(5*retry, 600)
@@ -420,6 +420,7 @@ logging.addLevelName(5, "PARSER")
 """ PCRE: geocaching.com general """
 __pcresMask["hiddenInput"] = ("<input type=[\"']hidden[\"'] name=\"([^\"]+)\"[^>]+value=\"([^\"]*)\"", re.I)
 __pcresMask["PMonly"] = ("<p class=['\"]Warning['\"][^>]*>Sorry, the owner of this listing has made it viewable to Premium Members only", re.I)
+__pcresMask["guid"] = ("^[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+$", re.I)
 
 
 class BaseParser(object):
@@ -475,22 +476,21 @@ __pcresMask["cacheVisits"] = ("<span id=['\"]ctl00_ContentBody_lblFindCounts['\"
 __pcresMask["cacheLogCount"] = ("<img[^>]*alt=\"([^\"]+)\"[^>]*/>([0-9]+)", re.I)
 
 class CacheParser(BaseParser):
-    def __init__(self, fetcher, guid=None, waypoint=None, logs=False):
+    def __init__(self, fetcher, id, logs=False):
         BaseParser.__init__(self, fetcher)
         self.log = logging.getLogger("GCparser.CacheParser")
         self.details = None
-        self.waypoint = waypoint
-        self.guid = guid
-
-        if guid is None and waypoint is None:
-            self.log.error("No guid or waypoint given - don't know what to parse.")
-            raise ValueError
+        self.id = id
+        if pcre("guid").match(id) is not None:
+            self.type = "guid"
+        else:
+            self.type = "waypoint"
 
         self.url = "http://www.geocaching.com/seek/cache_details.aspx?pf=y&numlogs=&decrypt=y"
-        if guid is not None:
-            self.url = self.url + "&guid=" + guid
+        if self.type == "guid":
+            self.url = self.url + "&guid=" + self.id
         else:
-            self.url = self.url + "&wp=" + waypoint
+            self.url = self.url + "&wp=" + self.id
 
         if logs:
             self.url = self.url + "&log=y"
@@ -527,10 +527,10 @@ class CacheParser(BaseParser):
         match = pcre("PMonly").search(self.data)
         if match is not None:
             self.log.warn("PM only cache at '{0}'.".format(self.url))
-            if self.guid is not None:
-                self.details["guid"] = self.guid
-            elif self.waypoint is not None:
-                self.details["waypoint"] = self.waypoint
+            if self.type == "guid":
+                self.details["guid"] = self.id
+            else:
+                self.details["waypoint"] = self.id
             return self.details
 
         self.details["disabled"] = 0

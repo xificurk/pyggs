@@ -159,7 +159,7 @@ class Storage(base.Storage):
             row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
             if row is None or (timeout + float(row["lastCheck"])) <= time.time():
                 self.log.debug("Data about cache guid {0} out of date, initiating refresh.".format(guid))
-                self.plugin.master.parse("cache", guid=guid)
+                self.plugin.master.parse("cache", guid)
                 row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
             row = dict(row)
             row["inventory"] = {}

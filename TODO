@@ -1,3 +1,7 @@
+* gccz_rating use standard deviation
+* Templates: css gradient feature like in Google chart API
+* new gccom plugin: store credentials, use of PQ, download limits, warn on big amount of downloads
+* cache plugin: base refresh of data on probability
 * Unrated caches page - make possible to rate it from there + show basic info
 * Czech template
 * XTF list via scanning logs

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     plugins/base.py - Parent plugin for all others.
-    Copyright (C) 2009 Petr Morávek
+    Copyright (C) 2009-2010 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -24,6 +24,8 @@ from collections import OrderedDict
 import logging
 import sqlite3
 
+from libs.versioning import VersionInfo
+
 
 class Plugin(object):
     def __init__(self, master):
@@ -32,14 +34,36 @@ class Plugin(object):
         self.master = master
         self.about = ""
         self.dependencies = []
+        self.version = VersionInfo("0")
 
 
     def prepare(self):
         # Do we need to run upgrade script?
-        #pyggsVersion, pluginVersion = self.master.profileStorage.getOldVersions(self.NS)
+        pyggsVersion = self.master.profileStorage.getVersion("pyggs", self)
+        if self.master.version > pyggsVersion:
+            upgraded = True
+            if hasattr(self, "onPyggsUpgrade"):
+                self.log.info(_("Upgrading plugin data from Pyggs version {0} to {1}.").format(pyggsVersion, self.master.version))
+                upgraded = self.onPyggsUpgrade(pyggsVersion)
+            if not upgraded:
+                self.log.critical(_("Upgrade script failed."))
+            else:
+                self.master.profileStorage.setVersion("pyggs", self.master.version, self)
+        pluginVersion = self.master.profileStorage.getVersion("plugin", self)
+        if self.version > pluginVersion:
+            upgraded = True
+            if hasattr(self, "onPluginUpgrade"):
+                self.log.info(_("Upgrading plugin data from plugin version {0} to {1}.").format(pluginVersion, self.version))
+                upgraded = self.onPluginUpgrade(pluginVersion)
+            if not upgraded:
+                self.log.critical(_("Upgrade script failed."))
+            else:
+                self.master.profileStorage.setVersion("plugin", self.version, self)
+
         # Map the dependencies
         for plugin in self.dependencies:
             self.__dict__[plugin] = self.master.plugins[plugin]
+
         # Load config
         self.config = {}
         if self.master.config.has_section(self.NS):
@@ -61,14 +85,16 @@ class Storage(object):
 
 
     def getDb(self):
-        """Return a new DB connection"""
+        """ Return a new DB connection.
+        """
         con = sqlite3.connect(self.filename)
         con.row_factory = sqlite3.Row
         return con
 
 
     def fetchAssoc(self, result, format="#"):
-        """Fetch result to a dictionary"""
+        """ Fetch result to a dictionary.
+        """
         if format == "":
             format = "#"
         format = format.split(",")
@@ -110,7 +136,8 @@ class Storage(object):
 
 
     def query(self, query, values=()):
-        """Perform query in current database"""
+        """ Perform query in current database.
+        """
         db = self.getDb()
         result = db.cursor().execute(query, values).fetchall()
         db.commit()
@@ -119,26 +146,57 @@ class Storage(object):
 
 
     def createTables(self):
-        """If Environment table doesn't exist, create it"""
+        """ If Environment table doesn't exist, create it.
+        """
         self.query("CREATE TABLE IF NOT EXISTS environment (variable VARCHAR(256) PRIMARY KEY, value VARCHAR(256))")
 
 
     def setEnv(self, variable, value):
-        """insert or update env variale"""
+        """ Insert or update environment variale.
+        """
         variable = self.NS + variable
         self.query("INSERT OR REPLACE INTO environment(variable, value) VALUES(?, ?)", (variable, value))
 
 
     def getEnv(self, variable):
-        """get env variable"""
+        """ Get environment variable.
+        """
         variable = self.NS + variable
         value = self.query("SELECT value FROM environment WHERE variable=? LIMIT 1", (variable,))
         if len(value) > 0:
             value = value[0]["value"]
+        else:
+            value = None
         return value
 
 
     def delEnv(self, variable):
-        """delete env variale"""
+        """ Delete environment variable.
+        """
         variable = self.NS + variable
-        self.query("DELETE FROM environment WHERE variable=? LIMIT 1", (variable,))
+        self.query("DELETE FROM environment WHERE variable=?", (variable,))
+
+
+    def getVersion(self, type, plugin=None):
+        """ Get stored version of pyggs, or plugin from plugin's namespace.
+        """
+        if plugin is not None:
+            namespace = plugin.NS + "."
+        else:
+            namespace = ""
+
+        version = self.getEnv("{0}version.{1}".format(namespace, type.lower()))
+        if version is None:
+            version = "0"
+        return VersionInfo(version)
+
+
+    def setVersion(self, type, version, plugin=None):
+        """ Store version of pyggs, or plugin to plugin's namespace.
+        """
+        if plugin is not None:
+            namespace = plugin.NS + "."
+        else:
+            namespace = ""
+
+        self.setEnv("{0}version.{1}".format(namespace, type.lower()), str(version))

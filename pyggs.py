@@ -59,7 +59,7 @@ gettext.install("pyggs", localedir=localeDir, codeset="utf-8")
 class Pyggs(object):
     def __init__(self, workDir, profile):
         self.log = logging.getLogger("Pyggs")
-        self.version = __version__
+        self.version = VersionInfo(__version__)
         self.workDir = workDir
         self.profile = profile
         self.config = ProfileConfig(os.path.join(workDir, "pyggs", "profiles", profile, "config.ini"))
@@ -846,15 +846,6 @@ if __name__ == "__main__":
                     rmtree(workDir)
                     setup = "full"
             else:
-                if version < "0.2.5":
-                    if os.path.isfile(os.path.join(os.path.dirname(__file__), "plugins", "cache.py")) and os.path.isfile(os.path.join(pyggsDir, "storage.sqlite")):
-                        rootlog.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle."))
-                        cacheStorage = Storage(os.path.join(pyggsDir, "storage.sqlite"))
-                        try:
-                            cacheStorage.query("UPDATE [cache] SET [type]='Mystery/Puzzle Cache' WHERE [type]='Unknown Cache'")
-                            rootlog.info(_("Fixing change of cache type name Unknown - Mystery/Puzzle SUCCESSFUL."))
-                        except:
-                            rootlog.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle FAILED."))
                 if version < "0.2.7":
                     if os.path.isfile(os.path.join(pyggsDir, "storage.sqlite")):
                         globalStorage = Storage(os.path.join(pyggsDir, "storage.sqlite"))
@@ -898,21 +889,13 @@ if __name__ == "__main__":
                 version = VersionInfo(fp.read())
         else:
             version = VersionInfo("0.2.5")
-        if version < "0.2.7":
-            if os.path.isfile(os.path.join(profilesDir, profile, "storage.sqlite")):
-                globalStorage = Storage(os.path.join(profilesDir, profile, "storage.sqlite"))
-                globalStorage.query("UPDATE environment SET variable = REPLACE(variable, '.db.', '.') WHERE variable LIKE 'plug.%.db.%'")
-                globalStorage.query("UPDATE environment SET variable = REPLACE(variable, 'Storage.plug.', 'plug.') WHERE variable LIKE 'Storage.plug.%'")
-                rootlog.info(_("Updating environment variables in profile storage."))
         if version < __version__:
-            # Force update of myFinds database
-            if os.path.isfile(os.path.join(profilesDir, profile, "storage.sqlite")):
-                rootlog.warn(_("Detected new version of Pyggs: forcing myFinds database update."))
-                myFindsStorage = Storage(os.path.join(profilesDir, profile, "storage.sqlite"))
-                try:
-                    myFindsStorage.query("DELETE FROM [environment] WHERE [variable]='plug.myfinds.db.lastcheck'")
-                except:
-                    pass
+            if version < "0.2.7":
+                if os.path.isfile(os.path.join(profilesDir, profile, "storage.sqlite")):
+                    globalStorage = Storage(os.path.join(profilesDir, profile, "storage.sqlite"))
+                    globalStorage.query("UPDATE environment SET variable = REPLACE(variable, '.db.', '.') WHERE variable LIKE 'plug.%.db.%'")
+                    globalStorage.query("UPDATE environment SET variable = REPLACE(variable, 'Storage.plug.', 'plug.') WHERE variable LIKE 'Storage.plug.%'")
+                    rootlog.info(_("Updating environment variables in profile storage."))
             with open(os.path.join(profilesDir, profile, "version"), "w") as fp:
                 fp.write(__version__)
 

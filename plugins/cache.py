@@ -42,6 +42,16 @@ class Plugin(base.Plugin):
         config.update(self.NS, "timeout", _("Cache details data timeout in days:"), validate=lambda val: None if val.isdigit() else _("Use only digits, please."))
 
 
+    def onPyggsUpgrade(self, oldVersion):
+        if oldVersion < "0.2.5":
+            # fix cache types Uknown -> Mystery/Puzzle
+            storage = self.master.globalStorage
+            if storage.query("SELECT COUNT(*) AS [exists] FROM [sqlite_master] WHERE [type] = 'table' AND [name] = 'cache'")[0]["exists"] > 0:
+                self.log.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle."))
+                storage.query("UPDATE [cache] SET [type] = 'Mystery/Puzzle Cache' WHERE [type] = 'Unknown Cache'")
+        return True
+
+
     def prepare(self):
         base.Plugin.prepare(self)
         self.config["timeout"] = int(self.config["timeout"])

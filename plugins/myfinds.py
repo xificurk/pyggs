@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     plugins/myfinds.py - handles myFinds database for each profile.
-    Copyright (C) 2009 Petr Morávek
+    Copyright (C) 2009-2010 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -39,6 +39,13 @@ class Plugin(base.Plugin):
         config.defaults[self.NS] = {}
         config.defaults[self.NS]["timeout"] = "24"
         config.update(self.NS, "timeout", _("My Finds data timeout in hours:"), validate=lambda val: None if val.isdigit() else _("Use only digits, please."))
+
+
+    def onPyggsUpgrade(self, oldVersion):
+        # Force update of myFinds database
+        self.log.warn(_("New version of Pyggs: forcing database update."))
+        self.master.profileStorage.delEnv("{0}.lastcheck".format(self.NS))
+        return True
 
 
     def prepare(self):

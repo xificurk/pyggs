@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     plugins/cache.py - handles global database of cache details.
-    Copyright (C) 2009 Petr Morávek
+    Copyright (C) 2009-2010 Petr Morávek
 
     This file is part of Pyggs.
 

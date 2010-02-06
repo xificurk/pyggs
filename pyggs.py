@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
     pyggs.py - base script for Pyggs.
-    Copyright (C) 2009 Petr Morávek
+    Copyright (C) 2009-2010 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -56,9 +56,10 @@ for lang in os.listdir(localeDir):
 gettext.install("pyggs", localedir=localeDir, codeset="utf-8")
 
 
-class Pyggs(GCparser):
+class Pyggs(object):
     def __init__(self, workDir, profile):
         self.log = logging.getLogger("Pyggs")
+        self.version = __version__
         self.workDir = workDir
         self.profile = profile
         self.config = ProfileConfig(os.path.join(workDir, "pyggs", "profiles", profile, "config.ini"))
@@ -311,8 +312,7 @@ class Pyggs(GCparser):
         """Run pyggs"""
         config = self.config
         # Init GCparser, and redefine again self.log
-        GCparser.__init__(self, username=config.get("geocaching.com", "username"), password=config.get("geocaching.com", "password"), dataDir=os.path.join(self.workDir, "parser"))
-        self.log = logging.getLogger("Pyggs")
+        self.gcp = GCparser(username=config.get("geocaching.com", "username"), password=config.get("geocaching.com", "password"), dataDir=os.path.join(self.workDir, "parser"))
 
         self.globalStorage = Storage(os.path.join(self.workDir, "pyggs", "storage.sqlite"))
         self.profileStorage = Storage(os.path.join(self.workDir, "pyggs", "profiles", profile, "storage.sqlite"))
@@ -366,7 +366,7 @@ class Pyggs(GCparser):
         """Create parser and return it to every registered handler"""
         handlers = self.handlers.get(name)
         if handlers is not None:
-            parser = GCparser.parse(self, name, *args, **kwargs)
+            parser = self.gcp.parse(name, *args, **kwargs)
             for handler in handlers:
                 handler(parser)
 
@@ -894,7 +894,7 @@ if __name__ == "__main__":
             version = VersionInfo("0.2.5")
         if version < __version__:
             # Force update of myFinds database
-            if os.path.isfile(os.path.join(os.path.dirname(__file__), "plugins", "myfinds.py")) and os.path.isfile(os.path.join(profilesDir, profile, "storage.sqlite")):
+            if os.path.isfile(os.path.join(profilesDir, profile, "storage.sqlite")):
                 rootlog.warn(_("Detected new version of Pyggs: forcing myFinds database update."))
                 myFindsStorage = Storage(os.path.join(profilesDir, profile, "storage.sqlite"))
                 try:

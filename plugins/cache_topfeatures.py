@@ -2,7 +2,7 @@
 """
     plugins/cache_topfeatures.py - Add top features of found caches (most distant
       cache, most southern cache, etc.) to general statistics.
-    Copyright (C) 2009 Petr Morávek
+    Copyright (C) 2009-2010 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -41,6 +41,7 @@ class Plugin(base.Plugin):
         templateData = {}
         templateData["distances"] = self.getTopDistances(caches)
         templateData["directions"] = self.getTopDirections(caches)
+        templateData["elevations"] = self.getTopElevations(caches)
         templateData["age"] = self.getTopAge(caches)
         templateData["archived"] = self.getArchived(caches)
         self.general.registerTemplate(":stats.general.cache_topfeatures", templateData)
@@ -75,6 +76,19 @@ class Plugin(base.Plugin):
                 directions["west"] = cache
 
         return directions
+
+
+    def getTopElevations(self, caches):
+        elevation = {"min":caches[0], "max":caches[0]}
+        for cache in caches:
+            if cache["elevation"] == -9999:
+                continue
+            if cache["elevation"] > elevation["max"]["elevation"] or (cache["elevation"] == elevation["max"]["elevation"] and cache["date"] < elevation["max"]["date"]):
+                elevation["max"] = cache
+            if cache["elevation"] < elevation["min"]["elevation"] or (cache["elevation"] == elevation["min"]["elevation"] and cache["date"] < elevation["min"]["date"]):
+                elevation["min"] = cache
+
+        return elevation
 
 
     def getTopAge(self, caches):

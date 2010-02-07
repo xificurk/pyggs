@@ -1,41 +1,51 @@
 <tr>
 <td#{{css("td")}}>Nearest cache found</td>
-<td#{{css("td")}}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{distances["min"]["guid"]}}">${{distances["min"]["name"]}}</a> (<strong>#{{dist(distances["min"]["distance"])}}</strong>km)</td>
+<td#{{css("td")}}><strong#{{css("databox")}}>#{{dist(distances["min"]["distance"])}}&nbsp;km</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{distances["min"]["guid"]}}">${{distances["min"]["name"]}}</a></td>
 </tr>
 
 <tr>
 <td#{{css("td", "endsection")}}>Furthest cache found</td>
-<td#{{css("td", "endsection")}}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{distances["max"]["guid"]}}">${{distances["max"]["name"]}}</a> (<strong>#{{dist(distances["max"]["distance"])}}</strong>km)</td>
+<td#{{css("td", "endsection")}}><strong#{{css("databox")}}>#{{dist(distances["max"]["distance"])}}&nbsp;km</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{distances["max"]["guid"]}}">${{distances["max"]["name"]}}</a></td>
 </tr>
 
 <tr>
 <td#{{css("td")}}>Northernmost cache found</td>
-<td#{{css("td")}}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{directions["north"]["guid"]}}">${{directions["north"]["name"]}}</a> (<strong>#{{lat(directions["north"]["lat"])}}</strong>)</td>
+<td#{{css("td")}}><strong#{{css("databox")}}>#{{lat(directions["north"]["lat"])}}</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{directions["north"]["guid"]}}">${{directions["north"]["name"]}}</a></td>
 </tr>
 
 <tr>
 <td#{{css("td")}}>Southernmost cache found</td>
-<td#{{css("td")}}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{directions["south"]["guid"]}}">${{directions["south"]["name"]}}</a> (<strong>#{{lat(directions["south"]["lat"])}}</strong>)</td>
+<td#{{css("td")}}><strong#{{css("databox")}}>#{{lat(directions["south"]["lat"])}}</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{directions["south"]["guid"]}}">${{directions["south"]["name"]}}</a></td>
 </tr>
 
 <tr>
 <td#{{css("td")}}>Easternmost cache found</td>
-<td#{{css("td")}}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{directions["east"]["guid"]}}">${{directions["east"]["name"]}}</a> (<strong>#{{lon(directions["east"]["lon"])}}</strong>)</td>
+<td#{{css("td")}}><strong#{{css("databox")}}>#{{lon(directions["east"]["lon"])}}</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{directions["east"]["guid"]}}">${{directions["east"]["name"]}}</a></td>
 </tr>
 
 <tr>
 <td#{{css("td", "endsection")}}>Westernmost cache found</td>
-<td#{{css("td", "endsection")}}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{directions["west"]["guid"]}}">${{directions["west"]["name"]}}</a> (<strong>#{{lon(directions["west"]["lon"])}}</strong>)</td>
+<td#{{css("td", "endsection")}}><strong#{{css("databox")}}>#{{lon(directions["west"]["lon"])}}</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{directions["west"]["guid"]}}">${{directions["west"]["name"]}}</a></td>
+</tr>
+
+<tr>
+<td#{{css("td")}}>Lowest cache found</td>
+<td#{{css("td")}}><strong#{{css("databox")}}>#{{elevations["min"]["elevation"]}}&nbsp;m</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{elevations["min"]["guid"]}}">${{elevations["min"]["name"]}}</a></td>
+</tr>
+
+<tr>
+<td#{{css("td", "endsection")}}>Highest cache found</td>
+<td#{{css("td", "endsection")}}><strong#{{css("databox")}}>#{{elevations["max"]["elevation"]}}&nbsp;m</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{elevations["max"]["guid"]}}">${{elevations["max"]["name"]}}</a></td>
 </tr>
 
 <tr>
 <td#{{css("td")}}>Youngest cache found</td>
-<td#{{css("td")}}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{age["max"]["guid"]}}">${{age["max"]["name"]}}</a> (<strong>#{{date(age["max"]["hidden"])}}</strong>)</td>
+<td#{{css("td")}}><strong#{{css("databox")}}>#{{date(age["max"]["hidden"])}}</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{age["max"]["guid"]}}">${{age["max"]["name"]}}</a></td>
 </tr>
 
 <tr>
 <td#{{css("td", "endsection")}}>Oldest cache found</td>
-<td#{{css("td", "endsection")}}><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{age["min"]["guid"]}}">${{age["min"]["name"]}}</a> (<strong>#{{date(age["min"]["hidden"])}}</strong>)</td>
+<td#{{css("td", "endsection")}}><strong#{{css("databox")}}>#{{date(age["min"]["hidden"])}}</strong> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{age["min"]["guid"]}}">${{age["min"]["name"]}}</a></td>
 </tr>
 
 <tr>

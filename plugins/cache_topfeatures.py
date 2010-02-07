@@ -48,11 +48,14 @@ class Plugin(base.Plugin):
 
 
     def getTopDistances(self, caches):
-        distances = {"min":caches[0], "max":caches[0]}
+        distances = None
         for cache in caches:
             if isinstance(cache["lat"], str) or isinstance(cache["lon"], str):
                 continue
             cache["distance"] = self.cache.distance(cache["lat"], cache["lon"])
+            if distances is None:
+                distances = {"min":cache, "max":cache}
+                continue
             if cache["distance"] > distances["max"]["distance"] or (cache["distance"] == distances["max"]["distance"] and cache["date"] < distances["max"]["date"]):
                 distances["max"] = cache
             if cache["distance"] < distances["min"]["distance"] or (cache["distance"] == distances["min"]["distance"] and cache["date"] < distances["min"]["date"]):
@@ -62,9 +65,12 @@ class Plugin(base.Plugin):
 
 
     def getTopDirections(self, caches):
-        directions = {"north":caches[0], "south":caches[0],"east":caches[0], "west":caches[0]}
+        directions = None
         for cache in caches:
             if isinstance(cache["lat"], str) or isinstance(cache["lon"], str):
+                continue
+            if directions is None:
+                directions = {"north":cache, "south":cache,"east":cache, "west":cache}
                 continue
             if cache["lat"] > directions["north"]["lat"] or (cache["lat"] == directions["north"]["lat"] and cache["date"] < directions["north"]["date"]):
                 directions["north"] = cache
@@ -79,9 +85,12 @@ class Plugin(base.Plugin):
 
 
     def getTopElevations(self, caches):
-        elevation = {"min":caches[0], "max":caches[0]}
+        elevation = None
         for cache in caches:
             if cache["elevation"] == -9999:
+                continue
+            if elevation is None:
+                elevation = {"min":cache, "max":cache}
                 continue
             if cache["elevation"] > elevation["max"]["elevation"] or (cache["elevation"] == elevation["max"]["elevation"] and cache["date"] < elevation["max"]["date"]):
                 elevation["max"] = cache
@@ -92,9 +101,12 @@ class Plugin(base.Plugin):
 
 
     def getTopAge(self, caches):
-        age = {"min":caches[0], "max":caches[0]}
+        age = None
         for cache in caches:
             if cache["hidden"] == "":
+                continue
+            if age is None:
+                age = {"min":cache, "max":cache}
                 continue
             if cache["hidden"] > age["max"]["hidden"] or (cache["hidden"] == age["max"]["hidden"] and cache["date"] < age["max"]["date"]):
                 age["max"] = cache

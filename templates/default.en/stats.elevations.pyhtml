@@ -1,0 +1,35 @@
+<table#{{css("table", "graph", "fixedtable")}}>
+<col#{{css("col-graph-header")}} />
+<col span="#{{len(elevations)}}"#{{css("col-graph")}} />
+<caption#{{css("caption")}}>Found caches by elevation (average elevation #{{average}}&nbsp;m)</caption>
+
+<tr#{{css("small")}}>
+<td#{{css("td","graph-cell","graph-leftheader")}}></td>
+<?py
+for row in elevations:
+    if row["count"] >= top:
+        share = 1
+    #
+    else:
+        share = 0
+    #
+    bar  = {"height":"{0}px".format(round(row["count"]/top*140)),"background":gradient("lightmin","lightmax",share),"border-color":gradient("bordermin","bordermax",share)}
+?>
+    <td#{{css("td","graph-cell",{"height":"160px"})}}>#{{row["count"]}}<br /><div#{{css("graph-bar",bar)}}>&nbsp;</div></td>
+<?py
+#endfor
+?>
+</tr>
+
+<tr#{{css("small")}}>
+<th#{{css("th","graph-header","graph-leftheader")}}>Elevation</th>
+<?py
+for row in elevations:
+?>
+    <th#{{css("th","graph-header")}}>#{{row["label"]}}</th>
+<?py
+#endfor
+?>
+</tr>
+
+</table>

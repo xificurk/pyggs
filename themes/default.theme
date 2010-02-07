@@ -112,7 +112,7 @@ border-spacing = 1px
 border = 1px solid white
 
 [col-graph-header]
-width = 80px
+width = 65px
 
 [col-graph]
 width = 20px

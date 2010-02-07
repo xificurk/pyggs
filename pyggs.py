@@ -74,7 +74,8 @@ class Pyggs(object):
 
 
     def interactiveSetup(self):
-        """Interactive setup script"""
+        """ Interactive setup script.
+        """
         print()
         console.writeln(_("Entering setup menu for profile {0}.").format(self.profile), console.color("G", True, ""))
         self.setupWorkDir()
@@ -105,7 +106,8 @@ class Pyggs(object):
 
 
     def fullSetup(self):
-        """Full setup script"""
+        """ Full setup script.
+        """
         print()
         console.writeln(_("Entering full setup for profile {0}.").format(self.profile), console.color("G", True, ""))
         self.setupWorkDir()
@@ -117,7 +119,8 @@ class Pyggs(object):
 
 
     def setupWorkDir(self):
-        """Setup structure of working directory"""
+        """ Setup structure of working directory.
+        """
         self.log.debug("Setting up base working directory structure.")
         if not os.path.isdir(self.workDir):
             os.makedirs(self.workDir, 0o750)
@@ -146,7 +149,8 @@ class Pyggs(object):
 
 
     def setupGeneral(self):
-        """Config: general section"""
+        """ Config: general section
+        """
         config = self.config
         config.assertSection("general")
         print()
@@ -163,7 +167,8 @@ class Pyggs(object):
 
 
     def setupGeocachingCom(self):
-        """Config: geocaching.com section"""
+        """ Config: geocaching.com section
+        """
         config = self.config
         config.assertSection("geocaching.com")
         print()
@@ -175,7 +180,8 @@ class Pyggs(object):
 
 
     def setupOutput(self):
-        """Config: output section"""
+        """ Config: output section
+        """
         config = self.config
         config.assertSection("output")
         print()
@@ -193,34 +199,9 @@ class Pyggs(object):
         config.save()
 
 
-    def setupPluginsSettings(self):
-        """Config of every enabled plugin"""
-        config = self.config
-        choices = []
-        choices.append(_("Exit"))
-        plugins = config.options("plugins")
-        plugins.sort()
-        for plugin in list(plugins):
-            self.loadPlugin(plugin)
-            if hasattr(self.plugins[plugin], "setup"):
-                choices.append("{0:25s} {1}".format(plugin, self.plugins[plugin].about))
-            else:
-                plugins.remove(plugin)
-        while True:
-            print()
-            console.writeln("  " + _("Plugins settings menu"), console.color("RB", False, ""))
-            choice = console.menu(_("Plugins:"), choices, padding=1)
-            if choice == choices[0]:
-                break
-            plugin = plugins[choices.index(choice) - 1]
-            console.write("  " + _("Configuration of") + " ", console.color("GB", False, ""))
-            console.writeln(plugin, console.color("GB", True, ""))
-            self.plugins[plugin].setup()
-            config.save()
-
-
     def setupPlugins(self):
-        """Config: plugins section"""
+        """ Config: plugins section
+        """
         config = self.config
         config.assertSection("plugins")
         print()
@@ -234,8 +215,8 @@ class Pyggs(object):
                 config.remove_option("plugins", plugin)
         # Setup new found plugins
         for plugin in installedPlugins:
-            self.loadPlugin(plugin)
             if plugin not in config.options("plugins"):
+                self.loadPlugin(plugin)
                 console.writeln("  " + _("Plugin") + " " + plugin + ": " + self.plugins[plugin].about, console.color("G", False, ""))
                 config.update("plugins", plugin, _("Enable") + " " + plugin + " ({CHOICES})?", validate=["y", "n"])
                 if config.get("plugins", plugin) == "y":
@@ -278,7 +259,8 @@ class Pyggs(object):
 
 
     def setupPluginsEnable(self, plugin):
-        """Enable and setup plugin with all dependencies"""
+        """ Enable and setup plugin with all dependencies
+        """
         if hasattr(self.plugins[plugin], "setup"):
             console.write("  " + _("Configuration of") + " ", console.color("GB", False, ""))
             console.writeln(plugin, console.color("GB", True, ""))
@@ -297,8 +279,36 @@ class Pyggs(object):
         self.config.save()
 
 
+    def setupPluginsSettings(self):
+        """ Config of every enabled plugin
+        """
+        config = self.config
+        choices = []
+        choices.append(_("Exit"))
+        plugins = config.options("plugins")
+        plugins.sort()
+        for plugin in list(plugins):
+            self.loadPlugin(plugin)
+            if hasattr(self.plugins[plugin], "setup"):
+                choices.append("{0:25s} {1}".format(plugin, self.plugins[plugin].about))
+            else:
+                plugins.remove(plugin)
+        while True:
+            print()
+            console.writeln("  " + _("Plugins settings menu"), console.color("RB", False, ""))
+            choice = console.menu(_("Plugins:"), choices, padding=1)
+            if choice == choices[0]:
+                break
+            plugin = plugins[choices.index(choice) - 1]
+            console.write("  " + _("Configuration of") + " ", console.color("GB", False, ""))
+            console.writeln(plugin, console.color("GB", True, ""))
+            self.plugins[plugin].setup()
+            config.save()
+
+
     def setupEnd(self):
-        """Save config etc"""
+        """ Save config, etc
+        """
         self.config.save()
         with open(os.path.join(self.workDir, "pyggs", "version"), "w") as fp:
             fp.write(__version__)
@@ -309,7 +319,8 @@ class Pyggs(object):
 
 
     def run(self):
-        """Run pyggs"""
+        """ Run pyggs
+        """
         config = self.config
         # Init GCparser, and redefine again self.log
         self.gcp = GCparser(username=config.get("geocaching.com", "username"), password=config.get("geocaching.com", "password"), dataDir=os.path.join(self.workDir, "parser"))
@@ -349,12 +360,14 @@ class Pyggs(object):
 
 
     def registerPage(self, output, template, menutemplate, context, layout=True):
-        """Register page for rendering"""
+        """ Register page for rendering.
+        """
         self.pages[output] = {"template":template, "menu":menutemplate, "context":context, "layout":layout}
 
 
     def registerHandler(self, parsername, handler):
-        """Register handler that gets Parser object, when parse() method is called"""
+        """ Register handler that gets Parser object, when parse() method is called.
+        """
         try:
             self.handlers[parsername].append(handler)
         except KeyError:
@@ -363,7 +376,8 @@ class Pyggs(object):
 
 
     def parse(self, name, *args, **kwargs):
-        """Create parser and return it to every registered handler"""
+        """ Create parser and return it to every registered handler.
+        """
         handlers = self.handlers.get(name)
         if handlers is not None:
             parser = self.gcp.parse(name, *args, **kwargs)
@@ -372,7 +386,8 @@ class Pyggs(object):
 
 
     def loadPlugin(self, name):
-        """ Load a plugin - name is the file and class name"""
+        """ Load a plugin - name is the file and class name.
+        """
         if name not in globals()["plugins"].__dict__:
             self.log.info(_("Loading plugin {0}.").format(name))
             __import__("{0}.{1}".format(globals()["plugins"].__name__, name))
@@ -381,7 +396,8 @@ class Pyggs(object):
 
 
     def loadPlugins(self):
-        """Loads all plugins and their dependencies"""
+        """ Loads all plugins and their dependencies.
+        """
         for plugin in self.config.options("plugins"):
             if self.config.get("plugins", plugin) == "y":
                 self.loadPlugin(plugin)
@@ -391,7 +407,8 @@ class Pyggs(object):
 
 
     def findDeps(self, plugins):
-        """Finds all dependencies that are not loaded"""
+        """ Finds all dependencies that are not loaded.
+        """
         result = []
         for plugin in plugins:
             self.loadPlugin(plugin)
@@ -400,7 +417,8 @@ class Pyggs(object):
 
 
     def findPluginDeps(self, loaded, deps):
-        """findDeps recursive callback"""
+        """ findDeps recursive callback
+        """
         result = list(deps)
         for plugin in deps:
             if plugin in loaded:
@@ -412,7 +430,8 @@ class Pyggs(object):
 
 
     def makeDepTree(self):
-        """Rearragne the order of self.plugins according to dependencies"""
+        """ Rearragne the order of self.plugins according to dependencies.
+        """
         plugins = OrderedDict()
         fs = 0
         while len(self.plugins):
@@ -430,7 +449,8 @@ class Pyggs(object):
 
 
     def detectTemplates(self):
-        """Search for available templates"""
+        """ Search for available templates.
+        """
         templates = []
         for dir in self.templateDirs:
             if os.path.isdir(dir):
@@ -442,7 +462,8 @@ class Pyggs(object):
 
 
     def getTemplate(self):
-        """find selected template directory"""
+        """ Find directory of selected template.
+        """
         template = self.config.get("output", "template")
         for dir in self.templateDirs:
             if os.path.isdir(os.path.join(dir, template)):
@@ -451,7 +472,8 @@ class Pyggs(object):
 
 
     def detectThemes(self):
-        """Search for available themes"""
+        """ Search for available themes.
+        """
         themes = []
         for dir in self.themeDirs:
             if os.path.isdir(dir):
@@ -463,7 +485,8 @@ class Pyggs(object):
 
 
     def getTheme(self):
-        """find selected theme file"""
+        """ Find file of selected theme.
+        """
         theme = self.config.get("output", "theme")
         for dir in self.themeDirs:
             if os.path.isfile(os.path.join(dir, theme + ".theme")):
@@ -472,7 +495,8 @@ class Pyggs(object):
 
 
     def detectPlugins(self):
-        """Search for available plugins"""
+        """ Search for available plugins.
+        """
         plugins = []
         for plugin in os.listdir(os.path.join(os.path.dirname(__file__), "plugins")):
             if plugin.endswith(".py") and not plugin.startswith("__init__") and not plugin.startswith("example") and plugin[:-3] != "base":
@@ -498,19 +522,22 @@ class BaseConfig(configparser.RawConfigParser):
 
 
     def save(self):
-        """Save config to a file"""
+        """ Save config to a file.
+        """
         with open(self.configFile, "w", encoding="utf-8") as cfp:
             self.write(cfp)
 
 
     def load(self, configFile):
-        """Loads config from a file"""
+        """ Load config from a file.
+        """
         with open(configFile, encoding="utf-8") as cfp:
             self.readfp(cfp)
 
 
     def get(self, section, option):
-        """Get section->option, from config, or self.defaults"""
+        """ Get section->option from config, or self.defaults.
+        """
         try:
             value = configparser.RawConfigParser.get(self, section, option)
         except (configparser.NoSectionError, configparser.NoOptionError):
@@ -522,7 +549,8 @@ class BaseConfig(configparser.RawConfigParser):
 
 
     def assertSection(self, section):
-        """Add section, if not present"""
+        """ Add section if not present.
+        """
         try:
             self.add_section(section)
         except configparser.DuplicateSectionError:
@@ -530,7 +558,8 @@ class BaseConfig(configparser.RawConfigParser):
 
 
     def update(self, section, option, prompt, validate=None):
-        """Update option via user input"""
+        """ Update option via user input.
+        """
         default = self.get(section, option)
         value = console.prompt(prompt, padding=2, default=default, validate=validate)
         self.set(section, option, value)
@@ -567,7 +596,8 @@ class Templar(tenjin.Engine):
 
 
     def include(self, template_name, append_to_buf=True, context = None):
-        """This allows to pass different context to the subtemplate"""
+        """ This allows to pass different context to the subtemplate.
+        """
         frame = sys._getframe(1)
         locals = frame.f_locals
         globals = frame.f_globals
@@ -586,7 +616,8 @@ class Templar(tenjin.Engine):
 
 
     def outputPages(self, pages):
-        """Render and save all pages"""
+        """ Render and save all pages.
+        """
         for output in pages:
             globals = { "escape":tenjin.helpers.escape,
                         "to_str":tenjin.helpers.to_str,
@@ -612,7 +643,8 @@ class Templar(tenjin.Engine):
 
 
     def formatDate(self, value = None, format = "{day:d}.&nbsp;{month:d}.&nbsp;{year:d}"):
-        """Return date in string fromat"""
+        """ Return date in string fromat.
+        """
         if isinstance(value, str):
             value = datetime.datetime.strptime(value, "%Y-%m-%d")
         elif isinstance(value, int):
@@ -624,7 +656,8 @@ class Templar(tenjin.Engine):
 
 
     def dateRange(self, start, end = None):
-        """Returns date range in string format"""
+        """ Return date range in string format.
+        """
         if isinstance(start, str):
             start = datetime.datetime.strptime(start, "%Y-%m-%d")
         elif isinstance(start, int):
@@ -656,7 +689,8 @@ class Templar(tenjin.Engine):
 
 
     def formatDistance(self, value):
-        """Returns distance with suitable precision"""
+        """ Return distance with suitable precision.
+        """
         if value < 10:
             return "{0:.2f}".format(value)
         elif value < 100:
@@ -666,7 +700,8 @@ class Templar(tenjin.Engine):
 
 
     def formatLat(self, lat):
-        """Formats latitude"""
+        """ Format latitude.
+        """
         if lat > 0:
             pre = "N"
         else:
@@ -678,7 +713,8 @@ class Templar(tenjin.Engine):
 
 
     def formatLon(self, lon):
-        """Formats Longitude"""
+        """ Format Longitude.
+        """
         if lon > 0:
             pre = "E"
         else:
@@ -721,7 +757,8 @@ class Theme(BaseConfig):
 
 
     def options(self, section):
-        """Handle missing section error"""
+        """ Handle missing section error.
+        """
         try:
             return BaseConfig.options(self, section)
         except configparser.NoSectionError:
@@ -730,7 +767,8 @@ class Theme(BaseConfig):
 
 
     def css(self, *classes):
-        """Merge definitions from classe and return them"""
+        """ Merge definitions from classes and return them.
+        """
         all = OrderedDict()
         for cl in classes:
             tomerge = {}
@@ -754,7 +792,8 @@ class Theme(BaseConfig):
 
 
     def cssHeader(self):
-        """Render common styles in the header"""
+        """ Render common styles in the header.
+        """
         ret = ""
         for option in self.options("@screen"):
             ret = ret + "\n" + option + " {" + self.get("@screen", option) + "}"
@@ -762,7 +801,8 @@ class Theme(BaseConfig):
 
 
     def cssGradient(self, color1, color2, share):
-        """Return color between color1 and color2 according to share"""
+        """ Return color between color1 and color2 according to share.
+        """
         colors = self.options("@colors")
         if color1 in colors:
             color1 = self.get("@colors", color1)

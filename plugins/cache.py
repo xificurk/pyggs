@@ -20,16 +20,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+__version__ = "0.2"
+
+
 import logging
 import math
 import time
+import urllib.request
 
 from . import base
+from libs.versioning import VersionInfo
 
 
 class Plugin(base.Plugin):
     def __init__(self, master):
         base.Plugin.__init__(self, master)
+        self.version = VersionInfo(__version__)
         self.about = _("Global storage for detailed info about caches.")
 
 
@@ -52,6 +58,46 @@ class Plugin(base.Plugin):
         return True
 
 
+    def onPluginUpgrade(self, oldVersion):
+        if oldVersion < "0.2":
+            storage = self.master.globalStorage
+            if storage.query("SELECT COUNT(*) AS [exists] FROM [sqlite_master] WHERE [type] = 'table' AND [name] = 'cache'")[0]["exists"] > 0:
+                exists = False
+                for row in storage.query("PRAGMA TABLE_INFO([cache])"):
+                    if row["name"] == "elevation":
+                        exists = True
+                        break
+                if not exists:
+                    self.log.info(_("Creating column for elevation in cache database."))
+                    storage.query("ALTER TABLE [cache] ADD COLUMN [elevation] int(5) NOT NULL DEFAULT -9999")
+                self.log.warn(_("Updating cache database with elevation data... this may take a while."))
+                for cache in storage.query("SELECT guid, lat, lon FROM [cache] WHERE [elevation] = -9999"):
+                    elevation = self.getElevation(cache["lat"], cache["lon"])
+                    storage.query("UPDATE [cache] SET [elevation] = ? WHERE [guid] = ?", (elevation, cache["guid"]))
+        return True
+
+
+    def getElevation(self, lat, lon):
+        elevation = self.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
+        if elevation is not None:
+            elevation = int(elevation.read().strip())
+        else:
+            elevation = -9999
+        return elevation
+
+
+    def fetch(self, url):
+        try:
+            response = urllib.request.urlopen(url, timeout=10)
+        except IOError:
+            self.log.error("Could not fetch URL {0}.".format(url))
+            return None
+        if response.getcode() != 200:
+            self.log.error("Got error code {0} while fetching {1}.".format(response.getcode(), url))
+            return None
+        return response
+
+
     def prepare(self):
         base.Plugin.prepare(self)
         self.config["timeout"] = int(self.config["timeout"])
@@ -67,6 +113,10 @@ class Plugin(base.Plugin):
     def parseCache(self, cache):
         """Update Cache database"""
         details = cache.getDetails()
+        if "lat" in details and "lon" in details:
+            details["elevation"] = self.getElevation(details["lat"], details["lon"])
+        else:
+            details["elevation"] = -9999
         self.log.info("Updating Cache database for {0}: {1}.".format(details.get("waypoint"), details.get("name")))
         self.storage.update(details)
 
@@ -107,6 +157,7 @@ class Storage(base.Storage):
                 lon decimal(9,6) NOT NULL,
                 difficulty decimal(2,1) NOT NULL,
                 terrain decimal(2,1) NOT NULL,
+                elevation int(5) NOT NULL DEFAULT -9999,
                 size varchar(15) NOT NULL,
                 disabled int(1) NOT NULL,
                 archived int(1) NOT NULL,
@@ -146,7 +197,7 @@ class Storage(base.Storage):
             for tbid in data["inventory"]:
                 cur.execute("INSERT INTO cache_inventory(guid, tbid, name) VALUES(?,?,?)", (data["guid"], tbid, data["inventory"][tbid]))
             cur.execute("DELETE FROM cache WHERE guid = ?", (data["guid"],))
-            cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["owner_id"], data["hidden"], data["type"], data["country"], data["province"], data["lat"], data["lon"], data["difficulty"], data["terrain"], data["size"], data["disabled"], data["archived"], data["hint"], data["attributes"], time.time()))
+            cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["owner_id"], data["hidden"], data["type"], data["country"], data["province"], data["lat"], data["lon"], data["difficulty"], data["terrain"], data["size"], data["disabled"], data["archived"], data["hint"], data["attributes"], time.time(), data["elevation"]))
             cur.execute("DELETE FROM cache_visits WHERE guid = ?", (data["guid"],))
             for logtype in data["visits"]:
                 cur.execute("INSERT INTO cache_visits(guid, type, count) VALUES(?,?,?)", (data["guid"], logtype, data["visits"][logtype]))
@@ -154,7 +205,7 @@ class Storage(base.Storage):
             if exists:
                 cur.execute("UPDATE cache SET lastCheck = ? WHERE guid = ?", (time.time(), data["guid"]))
             else:
-                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck) VALUES(?,?,'','','','','','','','','','','','','','','','',?)", (data["guid"], data["waypoint"], time.time()))
+                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,'','','','','','','','','','','','','','','','',?,?)", (data["guid"], data["waypoint"], time.time(), -9999))
         db.commit()
         db.close()
 

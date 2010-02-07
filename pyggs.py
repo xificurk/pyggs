@@ -136,7 +136,7 @@ class Pyggs(object):
         if not os.path.isdir(parserDir) or not os.path.isdir(pyggsDir) or not os.path.isdir(profilesDir):
             self.log.critical(_("Unable to set up base directory structure in working directory {0}.").format(self.workDir))
 
-        self.log.info("Working directory is {0}.".format(self.workDir))
+        self.log.info(_("Working directory is {0}.").format(self.workDir))
 
         profileDir = os.path.join(profilesDir, self.profile)
         if not os.path.isdir(profileDir):
@@ -325,13 +325,13 @@ class Pyggs(object):
         # Prepare plugins
         for plugin in self.plugins:
             if hasattr(self.plugins[plugin], "prepare"):
-                self.log.info("Preparing plugin {0}...".format(plugin))
+                self.log.info(_("Preparing plugin {0}...").format(plugin))
                 self.plugins[plugin].prepare()
 
         # Run plugins
         for plugin in self.plugins:
             if hasattr(self.plugins[plugin], "run"):
-                self.log.info("Running plugin {0}...".format(plugin))
+                self.log.info(_("Running plugin {0}...").format(plugin))
                 self.plugins[plugin].run()
 
         # Render output
@@ -344,7 +344,7 @@ class Pyggs(object):
         # Finish plugins
         for plugin in self.plugins:
             if hasattr(self.plugins[plugin], "finish"):
-                self.log.info("Finishing plugin {0}...".format(plugin))
+                self.log.info(_("Finishing plugin {0}...").format(plugin))
                 self.plugins[plugin].finish()
 
 
@@ -374,7 +374,7 @@ class Pyggs(object):
     def loadPlugin(self, name):
         """ Load a plugin - name is the file and class name"""
         if name not in globals()["plugins"].__dict__:
-            self.log.info("Loading plugin {0}.".format(name))
+            self.log.info(_("Loading plugin {0}.").format(name))
             __import__("{0}.{1}".format(globals()["plugins"].__name__, name))
         if name not in self.plugins:
             self.plugins[name] = getattr(globals()["plugins"].__dict__[name], "Plugin")(self)
@@ -418,7 +418,7 @@ class Pyggs(object):
         while len(self.plugins):
             fs = fs +1
             if fs > 100:
-                self.log.warn("Cannot make plugin depedency tree for {0}. Possible circular dependencies.".format(",".join(list(self.plugins.keys()))))
+                self.log.warn(_("Cannot make plugin depedency tree for {0}. Possible circular dependencies.").format(",".join(list(self.plugins.keys()))))
                 for plugin in list(self.plugins.keys()):
                     plugins[plugin] = self.plugins.pop(plugin)
 
@@ -725,7 +725,7 @@ class Theme(BaseConfig):
         try:
             return BaseConfig.options(self, section)
         except configparser.NoSectionError:
-            self.log.warn("This theme has no section {0}.".format(section))
+            self.log.warn(_("This theme has no section {0}.").format(section))
             return []
 
 
@@ -773,10 +773,10 @@ class Theme(BaseConfig):
         match2 = re.search("rgb\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)", color2)
 
         if match1 is None:
-            self.log.error("Cannot parse color {0}.".format(color1))
+            self.log.error(_("Cannot parse color {0}.").format(color1))
             return "inherit"
         if match2 is None:
-            self.log.error("Cannot parse color {0}.".format(color2))
+            self.log.error(_("Cannot parse color {0}.").format(color2))
             return "inherit"
 
         share = max(0, min(float(share), 1))

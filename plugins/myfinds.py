@@ -57,10 +57,10 @@ class Plugin(base.Plugin):
 
     def parseMyFinds(self, myFinds):
         """Update MyFinds database"""
-        self.log.info("Updating MyFinds database.")
+        self.log.info(_("Updating MyFinds database."))
         myFinds = myFinds.getList()
         if len(myFinds) == 0:
-            self.log.error("Got zero myFinds records (bug?), leaving old database in place.")
+            self.log.error(_("Got zero myFinds records (bug?), leaving old database in place."))
         self.storage.update(myFinds)
 
 
@@ -92,7 +92,7 @@ class Storage(base.Storage):
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
         else:
-            self.log.info("MyFinds database out of date, initiating refresh.")
+            self.log.info(_("MyFinds database out of date, initiating refresh."))
             self.plugin.master.parse("myFinds")
 
         return self.valid

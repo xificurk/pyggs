@@ -63,7 +63,7 @@ class Plugin(base.Plugin):
         if not self.config["force"]:
             hash_old = self.master.profileStorage.getEnv(self.NS + ".hash")
             if hash == hash_old:
-                self.log.info("Geocaching.cz database seems already up to date, skipping update.")
+                self.log.info(_("Geocaching.cz database seems already up to date, skipping update."))
                 return
 
         data = {"a":"nalezy","u":self.gccz.config["username"],"p":self.gccz.config["password"],"d":finds}
@@ -78,8 +78,8 @@ class Plugin(base.Plugin):
                 break
 
         if succ is False:
-            self.log.error("Unable to update Geocaching.cz database.")
+            self.log.error(_("Unable to update Geocaching.cz database."))
             self.log.debug("Response: {0}".format(result))
         else:
             self.master.profileStorage.setEnv(self.NS + ".hash", hash)
-            self.log.info("Geocaching.cz database successfully updated.")
+            self.log.info(_("Geocaching.cz database successfully updated."))

@@ -107,7 +107,7 @@ class Storage(object):
 
         for field in format:
             if field != "#" and field not in result[0].keys():
-                self.log.error("There is no field '{0}' in the result set.".format(field))
+                self.log.error(_("There is no field '{0}' in the result set.").format(field))
                 return []
 
         # make associative tree

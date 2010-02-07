@@ -90,10 +90,10 @@ class Plugin(base.Plugin):
         try:
             response = urllib.request.urlopen(url, timeout=10)
         except IOError:
-            self.log.error("Could not fetch URL {0}.".format(url))
+            self.log.error(_("Could not fetch URL {0}.").format(url))
             return None
         if response.getcode() != 200:
-            self.log.error("Got error code {0} while fetching {1}.".format(response.getcode(), url))
+            self.log.error(_("Got error code {0} while fetching {1}.").format(response.getcode(), url))
             return None
         return response
 
@@ -117,7 +117,7 @@ class Plugin(base.Plugin):
             details["elevation"] = self.getElevation(details["lat"], details["lon"])
         else:
             details["elevation"] = -9999
-        self.log.info("Updating Cache database for {0}: {1}.".format(details.get("waypoint"), details.get("name")))
+        self.log.info(_("Updating Cache database for {0}: {1}.").format(details.get("waypoint"), details.get("name")))
         self.storage.update(details)
 
 
@@ -181,7 +181,7 @@ class Storage(base.Storage):
     def update(self, data):
         """Update Cache database by data"""
         if "guid" not in data:
-            self.log.error("No guid passed, not updating.")
+            self.log.error(_("No guid passed, not updating."))
             return
 
         db = self.getDb()

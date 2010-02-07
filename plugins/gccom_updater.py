@@ -53,7 +53,7 @@ class Plugin(base.Plugin):
     def finish(self):
         file = os.path.join(self.master.outDir, "export.html")
         if not os.path.isfile(file):
-            self.log.error("Export file not found.")
+            self.log.error(_("Export file not found."))
             return
 
         with open(file, "r", encoding="utf-8") as fp:
@@ -68,7 +68,7 @@ class Plugin(base.Plugin):
         if not self.config["force"]:
             hashOld = self.master.profileStorage.getEnv(self.NS + ".hash")
             if hash == hashOld:
-                self.log.info("Geocaching.com profile seems already up to date, skipping update.")
+                self.log.info(_("Geocaching.com profile seems already up to date, skipping update."))
                 return
 
         data = data.replace("<!-- pyggs[hashRemove] -->", "")

@@ -75,7 +75,7 @@ class Storage(base.Storage):
         if lastCheck is not None and float(lastCheck)+timeout >= time.time():
             self.valid = True
         else:
-            self.log.info("Geocaching.cz Ratings database out of date, initiating refresh.")
+            self.log.info(_("Geocaching.cz Ratings database out of date, initiating refresh."))
             self.update()
 
         return self.valid
@@ -97,7 +97,7 @@ class Storage(base.Storage):
         db = self.getDb()
         cur = db.cursor()
         if succ is False:
-            self.log.error("Unable to load Geocaching.cz Ratings, extending validity of current data.")
+            self.log.error(_("Unable to load Geocaching.cz Ratings, extending validity of current data."))
             self.log.debug("Response: {0}".format(result))
         else:
             cur.execute("DELETE FROM gccz_ratings")
@@ -106,7 +106,7 @@ class Storage(base.Storage):
                 row = row.split(";")
                 if len(row) >= 3:
                     cur.execute("INSERT INTO gccz_ratings(waypoint, rating, count) VALUES(?,?,?)", (row[0], row[1], row[2]))
-            self.log.info("Geocaching.cz Ratings database successfully updated.")
+            self.log.info(_("Geocaching.cz Ratings database successfully updated."))
 
         db.commit()
         db.close()

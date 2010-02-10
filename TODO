@@ -1,3 +1,4 @@
+* autodetect new plugins
 * gccz_rating use standard deviation
 * Templates: css gradient feature like in Google chart API
 * new gccom plugin: store credentials, use of PQ, download limits, warn on big amount of downloads

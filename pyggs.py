@@ -160,7 +160,7 @@ class Pyggs(object):
         config.update("general", "language", _("Please, select user interface language ({CHOICES})."), validate=list(langs.keys()))
         langs[config.get("general", "language")].install()
 
-        print("    " + _("Enter your home coordinates in degrees as deciamal number (N means positive value, S negative; E means positive value, W negative)."))
+        print("    " + _("Enter your home coordinates in degrees as decimal number (N means positive value, S negative; E means positive value, W negative)."))
         config.update("general", "homelat", _("Latitude:"), validate=lambda val: None if re.search("^-?[0-9]+\.?[0-9]*$", val) is not None else _("Please, use decimal number."))
         config.update("general", "homelon", _("Longitude:"), validate=lambda val: None if re.search("^-?[0-9]+\.?[0-9]*$", val) is not None else _("Please, use decimal number."))
         config.save()
@@ -195,7 +195,7 @@ class Pyggs(object):
         print("    " + _("Themes are looked up in these directories (consecutively):") + "\n      * " + "\n      * ".join(self.themeDirs))
         config.update("output", "theme", _("Theme ({CHOICES}):"), validate=themes)
 
-        config.update("output", "directory", _("Directory:"), validate=lambda val: None if os.path.isdir(os.path.expanduser(val)) else _("You have to input existing directory."))
+        config.update("output", "directory", _("Output directory:"), validate=lambda val: None if os.path.isdir(os.path.expanduser(val)) else _("You have to input existing directory."))
         config.save()
 
 

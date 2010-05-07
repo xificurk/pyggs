@@ -742,8 +742,13 @@ class Templar(tenjin.Engine):
         ctypes["Webcam Cache"] = 11
         ctypes["Cache In Trash Out Event"] = 13
         ctypes["Mega-Event Cache"] = "mega"
+        ctypes["Lost and Found Event Cache"] = "10Years_32"
 
         if ctype == "":
+            return ""
+
+        if ctype not in ctypes:
+            self.log.error(_("Uknown cache type '{0}'").format(ctype))
             return ""
 
         return "<img alt=\"{0}\" title=\"{0}\" src=\"http://www.geocaching.com/images/WptTypes/sm/{1}.gif\" width=\"16\" height=\"16\" />".format(ctype, ctypes[ctype])

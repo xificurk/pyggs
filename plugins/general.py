@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    plugins/general.py - Prepare place to pug general statistics.
+    plugins/general.py - Prepare place to put general statistics.
     Copyright (C) 2009 Petr Morávek
 
     This file is part of Pyggs.

@@ -78,6 +78,9 @@ class Plugin(base.Plugin):
 
     def getElevation(self, lat, lon):
         elevation = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
+        if elevation is None:
+            self.log.warn(_("Re-trying..."))
+            elevation = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
         if elevation is not None:
             elevation = int(elevation.read().strip())
         else:

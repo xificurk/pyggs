@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.7"
+__version__ = "0.2.8"
 
 
 from collections import OrderedDict
@@ -506,9 +506,11 @@ class Pyggs(object):
         return plugins
 
 
-    def fetch(self, url, data=None, timeout=10):
+    def fetch(self, url, data=None, timeout=20):
         try:
-            response = urllib.request.urlopen(url, data=urllib.parse.urlencode(data), timeout=timeout)
+            if data is not None:
+                data = urllib.parse.urlencode(data)
+            response = urllib.request.urlopen(url, data=data, timeout=timeout)
         except IOError:
             self.log.error(_("Could not fetch URL {0}.").format(url))
             return None
@@ -761,7 +763,7 @@ class Templar(tenjin.Engine):
             return ""
 
         if ctype not in ctypes:
-            self.log.error(_("Uknown cache type '{0}'").format(ctype))
+            self.log.error(_("Unknown cache type '{0}'.").format(ctype))
             return ""
 
         return "<img alt=\"{0}\" title=\"{0}\" src=\"http://www.geocaching.com/images/WptTypes/sm/{1}.gif\" width=\"16\" height=\"16\" />".format(ctype, ctypes[ctype])

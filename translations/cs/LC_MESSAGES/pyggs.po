@@ -4,8 +4,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pyggs 0.1\n"
-"POT-Creation-Date: 2010-01-16 22:40+CET\n"
+"Project-Id-Version: Pyggs 0.2.8\n"
+"POT-Creation-Date: 2010-06-07 01:19+CEST\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Petr Morávek <xificurk@gmail.com>\n"
 "Language-Team: \n"
@@ -37,21 +37,62 @@ msgstr "Musíte vybrat volbu ze seznamu. Zadejte číslo, nebo plný textový n�
 msgid "Select"
 msgstr "Výběr"
 
-#: plugins/cache.py:33
+#: plugins/base.py:46
+msgid "Upgrading plugin data from Pyggs version {0} to {1}."
+msgstr "Aktualizuji data pluginu z Pyggs verze {0} na {1}."
+
+#: plugins/base.py:49
+#: plugins/base.py:59
+msgid "Upgrade script failed."
+msgstr "Aktualizační skript selhal."
+
+#: plugins/base.py:56
+msgid "Upgrading plugin data from plugin version {0} to {1}."
+msgstr "Aktualizuji data pluginu z verze {0} na {1}."
+
+#: plugins/base.py:110
+msgid "There is no field '{0}' in the result set."
+msgstr "Pole '{0}' v datech neexistuje."
+
+#: plugins/cache.py:38
 msgid "Global storage for detailed info about caches."
 msgstr "Globální uložiště podrobností o keších."
 
-#: plugins/cache.py:42
+#: plugins/cache.py:47
 msgid "Cache details data timeout in days:"
 msgstr "Platnost uložených podrobností o keši v dnech:"
 
-#: plugins/cache.py:42
+#: plugins/cache.py:47
 #: plugins/gccz.py:38
-#: plugins/gccz_myratings.py:43
-#: plugins/gccz_ratings.py:42
+#: plugins/gccz_myratings.py:42
+#: plugins/gccz_ratings.py:41
 #: plugins/myfinds.py:41
 msgid "Use only digits, please."
 msgstr "Vložte prosím pouze číslice."
+
+#: plugins/cache.py:55
+msgid "Fixing change of cache type name Unknown - Mystery/Puzzle."
+msgstr "Upravuji název typu keší Uknown - Mystery/Puzzle."
+
+#: plugins/cache.py:70
+msgid "Creating column for elevation in cache database."
+msgstr "Vytvářím sloupec pro výšková data v databázi keší."
+
+#: plugins/cache.py:72
+msgid "Updating cache database with elevation data... this may take a while."
+msgstr "Aktualizuji výšková data v databázi keší... tato operace může chvíli trvat."
+
+#: plugins/cache.py:82
+msgid "Re-trying..."
+msgstr "Zkouším znovu..."
+
+#: plugins/cache.py:110
+msgid "Updating Cache database for {0}: {1}."
+msgstr "Aktualizuji data v databázi keší pro {0}: {1}."
+
+#: plugins/cache.py:174
+msgid "No guid passed, not updating."
+msgstr "Nebyl zadán guid, nemůžu provést aktualizaci."
 
 #: plugins/cache_distrib.py:33
 msgid "Statistics of found caches by type, size and country."
@@ -65,6 +106,10 @@ msgstr "Přidá řádky o nejvzdálenější, nejižnější, nejstarší, atd. 
 msgid "Difficulty / Terrain matrix of found caches."
 msgstr "Matice Obtížnost / Terén nalezených keší."
 
+#: plugins/elevations.py:32
+msgid "Adds graph and average value of finds by elevation."
+msgstr "Generuje graf a průměrné hodnoty nalezených keší podle nadmořské výšky."
+
 #: plugins/example.py:35
 msgid "This plugin is just simple example."
 msgstr "Toto je pouze jednoduchý příklad pluginu."
@@ -76,6 +121,14 @@ msgstr "Aktualizuje profil na geocaching.com vygenerovanými statistikami."
 #: plugins/gccom_updater.py:42
 msgid "Force geocaching.com profile update on every run ({CHOICES})?"
 msgstr "Vynutit aktualizaci profilu při každém spuštění ({CHOICES})?"
+
+#: plugins/gccom_updater.py:56
+msgid "Export file not found."
+msgstr "Soubor s exportem nenalezen."
+
+#: plugins/gccom_updater.py:71
+msgid "Geocaching.com profile seems already up to date, skipping update."
+msgstr "Profil na geocaching.com se zdá být aktuální, přeskakuji jeho aktualizaci."
 
 #: plugins/gccz.py:29
 msgid "Storage for geocaching.cz credentials etc."
@@ -93,37 +146,76 @@ msgstr "Heslo na geocaching.cz:"
 msgid "UID (for map generating):"
 msgstr "UID z geocaching.cz (pro generování map):"
 
-#: plugins/gccz_myratings.py:34
+#: plugins/gccz_myratings.py:33
 msgid "Storage for user's ratings of caches from geocaching.cz."
 msgstr "Uložiště pro vlastní hodnocení keší z geocaching.cz."
 
-#: plugins/gccz_myratings.py:43
+#: plugins/gccz_myratings.py:42
 msgid "Timeout for stored geocaching.cz ratings of the user in hours:"
 msgstr "Platnost uložených vlastních hodnocení z geocaching.cz v hodinách:"
+
+#: plugins/gccz_myratings.py:77
+msgid "Geocaching.cz MyRatings database out of date, initiating refresh."
+msgstr "Platnost databáze vlastních hodnocení z geocaching.cz vypršela, zahajuji aktualizaci."
+
+#: plugins/gccz_myratings.py:88
+#: plugins/gccz_myratings.py:101
+msgid "Unable to load Geocaching.cz MyRatings, extending validity of current data."
+msgstr "Nepodařilo se načíst vlastní hodnocení z geocaching.cz, prodlužuji platnost stávajících dat."
+
+#: plugins/gccz_myratings.py:113
+msgid "Geocaching.cz MyRatings database successfully updated."
+msgstr "Databáze vlastních hodnocení z geocaching.cz úspěšně aktualizována."
 
 #: plugins/gccz_myratings_top10.py:30
 msgid "List of top 10 user rated caches."
 msgstr "Seznam 10 nejlépe hodnocených keší uživatelem."
 
-#: plugins/gccz_ratings.py:33
+#: plugins/gccz_ratings.py:32
 msgid "Global storage for ratings of caches from geocaching.cz."
 msgstr "Globální uložiště pro hodnocení z geocaching.cz."
 
-#: plugins/gccz_ratings.py:42
+#: plugins/gccz_ratings.py:41
 msgid "Timeout for stored geocaching.cz ratings in days:"
 msgstr "Platnost uložených hodnocení z geocaching.cz v dnech:"
+
+#: plugins/gccz_ratings.py:77
+msgid "Geocaching.cz Ratings database out of date, initiating refresh."
+msgstr "Platnost databáze hodnocení z geocaching.cz vypršela, zahajuji aktualizaci."
+
+#: plugins/gccz_ratings.py:88
+#: plugins/gccz_ratings.py:101
+msgid "Unable to load Geocaching.cz Ratings, extending validity of current data."
+msgstr "Nepodařilo se načíst hodnocení z geocaching.cz, prodlužuji platnost stávajících dat."
+
+#: plugins/gccz_ratings.py:113
+msgid "Geocaching.cz Ratings database successfully updated."
+msgstr "Databáze hodnocení z geocaching.cz úspěšně aktualizována."
 
 #: plugins/gccz_ratings_top.py:31
 msgid "Adds rows about worst/best rated cache found into General statistics section."
 msgstr "Přidá řádky o nejlepší/nejhorší nalezené keši do sekce Celková statistika."
 
-#: plugins/gccz_updater.py:33
+#: plugins/gccz_updater.py:32
 msgid "Updates user's finds in geocaching.cz database."
 msgstr "Aktualizuje nálezy uživatele v databázi geocaching.cz."
 
-#: plugins/gccz_updater.py:42
+#: plugins/gccz_updater.py:41
 msgid "Force my finds update on every run ({CHOICES})?"
 msgstr "Vynutit aktualizaci nálezů při každém spuštění ({CHOICES})?"
+
+#: plugins/gccz_updater.py:65
+msgid "Geocaching.cz database seems already up to date, skipping update."
+msgstr "Nálezy na geocaching.cz se zdají být aktuální, přeskakuji jejich aktualizaci."
+
+#: plugins/gccz_updater.py:71
+#: plugins/gccz_updater.py:84
+msgid "Unable to update Geocaching.cz database."
+msgstr "Nepodařilo se aktualizovat nálezy na geocaching.cz."
+
+#: plugins/gccz_updater.py:89
+msgid "Geocaching.cz database successfully updated."
+msgstr "Nálezy na geocaching.cz úspěšně aktualizovány."
 
 #: plugins/general.py:30
 msgid "Container for General statistics table."
@@ -157,6 +249,22 @@ msgstr "Uložiště pro My Finds data z profilu na geocaching.com."
 msgid "My Finds data timeout in hours:"
 msgstr "Platnost uložených My Finds dat v hodinách:"
 
+#: plugins/myfinds.py:46
+msgid "New version of Pyggs: forcing database update."
+msgstr "Detekována nová verze Pyggs: databáze nálezů bude aktualizována."
+
+#: plugins/myfinds.py:60
+msgid "Updating MyFinds database."
+msgstr "Aktualizuji databázi nálezů."
+
+#: plugins/myfinds.py:63
+msgid "Got zero myFinds records (bug?), leaving old database in place."
+msgstr "Stažený seznam nálezů je prázdný (bug?), ponechávám starou databázi."
+
+#: plugins/myfinds.py:95
+msgid "MyFinds database out of date, initiating refresh."
+msgstr "Platnost databáze nálezů vypršela, zahajuji aktualizaci."
+
 #: plugins/myfinds_averages.py:33
 msgid "Adds rows about average finds (overall, in last 365 days) into General statistics section."
 msgstr "Přidá řádky s průměrnými údaji o nálezech (celkově, za posledních 365 dní) do sekce Celková statistika."
@@ -177,271 +285,311 @@ msgstr "Generuje HTML stránku se statistikami."
 msgid "Generates page with the list of found but unrated caches by user."
 msgstr "Vygeneruje stránku se seznamem nalezených, ale neohodnocených keší uživatele."
 
-#: pyggs.py:78
+#: pyggs.py:81
 msgid "Entering setup menu for profile {0}."
 msgstr "Otevírám menu s nastavením pro profil {0}."
 
-#: pyggs.py:83
-#: pyggs.py:199
-#: pyggs.py:249
+#: pyggs.py:86
+#: pyggs.py:232
+#: pyggs.py:288
 msgid "Exit"
 msgstr "Konec"
 
-#: pyggs.py:84
-#: pyggs.py:152
+#: pyggs.py:87
+#: pyggs.py:158
 msgid "General options"
 msgstr "Obecná nastavení"
 
-#: pyggs.py:86
-#: pyggs.py:181
+#: pyggs.py:89
+#: pyggs.py:189
 msgid "Output"
 msgstr "Výstup"
 
-#: pyggs.py:87
+#: pyggs.py:90
 msgid "Enable/Disable plugins"
 msgstr "Zapnout/Vypnout pluginy"
 
-#: pyggs.py:88
+#: pyggs.py:91
 msgid "Plugins settings"
 msgstr "Nastavení pluginů"
 
-#: pyggs.py:91
+#: pyggs.py:94
 msgid "Main menu"
 msgstr "Hlavní nabídka"
 
-#: pyggs.py:92
+#: pyggs.py:95
 msgid "Action:"
 msgstr "Akce:"
 
-#: pyggs.py:109
+#: pyggs.py:113
 msgid "Entering full setup for profile {0}."
 msgstr "Zahajuji kompletní nastavení profilu {0}."
 
-#: pyggs.py:124
+#: pyggs.py:129
 msgid "Unable to create working directory {0}."
 msgstr "Nepodařilo se vytvořit pracovní adresář {0}."
 
-#: pyggs.py:136
+#: pyggs.py:141
 msgid "Unable to set up base directory structure in working directory {0}."
 msgstr "Nepodařilo se vytvořit základní adresářovou strukturu v pracovním adresáři {0}."
 
-#: pyggs.py:144
+#: pyggs.py:143
+msgid "Working directory is {0}."
+msgstr "Pracovního adresář je {0}."
+
+#: pyggs.py:149
 msgid "Unable to create profile directory {0}."
 msgstr "Nepodařilo se vytvořit adresář profilu {0}."
 
-#: pyggs.py:155
+#: pyggs.py:161
 msgid "Please, select user interface language ({CHOICES})."
 msgstr "Vyberte prosím jazyk uživatelského rozhraní ({CHOICES})."
 
-#: pyggs.py:158
-msgid "Enter your home coordinates in degrees as deciamal number (N means positive value, S negative; E means positive value, W negative)."
-msgstr "Zadejte domovské souřadnice jako desetinné číslo ve stupních (N je jsou kladné hodnoty, S záporné; E jsou kladné hodnoty, W záporné)."
+#: pyggs.py:164
+msgid "Enter your home coordinates in degrees as decimal number (N means positive value, S negative; E means positive value, W negative)."
+msgstr "Zadejte domovské souřadnice jako desetinné číslo ve stupních (N jsou kladné hodnoty, S záporné; E jsou kladné hodnoty, W záporné)."
 
-#: pyggs.py:159
+#: pyggs.py:165
 msgid "Latitude:"
 msgstr "Zeměpisná šířka:"
 
-#: pyggs.py:159
-#: pyggs.py:160
+#: pyggs.py:165
+#: pyggs.py:166
 msgid "Please, use decimal number."
 msgstr "Vložte prosím desetinné číslo (s desetinnou tečkou)."
 
-#: pyggs.py:160
+#: pyggs.py:166
 msgid "Longitude:"
 msgstr "Zeměpisná délka:"
 
-#: pyggs.py:171
+#: pyggs.py:178
 msgid "Username:"
 msgstr "Uživatelské jméno:"
 
-#: pyggs.py:172
+#: pyggs.py:179
 msgid "Password:"
 msgstr "Heslo:"
 
-#: pyggs.py:184
+#: pyggs.py:192
 msgid "Templates are looked up in these directories (consecutively):"
 msgstr "Šablony se hledají v těchto adresářích (popořadě):"
 
-#: pyggs.py:185
+#: pyggs.py:193
 msgid "Template ({CHOICES}):"
 msgstr "Šablona ({CHOICES}):"
 
-#: pyggs.py:188
+#: pyggs.py:196
 msgid "Themes are looked up in these directories (consecutively):"
 msgstr "Motivy se hledají v těchto adresářích (popořadě):"
 
-#: pyggs.py:189
+#: pyggs.py:197
 msgid "Theme ({CHOICES}):"
 msgstr "Motiv ({CHOICES}):"
 
-#: pyggs.py:191
-msgid "Directory:"
-msgstr "Adresář:"
+#: pyggs.py:199
+msgid "Output directory:"
+msgstr "Adresář pro výstup:"
 
-#: pyggs.py:191
+#: pyggs.py:199
 msgid "You have to input existing directory."
 msgstr "Musíte zadat existující adreář."
 
-#: pyggs.py:210
-msgid "Plugins settings menu"
-msgstr "Nastavení jednotlivých pluginů"
-
-#: pyggs.py:211
-#: pyggs.py:258
-msgid "Plugins:"
-msgstr "Pluginy:"
-
-#: pyggs.py:215
-#: pyggs.py:282
-msgid "Configuration of"
-msgstr "Nastavení"
-
-#: pyggs.py:226
+#: pyggs.py:209
 msgid "Plugins"
 msgstr "Pluginy"
 
-#: pyggs.py:238
+#: pyggs.py:221
 msgid "Plugin"
 msgstr "Plugin"
 
-#: pyggs.py:239
+#: pyggs.py:222
 msgid "Enable"
 msgstr "Aktivovat"
 
-#: pyggs.py:257
+#: pyggs.py:240
 msgid "Enable/Disable plugins menu"
 msgstr "Nabídka zapnout/vypnout pluginy"
 
-#: pyggs.py:268
+#: pyggs.py:241
+#: pyggs.py:300
+msgid "Plugins:"
+msgstr "Pluginy:"
+
+#: pyggs.py:251
 msgid "Cannot disable plugin {0}, because {1} depend on it."
 msgstr "Není možné vypnout plugin {0}, jelikož na něm závisí {1}."
 
-#: pyggs.py:270
+#: pyggs.py:253
 msgid "Disabling plugin {0}."
 msgstr "Vypínám plugin {0}."
 
-#: pyggs.py:273
+#: pyggs.py:256
 msgid "Enabling plugin {0}."
 msgstr "Zapínám plugin {0}."
 
-#: pyggs.py:292
+#: pyggs.py:266
+#: pyggs.py:304
+msgid "Configuration of"
+msgstr "Nastavení"
+
+#: pyggs.py:276
 msgid "Plugin {0} pulled in as dependency."
 msgstr "Plugin {0} přidán jako závislost."
 
-#: pyggs.py:305
+#: pyggs.py:299
+msgid "Plugins settings menu"
+msgstr "Nastavení jednotlivých pluginů"
+
+#: pyggs.py:319
 msgid "Note: You can always edit these setings by running pyggs with --setup (-s) switch."
 msgstr "Poznámka: Tato nastavení můžete kdykoliv změnit spuštěním pyggs se --setup (-s) přepínačem."
 
-#: pyggs.py:338
+#: pyggs.py:340
+msgid "Preparing plugin {0}..."
+msgstr "Připravuji plugin {0}..."
+
+#: pyggs.py:346
+msgid "Running plugin {0}..."
+msgstr "Spouštím plugin {0}..."
+
+#: pyggs.py:352
 msgid "Invalid ouput directory {0}."
 msgstr "Chybný adresář {0} pro výstup."
 
-#: pyggs.py:388
+#: pyggs.py:359
+msgid "Finishing plugin {0}..."
+msgstr "Dokončuji plugin {0}..."
+
+#: pyggs.py:393
+msgid "Loading plugin {0}."
+msgstr "Načítám plugin {0}."
+
+#: pyggs.py:407
 msgid "Missing dependencies {0}."
 msgstr "Chybějící závislosti {0}."
 
-#: pyggs.py:448
+#: pyggs.py:441
+msgid "Cannot make plugin depedency tree for {0}. Possible circular dependencies."
+msgstr "Nemohu sestavit strom závislostí pluginů pro {0}. Pravděpodobně z důvodu cyklických závislostí."
+
+#: pyggs.py:472
 msgid "Cannot find template {0}."
 msgstr "Šablona {0} nenalezena."
 
-#: pyggs.py:469
+#: pyggs.py:495
 msgid "Cannot find theme {0}."
 msgstr "Motiv {0} nenalezen."
 
-#: pyggs.py:799
+#: pyggs.py:515
+msgid "Could not fetch URL {0}."
+msgstr "Nepodařilo se stáhnout data z {0}."
+
+#: pyggs.py:518
+msgid "Got error code {0} while fetching {1}."
+msgstr "Chyba {0} při stahování {1}."
+
+#: pyggs.py:766
+msgid "Unknown cache type '{0}'."
+msgstr "Neznámý typ keše '{0}'."
+
+#: pyggs.py:785
+msgid "This theme has no section {0}."
+msgstr "Tento styl nemá sekci {0}."
+
+#: pyggs.py:836
+#: pyggs.py:839
+msgid "Cannot parse color {0}."
+msgstr "Nepodařilo se naparsovat barvu {0}."
+
+#: pyggs.py:861
 msgid "choose profile"
 msgstr "nastavit profil"
 
-#: pyggs.py:800
+#: pyggs.py:862
 msgid "disable usage of colored output"
 msgstr "vypne používání barevného výstupu"
 
-#: pyggs.py:801
+#: pyggs.py:863
 msgid "run setup script"
 msgstr "spustí nastavení"
 
-#: pyggs.py:802
+#: pyggs.py:864
 msgid "set working directory, default is {0}"
 msgstr "nastavení pracovního adresáře, výchozí je {0}"
 
-#: pyggs.py:803
+#: pyggs.py:865
 msgid "set logging to ERROR"
 msgstr "nastavit logování na ERROR"
 
-#: pyggs.py:804
+#: pyggs.py:866
 msgid "set logging to INFO"
 msgstr "nastavit logování na INFO"
 
-#: pyggs.py:805
+#: pyggs.py:867
 msgid "set logging to DEBUG"
 msgstr "nastavit logování na DEBUG"
 
-#: pyggs.py:806
+#: pyggs.py:868
 msgid "set logging to ALL"
 msgstr "nastavit logování na ALL"
 
-#: pyggs.py:822
+#: pyggs.py:884
 msgid "You need at least Python {0} to run this script."
 msgstr "Pro běh tohot skriptu potřebujete Python verze {0} nebo vyšší."
 
-#: pyggs.py:838
+#: pyggs.py:900
 msgid "Detected incompatible version of working directory {0}. Please, delete the directory and set up your profiles from start."
 msgstr "Nalezena nekompatibilní verze pracovního adresáře {0}. Prosím, vymažte adresář a znovu nastavte své profily."
 
-#: pyggs.py:839
+#: pyggs.py:901
 msgid "Do you want to delete the working directory and enter the setup script now ({CHOICES})?"
 msgstr "Chcete nyní vymazat pracovní adresář a spustit nastavení profilu ({CHOICES})?"
 
-#: pyggs.py:843
+#: pyggs.py:905
 msgid "Deleting content of working directory {0}."
 msgstr "Mažu obsah pracovního adresáře {0}."
 
-#: pyggs.py:848
-msgid "Fixing change of cache type name Unknown - Mystery/Puzzle."
-msgstr "Upravuji název typu keší Uknown - Mystery/Puzzle."
+#: pyggs.py:913
+msgid "Updating environment variables in global storage."
+msgstr "Aktualizuji proměnné v globálním uložišti."
 
-#: pyggs.py:852
-msgid "Fixing change of cache type name Unknown - Mystery/Puzzle SUCCESSFUL."
-msgstr "Změna názvu typu keší Uknown - Mystery/Puzzle ÚSPĚŠNÁ."
-
-#: pyggs.py:854
-msgid "Fixing change of cache type name Unknown - Mystery/Puzzle FAILED."
-msgstr "Změna názvu typu keší Uknown - Mystery/Puzzle SELHALA."
-
-#: pyggs.py:860
+#: pyggs.py:919
 msgid "Working directory is not set up properly, initiating setup script."
 msgstr "Pracovní adresář není připraven, spouštím nastavení."
 
-#: pyggs.py:872
+#: pyggs.py:931
 msgid "No profile name given, auto-chosing the only available profile '{0}'."
 msgstr "Nebylo zadáno žádné jméno profilu, automaticky předpokládám jediný dostupný profil '{0}'."
 
-#: pyggs.py:875
+#: pyggs.py:934
 msgid "Create new"
 msgstr "Vytvořit nový"
 
-#: pyggs.py:876
+#: pyggs.py:935
 msgid "No profile name given, please select your profile."
 msgstr "Nebylo zadáno žádné jméno profilu, vyberte prosím profil."
 
-#: pyggs.py:878
+#: pyggs.py:937
 msgid "Please, use only alpha-numeric characters."
 msgstr "Používejte prosím pouze písmena a číslice."
 
-#: pyggs.py:878
+#: pyggs.py:937
 msgid "Profile name"
 msgstr "Jméno profilu"
 
-#: pyggs.py:883
+#: pyggs.py:942
 msgid "Profile '{0}' does not exist, creating profile directory and initiating setup script."
 msgstr "Profil '{0}' neexistuje, vytvářím adresář profilu a zahajuji nastavení."
 
-#: pyggs.py:896
-msgid "Detected new version of Pyggs: forcing myFinds database update."
-msgstr "Detekována nová verze Pyggs: myFinds databáze bude aktualizována."
+#: pyggs.py:958
+msgid "Updating environment variables in profile storage."
+msgstr "Aktualizuji proměnné v uživatelském uložišti."
 
-#~ msgid "Template '%s' not found."
-#~ msgstr "Šablona '%s' nenalezena."
+#~ msgid ""
+#~ "Fixing change of cache type name Unknown - Mystery/Puzzle SUCCESSFUL."
+#~ msgstr "Změna názvu typu keší Uknown - Mystery/Puzzle ÚSPĚŠNÁ."
+#~ msgid "Fixing change of cache type name Unknown - Mystery/Puzzle FAILED."
+#~ msgstr "Změna názvu typu keší Uknown - Mystery/Puzzle SELHALA."
 #~ msgid "Theme '%s' not found."
 #~ msgstr "Motiv '%s' nenalezen."
 #~ msgid "You have to select a profile."

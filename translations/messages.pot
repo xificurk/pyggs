@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-01-16 22:40+CET\n"
+"POT-Creation-Date: 2010-06-07 01:19+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,17 +35,57 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: plugins/cache.py:33
+#: plugins/base.py:46
+msgid "Upgrading plugin data from Pyggs version {0} to {1}."
+msgstr ""
+
+#: plugins/base.py:49 plugins/base.py:59
+msgid "Upgrade script failed."
+msgstr ""
+
+#: plugins/base.py:56
+msgid "Upgrading plugin data from plugin version {0} to {1}."
+msgstr ""
+
+#: plugins/base.py:110
+msgid "There is no field '{0}' in the result set."
+msgstr ""
+
+#: plugins/cache.py:38
 msgid "Global storage for detailed info about caches."
 msgstr ""
 
-#: plugins/cache.py:42
+#: plugins/cache.py:47
 msgid "Cache details data timeout in days:"
 msgstr ""
 
-#: plugins/cache.py:42 plugins/gccz.py:38 plugins/gccz_myratings.py:43
-#: plugins/gccz_ratings.py:42 plugins/myfinds.py:41
+#: plugins/cache.py:47 plugins/gccz.py:38 plugins/gccz_myratings.py:42
+#: plugins/gccz_ratings.py:41 plugins/myfinds.py:41
 msgid "Use only digits, please."
+msgstr ""
+
+#: plugins/cache.py:55
+msgid "Fixing change of cache type name Unknown - Mystery/Puzzle."
+msgstr ""
+
+#: plugins/cache.py:70
+msgid "Creating column for elevation in cache database."
+msgstr ""
+
+#: plugins/cache.py:72
+msgid "Updating cache database with elevation data... this may take a while."
+msgstr ""
+
+#: plugins/cache.py:82
+msgid "Re-trying..."
+msgstr ""
+
+#: plugins/cache.py:110
+msgid "Updating Cache database for {0}: {1}."
+msgstr ""
+
+#: plugins/cache.py:174
+msgid "No guid passed, not updating."
 msgstr ""
 
 #: plugins/cache_distrib.py:33
@@ -60,6 +100,10 @@ msgstr ""
 msgid "Difficulty / Terrain matrix of found caches."
 msgstr ""
 
+#: plugins/elevations.py:32
+msgid "Adds graph and average value of finds by elevation."
+msgstr ""
+
 #: plugins/example.py:35
 msgid "This plugin is just simple example."
 msgstr ""
@@ -70,6 +114,14 @@ msgstr ""
 
 #: plugins/gccom_updater.py:42
 msgid "Force geocaching.com profile update on every run ({CHOICES})?"
+msgstr ""
+
+#: plugins/gccom_updater.py:56
+msgid "Export file not found."
+msgstr ""
+
+#: plugins/gccom_updater.py:71
+msgid "Geocaching.com profile seems already up to date, skipping update."
 msgstr ""
 
 #: plugins/gccz.py:29
@@ -88,36 +140,72 @@ msgstr ""
 msgid "UID (for map generating):"
 msgstr ""
 
-#: plugins/gccz_myratings.py:34
+#: plugins/gccz_myratings.py:33
 msgid "Storage for user's ratings of caches from geocaching.cz."
 msgstr ""
 
-#: plugins/gccz_myratings.py:43
+#: plugins/gccz_myratings.py:42
 msgid "Timeout for stored geocaching.cz ratings of the user in hours:"
+msgstr ""
+
+#: plugins/gccz_myratings.py:77
+msgid "Geocaching.cz MyRatings database out of date, initiating refresh."
+msgstr ""
+
+#: plugins/gccz_myratings.py:88 plugins/gccz_myratings.py:101
+msgid "Unable to load Geocaching.cz MyRatings, extending validity of current data."
+msgstr ""
+
+#: plugins/gccz_myratings.py:113
+msgid "Geocaching.cz MyRatings database successfully updated."
 msgstr ""
 
 #: plugins/gccz_myratings_top10.py:30
 msgid "List of top 10 user rated caches."
 msgstr ""
 
-#: plugins/gccz_ratings.py:33
+#: plugins/gccz_ratings.py:32
 msgid "Global storage for ratings of caches from geocaching.cz."
 msgstr ""
 
-#: plugins/gccz_ratings.py:42
+#: plugins/gccz_ratings.py:41
 msgid "Timeout for stored geocaching.cz ratings in days:"
+msgstr ""
+
+#: plugins/gccz_ratings.py:77
+msgid "Geocaching.cz Ratings database out of date, initiating refresh."
+msgstr ""
+
+#: plugins/gccz_ratings.py:88 plugins/gccz_ratings.py:101
+msgid "Unable to load Geocaching.cz Ratings, extending validity of current data."
+msgstr ""
+
+#: plugins/gccz_ratings.py:113
+msgid "Geocaching.cz Ratings database successfully updated."
 msgstr ""
 
 #: plugins/gccz_ratings_top.py:31
 msgid "Adds rows about worst/best rated cache found into General statistics section."
 msgstr ""
 
-#: plugins/gccz_updater.py:33
+#: plugins/gccz_updater.py:32
 msgid "Updates user's finds in geocaching.cz database."
 msgstr ""
 
-#: plugins/gccz_updater.py:42
+#: plugins/gccz_updater.py:41
 msgid "Force my finds update on every run ({CHOICES})?"
+msgstr ""
+
+#: plugins/gccz_updater.py:65
+msgid "Geocaching.cz database seems already up to date, skipping update."
+msgstr ""
+
+#: plugins/gccz_updater.py:71 plugins/gccz_updater.py:84
+msgid "Unable to update Geocaching.cz database."
+msgstr ""
+
+#: plugins/gccz_updater.py:89
+msgid "Geocaching.cz database successfully updated."
 msgstr ""
 
 #: plugins/general.py:30
@@ -152,6 +240,22 @@ msgstr ""
 msgid "My Finds data timeout in hours:"
 msgstr ""
 
+#: plugins/myfinds.py:46
+msgid "New version of Pyggs: forcing database update."
+msgstr ""
+
+#: plugins/myfinds.py:60
+msgid "Updating MyFinds database."
+msgstr ""
+
+#: plugins/myfinds.py:63
+msgid "Got zero myFinds records (bug?), leaving old database in place."
+msgstr ""
+
+#: plugins/myfinds.py:95
+msgid "MyFinds database out of date, initiating refresh."
+msgstr ""
+
 #: plugins/myfinds_averages.py:33
 msgid "Adds rows about average finds (overall, in last 365 days) into General statistics section."
 msgstr ""
@@ -172,259 +276,295 @@ msgstr ""
 msgid "Generates page with the list of found but unrated caches by user."
 msgstr ""
 
-#: pyggs.py:78
+#: pyggs.py:81
 msgid "Entering setup menu for profile {0}."
 msgstr ""
 
-#: pyggs.py:83 pyggs.py:199 pyggs.py:249
+#: pyggs.py:86 pyggs.py:232 pyggs.py:288
 msgid "Exit"
 msgstr ""
 
-#: pyggs.py:84 pyggs.py:152
+#: pyggs.py:87 pyggs.py:158
 msgid "General options"
 msgstr ""
 
-#: pyggs.py:86 pyggs.py:181
+#: pyggs.py:89 pyggs.py:189
 msgid "Output"
 msgstr ""
 
-#: pyggs.py:87
+#: pyggs.py:90
 msgid "Enable/Disable plugins"
 msgstr ""
 
-#: pyggs.py:88
+#: pyggs.py:91
 msgid "Plugins settings"
 msgstr ""
 
-#: pyggs.py:91
+#: pyggs.py:94
 msgid "Main menu"
 msgstr ""
 
-#: pyggs.py:92
+#: pyggs.py:95
 msgid "Action:"
 msgstr ""
 
-#: pyggs.py:109
+#: pyggs.py:113
 msgid "Entering full setup for profile {0}."
 msgstr ""
 
-#: pyggs.py:124
+#: pyggs.py:129
 msgid "Unable to create working directory {0}."
 msgstr ""
 
-#: pyggs.py:136
+#: pyggs.py:141
 msgid "Unable to set up base directory structure in working directory {0}."
 msgstr ""
 
-#: pyggs.py:144
+#: pyggs.py:143
+msgid "Working directory is {0}."
+msgstr ""
+
+#: pyggs.py:149
 msgid "Unable to create profile directory {0}."
 msgstr ""
 
-#: pyggs.py:155
+#: pyggs.py:161
 msgid "Please, select user interface language ({CHOICES})."
 msgstr ""
 
-#: pyggs.py:158
-msgid "Enter your home coordinates in degrees as deciamal number (N means positive value, S negative; E means positive value, W negative)."
+#: pyggs.py:164
+msgid "Enter your home coordinates in degrees as decimal number (N means positive value, S negative; E means positive value, W negative)."
 msgstr ""
 
-#: pyggs.py:159
+#: pyggs.py:165
 msgid "Latitude:"
 msgstr ""
 
-#: pyggs.py:159 pyggs.py:160
+#: pyggs.py:165 pyggs.py:166
 msgid "Please, use decimal number."
 msgstr ""
 
-#: pyggs.py:160
+#: pyggs.py:166
 msgid "Longitude:"
 msgstr ""
 
-#: pyggs.py:171
+#: pyggs.py:178
 msgid "Username:"
 msgstr ""
 
-#: pyggs.py:172
+#: pyggs.py:179
 msgid "Password:"
 msgstr ""
 
-#: pyggs.py:184
+#: pyggs.py:192
 msgid "Templates are looked up in these directories (consecutively):"
 msgstr ""
 
-#: pyggs.py:185
+#: pyggs.py:193
 msgid "Template ({CHOICES}):"
 msgstr ""
 
-#: pyggs.py:188
+#: pyggs.py:196
 msgid "Themes are looked up in these directories (consecutively):"
 msgstr ""
 
-#: pyggs.py:189
+#: pyggs.py:197
 msgid "Theme ({CHOICES}):"
 msgstr ""
 
-#: pyggs.py:191
-msgid "Directory:"
+#: pyggs.py:199
+msgid "Output directory:"
 msgstr ""
 
-#: pyggs.py:191
+#: pyggs.py:199
 msgid "You have to input existing directory."
 msgstr ""
 
-#: pyggs.py:210
-msgid "Plugins settings menu"
-msgstr ""
-
-#: pyggs.py:211 pyggs.py:258
-msgid "Plugins:"
-msgstr ""
-
-#: pyggs.py:215 pyggs.py:282
-msgid "Configuration of"
-msgstr ""
-
-#: pyggs.py:226
+#: pyggs.py:209
 msgid "Plugins"
 msgstr ""
 
-#: pyggs.py:238
+#: pyggs.py:221
 msgid "Plugin"
 msgstr ""
 
-#: pyggs.py:239
+#: pyggs.py:222
 msgid "Enable"
 msgstr ""
 
-#: pyggs.py:257
+#: pyggs.py:240
 msgid "Enable/Disable plugins menu"
 msgstr ""
 
-#: pyggs.py:268
+#: pyggs.py:241 pyggs.py:300
+msgid "Plugins:"
+msgstr ""
+
+#: pyggs.py:251
 msgid "Cannot disable plugin {0}, because {1} depend on it."
 msgstr ""
 
-#: pyggs.py:270
+#: pyggs.py:253
 msgid "Disabling plugin {0}."
 msgstr ""
 
-#: pyggs.py:273
+#: pyggs.py:256
 msgid "Enabling plugin {0}."
 msgstr ""
 
-#: pyggs.py:292
+#: pyggs.py:266 pyggs.py:304
+msgid "Configuration of"
+msgstr ""
+
+#: pyggs.py:276
 msgid "Plugin {0} pulled in as dependency."
 msgstr ""
 
-#: pyggs.py:305
+#: pyggs.py:299
+msgid "Plugins settings menu"
+msgstr ""
+
+#: pyggs.py:319
 msgid "Note: You can always edit these setings by running pyggs with --setup (-s) switch."
 msgstr ""
 
-#: pyggs.py:338
+#: pyggs.py:340
+msgid "Preparing plugin {0}..."
+msgstr ""
+
+#: pyggs.py:346
+msgid "Running plugin {0}..."
+msgstr ""
+
+#: pyggs.py:352
 msgid "Invalid ouput directory {0}."
 msgstr ""
 
-#: pyggs.py:388
+#: pyggs.py:359
+msgid "Finishing plugin {0}..."
+msgstr ""
+
+#: pyggs.py:393
+msgid "Loading plugin {0}."
+msgstr ""
+
+#: pyggs.py:407
 msgid "Missing dependencies {0}."
 msgstr ""
 
-#: pyggs.py:448
+#: pyggs.py:441
+msgid "Cannot make plugin depedency tree for {0}. Possible circular dependencies."
+msgstr ""
+
+#: pyggs.py:472
 msgid "Cannot find template {0}."
 msgstr ""
 
-#: pyggs.py:469
+#: pyggs.py:495
 msgid "Cannot find theme {0}."
 msgstr ""
 
-#: pyggs.py:799
+#: pyggs.py:515
+msgid "Could not fetch URL {0}."
+msgstr ""
+
+#: pyggs.py:518
+msgid "Got error code {0} while fetching {1}."
+msgstr ""
+
+#: pyggs.py:766
+msgid "Unknown cache type '{0}'."
+msgstr ""
+
+#: pyggs.py:785
+msgid "This theme has no section {0}."
+msgstr ""
+
+#: pyggs.py:836 pyggs.py:839
+msgid "Cannot parse color {0}."
+msgstr ""
+
+#: pyggs.py:861
 msgid "choose profile"
 msgstr ""
 
-#: pyggs.py:800
+#: pyggs.py:862
 msgid "disable usage of colored output"
 msgstr ""
 
-#: pyggs.py:801
+#: pyggs.py:863
 msgid "run setup script"
 msgstr ""
 
-#: pyggs.py:802
+#: pyggs.py:864
 msgid "set working directory, default is {0}"
 msgstr ""
 
-#: pyggs.py:803
+#: pyggs.py:865
 msgid "set logging to ERROR"
 msgstr ""
 
-#: pyggs.py:804
+#: pyggs.py:866
 msgid "set logging to INFO"
 msgstr ""
 
-#: pyggs.py:805
+#: pyggs.py:867
 msgid "set logging to DEBUG"
 msgstr ""
 
-#: pyggs.py:806
+#: pyggs.py:868
 msgid "set logging to ALL"
 msgstr ""
 
-#: pyggs.py:822
+#: pyggs.py:884
 msgid "You need at least Python {0} to run this script."
 msgstr ""
 
-#: pyggs.py:838
+#: pyggs.py:900
 msgid "Detected incompatible version of working directory {0}. Please, delete the directory and set up your profiles from start."
 msgstr ""
 
-#: pyggs.py:839
+#: pyggs.py:901
 msgid "Do you want to delete the working directory and enter the setup script now ({CHOICES})?"
 msgstr ""
 
-#: pyggs.py:843
+#: pyggs.py:905
 msgid "Deleting content of working directory {0}."
 msgstr ""
 
-#: pyggs.py:848
-msgid "Fixing change of cache type name Unknown - Mystery/Puzzle."
+#: pyggs.py:913
+msgid "Updating environment variables in global storage."
 msgstr ""
 
-#: pyggs.py:852
-msgid "Fixing change of cache type name Unknown - Mystery/Puzzle SUCCESSFUL."
-msgstr ""
-
-#: pyggs.py:854
-msgid "Fixing change of cache type name Unknown - Mystery/Puzzle FAILED."
-msgstr ""
-
-#: pyggs.py:860
+#: pyggs.py:919
 msgid "Working directory is not set up properly, initiating setup script."
 msgstr ""
 
-#: pyggs.py:872
+#: pyggs.py:931
 msgid "No profile name given, auto-chosing the only available profile '{0}'."
 msgstr ""
 
-#: pyggs.py:875
+#: pyggs.py:934
 msgid "Create new"
 msgstr ""
 
-#: pyggs.py:876
+#: pyggs.py:935
 msgid "No profile name given, please select your profile."
 msgstr ""
 
-#: pyggs.py:878
+#: pyggs.py:937
 msgid "Please, use only alpha-numeric characters."
 msgstr ""
 
-#: pyggs.py:878
+#: pyggs.py:937
 msgid "Profile name"
 msgstr ""
 
-#: pyggs.py:883
+#: pyggs.py:942
 msgid "Profile '{0}' does not exist, creating profile directory and initiating setup script."
 msgstr ""
 
-#: pyggs.py:896
-msgid "Detected new version of Pyggs: forcing myFinds database update."
+#: pyggs.py:958
+msgid "Updating environment variables in profile storage."
 msgstr ""
 

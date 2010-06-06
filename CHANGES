@@ -1,6 +1,24 @@
 CHANGES
 ============================================================================
 
+Release 0.2.8 (2010-06-07)
+--------------------------
+
+[Enhancements]
+
+  * Update GCparser to v0.4.4.
+
+  * New plugin: elevations (download SRTM data and generate statistics).
+
+  * Move update scripts from Pyggs class to plugins.
+
+[Bugfixes]
+
+  * Several typos.
+
+  * Cache type bugfix.
+
+
 Release 0.2.6 (2010-02-01)
 --------------------------
 

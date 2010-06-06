@@ -64,7 +64,7 @@ class Plugin(base.Plugin):
                     self.log.debug("Cache {0} matches expr {1}.".format(cache["sequence"], milestone))
                     guids.append(cache["guid"])
                     result.append(dict(cache))
-        caches = self.cache.storage.fetchAssoc(self.cache.storage.select(guids), "guid")
+        caches = self.cache.storage.fetchAssoc(self.cache.storage.getDetails(guids), "guid")
         for cache in result:
             cache.update(caches[cache["guid"]])
             if cache["name"] == "":

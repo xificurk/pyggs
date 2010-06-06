@@ -43,7 +43,7 @@ class Plugin(base.Plugin):
         myFinds = self.myfinds.storage.select()
         myFinds = fetchAssoc(myFinds, "guid")
 
-        caches = self.cache.storage.select(myFinds.keys())
+        caches = self.cache.storage.getDetails(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
         caches = fetchAssoc(caches, "waypoint")
@@ -52,7 +52,7 @@ class Plugin(base.Plugin):
         except KeyError:
             pass
 
-        ratings = self.gccz_ratings.storage.select(caches.keys(), min=3)
+        ratings = self.gccz_ratings.storage.getRatings(caches.keys(), min=3)
         ratings = fetchAssoc(ratings, "waypoint")
 
         for wpt in caches:

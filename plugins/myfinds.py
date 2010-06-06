@@ -58,7 +58,7 @@ class Plugin(base.Plugin):
     def parseMyFinds(self, myFinds):
         """Update MyFinds database"""
         self.log.info(_("Updating MyFinds database."))
-        myFinds = myFinds.getList()
+        myFinds = list(myFinds.getList())
         if len(myFinds) == 0:
             self.log.error(_("Got zero myFinds records (bug?), leaving old database in place."))
         self.storage.update(myFinds)
@@ -108,6 +108,7 @@ class Storage(base.Storage):
         db.commit()
         db.close()
         self.setEnv("lastcheck", time.time())
+        self.valid = True
 
 
     def select(self, query="SELECT * FROM myfinds"):

@@ -38,6 +38,7 @@ import platform
 import re
 from shutil import rmtree
 import sys
+import urllib.request
 
 import libs.console as console
 from libs.gcparser import GCparser
@@ -503,6 +504,18 @@ class Pyggs(object):
                 plugins.append(plugin[:-3])
         plugins.sort()
         return plugins
+
+
+    def fetch(self, url, data=None, timeout=10):
+        try:
+            response = urllib.request.urlopen(url, data=urllib.parse.urlencode(data), timeout=timeout)
+        except IOError:
+            self.log.error(_("Could not fetch URL {0}.").format(url))
+            return None
+        if response.getcode() != 200:
+            self.log.error(_("Got error code {0} while fetching {1}.").format(response.getcode(), url))
+            return None
+        return response
 
 
 

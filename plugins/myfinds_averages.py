@@ -40,7 +40,7 @@ class Plugin(base.Plugin):
         self.general.registerTemplate(":stats.general.myfinds_averages", templateData)
 
 
-    def getAverages(self, where = "1", period = None):
+    def getAverages(self, where="1", period=None):
         """return averages stats"""
         result = self.myfinds.storage.select("SELECT * FROM myfinds WHERE {0} ORDER BY date ASC, sequence ASC".format(where))
         all = self.myfinds.storage.fetchAssoc(result)

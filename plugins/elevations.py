@@ -35,11 +35,11 @@ class Plugin(base.Plugin):
     def run(self):
         myFinds = self.myfinds.storage.select()
         myFinds = self.myfinds.storage.fetchAssoc(myFinds, "guid")
-        caches = self.cache.storage.select(myFinds.keys())
+        caches = self.cache.storage.getDetails(myFinds.keys())
         for cache in caches:
             cache["elevation"] = int(cache["elevation"])
             if cache["elevation"] == -9999:
-                caches.pop(cache)
+                caches.remove(cache)
             else:
                 cache.update(myFinds[cache["guid"]])
 
@@ -63,7 +63,7 @@ class Plugin(base.Plugin):
         top = 0
         for lower in range(math.floor(totals["min"]/step)*step, (math.floor(totals["max"]/step)+1)*step, step):
             data = {"label":lower, "count":0}
-            for cache in caches:
+            for cache in list(caches):
                 if cache["elevation"] >= lower and cache["elevation"] < lower+step:
                     caches.remove(cache)
                     data["count"] = data["count"] + 1

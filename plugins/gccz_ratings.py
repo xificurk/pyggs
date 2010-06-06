@@ -22,7 +22,6 @@
 
 import logging
 import time
-import urllib
 
 from . import base
 
@@ -84,7 +83,11 @@ class Storage(base.Storage):
     def update(self):
         """Re-download ragings data"""
         data = {"a":"ctihodnoceni","v":"1"}
-        result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
+        reuslt = self.plugin.master.fetch("http://www.geocaching.cz/api.php", data=data)
+        if result is None:
+            self.log.error(_("Unable to load Geocaching.cz Ratings, extending validity of current data."))
+            return
+
         result = result.read().decode("utf-8","replace").splitlines()
 
         succ = False
@@ -94,26 +97,27 @@ class Storage(base.Storage):
                 succ = True
                 break
 
-        db = self.getDb()
-        cur = db.cursor()
-        if succ is False:
+        if not succ:
             self.log.error(_("Unable to load Geocaching.cz Ratings, extending validity of current data."))
             self.log.debug("Response: {0}".format(result))
-        else:
-            cur.execute("DELETE FROM gccz_ratings")
-            result = result[2].split(":",1)[-1]
-            for row in result.split("|"):
-                row = row.split(";")
-                if len(row) >= 3:
-                    cur.execute("INSERT INTO gccz_ratings(waypoint, rating, count) VALUES(?,?,?)", (row[0], row[1], row[2]))
-            self.log.info(_("Geocaching.cz Ratings database successfully updated."))
+            return
 
+        db = self.getDb()
+        cur = db.cursor()
+        cur.execute("DELETE FROM gccz_ratings")
+        result = result[2].split(":",1)[-1]
+        for row in result.split("|"):
+            row = row.split(";")
+            if len(row) >= 3:
+                cur.execute("INSERT INTO gccz_ratings(waypoint, rating, count) VALUES(?,?,?)", (row[0], row[1], row[2]))
+        self.log.info(_("Geocaching.cz Ratings database successfully updated."))
         db.commit()
         db.close()
         self.setEnv("lastcheck", time.time())
+        self.valid = True
 
 
-    def select(self, waypoints, min=0):
+    def getRatings(self, waypoints, min=0):
         """Selects data from database, performs update if neccessary"""
         self.checkValidity()
         result = []

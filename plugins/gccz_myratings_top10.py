@@ -42,7 +42,7 @@ class Plugin(base.Plugin):
         myFinds = self.myfinds.storage.select()
         myFinds = fetchAssoc(myFinds, "guid")
 
-        caches = self.cache.storage.select(myFinds.keys())
+        caches = self.cache.storage.getDetails(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
         caches = fetchAssoc(caches, "waypoint")
@@ -51,10 +51,10 @@ class Plugin(base.Plugin):
         except KeyError:
             pass
 
-        ratings = self.gccz_ratings.storage.select(caches.keys())
+        ratings = self.gccz_ratings.storage.getRatings(caches.keys())
         ratings = fetchAssoc(ratings, "waypoint")
 
-        myratings = self.gccz_myratings.storage.select(caches.keys())
+        myratings = self.gccz_myratings.storage.getRatings(caches.keys())
         myratings = fetchAssoc(myratings, "waypoint")
 
         for wpt in list(caches.keys()):
@@ -69,6 +69,5 @@ class Plugin(base.Plugin):
                 caches[wpt].update({"rating":0,"count":0})
 
         caches = list(caches.values())
-        caches.sort(key=lambda x: int(x["myrating"]) + int(x["rating"])/1000 + int(x["count"])/10000000)
-        caches.reverse()
+        caches.sort(key=lambda x: int(x["myrating"]) + int(x["rating"])/1000 + int(x["count"])/10000000, reverse=True)
         return caches

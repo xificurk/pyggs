@@ -41,12 +41,12 @@ class Plugin(base.Plugin):
         myFinds = self.myfinds.storage.select()
         myFinds = fetchAssoc(myFinds, "guid")
 
-        caches = self.cache.storage.select(myFinds.keys())
+        caches = self.cache.storage.getDetails(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
         caches = fetchAssoc(caches, "waypoint")
 
-        myratings = self.gccz_myratings.storage.select(caches.keys())
+        myratings = self.gccz_myratings.storage.getRatings(caches.keys())
         myratings = list(fetchAssoc(myratings, "waypoint").keys())
 
         unrated = []

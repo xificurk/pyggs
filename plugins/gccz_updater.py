@@ -21,7 +21,6 @@
 """
 
 from hashlib import md5
-import urllib
 
 from . import base
 
@@ -55,7 +54,7 @@ class Plugin(base.Plugin):
         for row in self.myfinds.storage.select():
             if len(finds) > 0:
                 finds = finds + "|"
-            details = self.cache.storage.select([row["guid"]])[0]
+            details = self.cache.storage.getDetails([row["guid"]])[0]
             finds = finds + "{0};{1};{2};{3}".format(details["waypoint"], row["date"], details["lat"], details["lon"])
 
         hash = str(finds)
@@ -67,7 +66,11 @@ class Plugin(base.Plugin):
                 return
 
         data = {"a":"nalezy","u":self.gccz.config["username"],"p":self.gccz.config["password"],"d":finds}
-        result = urllib.request.urlopen("http://www.geocaching.cz/api.php", urllib.parse.urlencode(data))
+        result = self.master.fetch("http://www.geocaching.cz/api.php", data=data)
+        if result is None:
+            self.log.error(_("Unable to update Geocaching.cz database."))
+            return
+
         result = result.read().decode().splitlines()
 
         succ = False
@@ -77,9 +80,10 @@ class Plugin(base.Plugin):
                 succ = True
                 break
 
-        if succ is False:
+        if not succ:
             self.log.error(_("Unable to update Geocaching.cz database."))
             self.log.debug("Response: {0}".format(result))
-        else:
-            self.master.profileStorage.setEnv(self.NS + ".hash", hash)
-            self.log.info(_("Geocaching.cz database successfully updated."))
+            return
+
+        self.master.profileStorage.setEnv(self.NS + ".hash", hash)
+        self.log.info(_("Geocaching.cz database successfully updated."))

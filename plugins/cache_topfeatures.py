@@ -34,7 +34,7 @@ class Plugin(base.Plugin):
     def run(self):
         myFinds = self.myfinds.storage.select()
         myFinds = self.myfinds.storage.fetchAssoc(myFinds, "guid")
-        caches = self.cache.storage.select(myFinds.keys())
+        caches = self.cache.storage.getDetails(myFinds.keys())
         for cache in caches:
             cache.update(myFinds[cache["guid"]])
 

@@ -32,7 +32,7 @@ class Plugin(base.Plugin):
 
     def run(self):
         myFinds = self.myfinds.storage.getList()
-        caches = self.cache.storage.select(myFinds)
+        caches = self.cache.storage.getDetails(myFinds)
         caches = self.master.globalStorage.fetchAssoc(caches, "country,#")
         europe = {}
         europe["Albania"] = "AL"

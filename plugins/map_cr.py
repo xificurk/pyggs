@@ -32,50 +32,52 @@ class Plugin(base.Plugin):
 
     def run(self):
         myFinds = self.myfinds.storage.getList()
-        caches = self.cache.storage.select(myFinds)
+        caches = self.cache.storage.getDetails(myFinds)
         caches = self.master.globalStorage.fetchAssoc(caches, "country,province,#")
         caches = caches.get("Czech Republic")
-        if caches is not None:
-            provincesAbbr = {}
-            provincesAbbr["Hlavni mesto Praha"] = "AA"
-            provincesAbbr["Jihocesky kraj"] = "CC"
-            provincesAbbr["Jihomoravsky kraj"] = "BB"
-            provincesAbbr["Karlovarsky kraj"] = "KK"
-            provincesAbbr["Kralovehradecky kraj"] = "HH"
-            provincesAbbr["Liberecky kraj"] = "LL"
-            provincesAbbr["Moravskoslezsky kraj"] = "TT"
-            provincesAbbr["Olomoucky kraj"] = "MM"
-            provincesAbbr["Pardubicky kraj"] = "EE"
-            provincesAbbr["Plzensky kraj"] = "PP"
-            provincesAbbr["Stredocesky kraj"] = "SS"
-            provincesAbbr["Ustecky kraj"] = "UU"
-            provincesAbbr["Vysocina"] = "JJ"
-            provincesAbbr["Zlinsky kraj"] = "ZZ"
-            total = {"country":0, "province":0}
-            tot = 0
-            provinces = {}
-            for province in caches:
-                total["country"] = total["country"]+len(caches[province])
-                if len(province) > 0:
-                    provinces[provincesAbbr[province]] = len(caches[province])
-                    tot = tot+len(caches[province])
-            total["province"] = len(provinces)
+        if caches is None:
+            return
 
-            prsorted = list(provinces.keys())
-            prsorted.sort()
-            tmp1 = ""
-            tmp2 = ""
-            for province in prsorted:
-                if len(tmp1) > 0 or len(tmp2) > 0:
-                    tmp1 = tmp1 + ","
-                    tmp2 = tmp2 + ","
-                tmp1 = tmp1 + str(provinces[province])
-                tmp2 = tmp2 + str(round(100*provinces[province]/tot))
+        provincesAbbr = {}
+        provincesAbbr["Hlavni mesto Praha"] = "AA"
+        provincesAbbr["Jihocesky kraj"] = "CC"
+        provincesAbbr["Jihomoravsky kraj"] = "BB"
+        provincesAbbr["Karlovarsky kraj"] = "KK"
+        provincesAbbr["Kralovehradecky kraj"] = "HH"
+        provincesAbbr["Liberecky kraj"] = "LL"
+        provincesAbbr["Moravskoslezsky kraj"] = "TT"
+        provincesAbbr["Olomoucky kraj"] = "MM"
+        provincesAbbr["Pardubicky kraj"] = "EE"
+        provincesAbbr["Plzensky kraj"] = "PP"
+        provincesAbbr["Stredocesky kraj"] = "SS"
+        provincesAbbr["Ustecky kraj"] = "UU"
+        provincesAbbr["Vysocina"] = "JJ"
+        provincesAbbr["Zlinsky kraj"] = "ZZ"
+        total = {"country":0, "province":0}
+        tot = 0
+        provinces = {}
+        for province in caches:
+            total["country"] = total["country"]+len(caches[province])
+            if len(province) > 0:
+                provinces[provincesAbbr[province]] = len(caches[province])
+                tot = tot+len(caches[province])
+        total["province"] = len(provinces)
 
-            templateData = {}
-            templateData["map"] = {}
-            templateData["map"]["chld"] = "".join(prsorted)
-            templateData["map"]["chd"] = tmp1 + "|" + tmp2
-            templateData["total"] = total
-            templateData["uid"] = self.gccz.config["uid"]
-            self.stats.registerTemplate(":stats.map_cr", templateData)
+        prsorted = list(provinces.keys())
+        prsorted.sort()
+        tmp1 = ""
+        tmp2 = ""
+        for province in prsorted:
+            if len(tmp1) > 0 or len(tmp2) > 0:
+                tmp1 = tmp1 + ","
+                tmp2 = tmp2 + ","
+            tmp1 = tmp1 + str(provinces[province])
+            tmp2 = tmp2 + str(round(100*provinces[province]/tot))
+
+        templateData = {}
+        templateData["map"] = {}
+        templateData["map"]["chld"] = "".join(prsorted)
+        templateData["map"]["chd"] = tmp1 + "|" + tmp2
+        templateData["total"] = total
+        templateData["uid"] = self.gccz.config["uid"]
+        self.stats.registerTemplate(":stats.map_cr", templateData)

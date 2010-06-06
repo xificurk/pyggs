@@ -26,7 +26,6 @@ __version__ = "0.2"
 import logging
 import math
 import time
-import urllib.request
 
 from . import base
 from libs.versioning import VersionInfo
@@ -78,24 +77,12 @@ class Plugin(base.Plugin):
 
 
     def getElevation(self, lat, lon):
-        elevation = self.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
+        elevation = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
         if elevation is not None:
             elevation = int(elevation.read().strip())
         else:
             elevation = -9999
         return elevation
-
-
-    def fetch(self, url):
-        try:
-            response = urllib.request.urlopen(url, timeout=10)
-        except IOError:
-            self.log.error(_("Could not fetch URL {0}.").format(url))
-            return None
-        if response.getcode() != 200:
-            self.log.error(_("Got error code {0} while fetching {1}.").format(response.getcode(), url))
-            return None
-        return response
 
 
     def prepare(self):
@@ -112,7 +99,7 @@ class Plugin(base.Plugin):
 
     def parseCache(self, cache):
         """Update Cache database"""
-        details = cache.getDetails()
+        details = dict(cache.getDetails())
         if "lat" in details and "lon" in details:
             details["elevation"] = self.getElevation(details["lat"], details["lon"])
         else:
@@ -121,7 +108,7 @@ class Plugin(base.Plugin):
         self.storage.update(details)
 
 
-    def distance(self, lat1, lon1, lat2 = None, lon2 = None):
+    def distance(self, lat1, lon1, lat2=None, lon2=None):
         """Calculate distance from home coordinates"""
         if lat2 is None:
             lat2 = self.homecoord["lat"]
@@ -186,11 +173,6 @@ class Storage(base.Storage):
 
         db = self.getDb()
         cur = db.cursor()
-        cur.execute("SELECT * FROM cache WHERE guid=?", (data["guid"],))
-        if (len(cur.fetchall()) > 0):
-            exists = True
-        else:
-            exists = False
 
         cur.execute("DELETE FROM cache_inventory WHERE guid = ?", (data["guid"],))
         if "name" in data:
@@ -202,7 +184,8 @@ class Storage(base.Storage):
             for logtype in data["visits"]:
                 cur.execute("INSERT INTO cache_visits(guid, type, count) VALUES(?,?,?)", (data["guid"], logtype, data["visits"][logtype]))
         else:
-            if exists:
+            cur.execute("SELECT * FROM cache WHERE guid=?", (data["guid"],))
+            if (len(cur.fetchall()) > 0):
                 cur.execute("UPDATE cache SET lastCheck = ? WHERE guid = ?", (time.time(), data["guid"]))
             else:
                 cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,'','','','','','','','','','','','','','','','',?,?)", (data["guid"], data["waypoint"], time.time(), -9999))
@@ -210,7 +193,7 @@ class Storage(base.Storage):
         db.close()
 
 
-    def select(self, guids):
+    def getDetails(self, guids):
         """Selects data from database, performs update if neccessary"""
         timeout = self.plugin.config["timeout"]*24*3600
         result = []

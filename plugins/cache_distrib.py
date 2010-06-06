@@ -40,7 +40,7 @@ class Plugin(base.Plugin):
 
     def run(self):
         myFinds = self.myfinds.storage.getList()
-        caches = self.cache.storage.select(myFinds)
+        caches = self.cache.storage.getDetails(myFinds)
 
         templateData = {}
         templateData["total"] = len(myFinds)
@@ -57,8 +57,7 @@ class Plugin(base.Plugin):
             if country == "":
                 continue
             tmp.append({"country":country, "count":len(result[country])})
-        tmp.sort(key=lambda x: x["count"])
-        tmp.reverse()
+        tmp.sort(key=lambda x: x["count"], reverse=True)
         countries = OrderedDict()
         for row in tmp:
             countries[row["country"]] = row["count"]
@@ -72,8 +71,7 @@ class Plugin(base.Plugin):
             if type == "":
                 continue
             tmp.append({"type":type, "count":len(result[type])})
-        tmp.sort(key=lambda x: x["count"])
-        tmp.reverse()
+        tmp.sort(key=lambda x: x["count"], reverse=True)
         types = OrderedDict()
         for row in tmp:
             types[row["type"]] = row["count"]
@@ -85,8 +83,7 @@ class Plugin(base.Plugin):
         tmp = []
         for size in result:
             tmp.append({"size":size, "count":len(result[size])})
-        tmp.sort(key=lambda x: x["count"])
-        tmp.reverse()
+        tmp.sort(key=lambda x: x["count"], reverse=True)
         sizes = OrderedDict()
         for row in tmp:
             sizes[row["size"]] = row["count"]

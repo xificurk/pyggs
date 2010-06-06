@@ -82,7 +82,7 @@ class Plugin(base.Plugin):
             self.log.warn(_("Re-trying..."))
             elevation = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
         if elevation is not None:
-            elevation = int(elevation.read().strip())
+            elevation = max(int(elevation.read().strip()), -9999)
         else:
             elevation = -9999
         return elevation

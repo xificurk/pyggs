@@ -83,7 +83,7 @@ class Storage(base.Storage):
     def update(self):
         """Re-download ragings data"""
         data = {"a":"ctihodnoceni","v":"1"}
-        reuslt = self.plugin.master.fetch("http://www.geocaching.cz/api.php", data=data)
+        result = self.plugin.master.fetch("http://www.geocaching.cz/api.php", data=data)
         if result is None:
             self.log.error(_("Unable to load Geocaching.cz Ratings, extending validity of current data."))
             return

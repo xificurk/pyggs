@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.4.4"
+__version__ = "0.4.5"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "SeekParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -446,7 +446,7 @@ __pcresMask["waypoint"] = ("GC[A-Z0-9]+", 0)
 __pcresMask["cacheGuid"] = ("<meta\s+name=\"og:url\"\s+content=\"http://www\.geocaching.com/seek/cache_details\.aspx\?guid=([a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+)\"", re.I)
 # <meta name="description" content="Cajova chyse/ Tea hut (GCRBCA) was created by adp. on 11/15/2005. It's a Micro size geocache, with difficulty of 1, terrain of 1. It's located in Hlavni mesto Praha, Czech Republic. Cache je um&amp;iacute;stena v Japonske casti botanicke zahrady vTroji/ Cache is located in Japan compartment of the Prague botanicgarden in Troja. Souradnice v&amp;#225;s zavedou doJaponsk&amp;#233; zahrady v Botanick&amp;#233; zahrade v Tr&amp;#243;ji." />
 # <meta name="description" content="PGME - Neco pro deti (GC25HWC) was created by gordici on 06/26/2010. It's a Other size geocache, with difficulty of 1.5, terrain of 1.5. It's located in Hlavni mesto Praha, Czech Republic. Mezi nami je rada rodin s detmi, tak aby deti neprisly zkratka,pripravili jsme pro ne take nejakou zabavu." />
-__pcresMask["cacheDetails"] = ("<meta\s+name=\"description\" content=\"([^\"]+) \(GC[A-Z0-9]+\) was created by ([^\"]+) on ([0-9]+)/([0-9]+)/([0-9]+)\. It's a ([a-zA-Z ]+) size geocache, with difficulty of ([0-9.]+), terrain of ([0-9.]+). It's located in (([^,]+), )?([^.]+)\.[^\"]*\"[^>]*>", re.I|re.S)
+__pcresMask["cacheDetails"] = ("<meta\s+name=\"description\" content=\"([^\"]+) \(GC[A-Z0-9]+\) was created by ([^\"]+) on ([0-9]+)/([0-9]+)/([0-9]+)\. It's a ([a-zA-Z ]+) size geocache, with difficulty of ([0-9.]+), terrain of ([0-9.]+). It's located in (([^,.]+), )?([^.]+)\.[^\"]*\"[^>]*>", re.I|re.S)
 # <a href="/about/cache_types.aspx" target="_blank" title="About Cache Types"><img src="/images/WptTypes/8.gif" alt="Unknown Cache" width="32" height="32" />
 __pcresMask["cacheType"] = ("<img src=['\"]/images/WptTypes/[^'\"]+['\"] alt=\"([^\"]+)\"[^>]*></a>", re.I)
 # by <a href="http://www.geocaching.com/profile/?guid=ed7a2040-3bbb-485b-9b03-21ae8507d2d7&wid=92322d1b-d354-4190-980e-8964d7740161&ds=2">
@@ -667,8 +667,9 @@ class CacheParser(BaseParser):
         if match is not None:
             self.details["attributes"] = []
             for item in pcre("cacheAttributesItem").finditer(match.group(1)):
-                if item != "blank":
-                    self.details["attributes"].append(unescape(item.group(1)).strip())
+                attr = unescape(item.group(1)).strip()
+                if attr != "blank":
+                    self.details["attributes"].append(attr)
             self.details["attributes"] = ", ".join(self.details["attributes"])
             self.log.log(LOG_PARSER, "attributes = {0}".format(self.details["attributes"]))
         else:

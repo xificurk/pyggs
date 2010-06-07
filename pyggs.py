@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.8"
+__version__ = "0.2.9"
 
 
 from collections import OrderedDict
@@ -757,7 +757,7 @@ class Templar(tenjin.Engine):
         ctypes["Webcam Cache"] = 11
         ctypes["Cache In Trash Out Event"] = 13
         ctypes["Mega-Event Cache"] = "mega"
-        ctypes["Lost and Found Event Cache"] = "10Years_32"
+        ctypes["Lost and Found Event Cache"] = "3653"
 
         if ctype == "":
             return ""

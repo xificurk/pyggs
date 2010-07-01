@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.4.5"
+__version__ = "0.4.6"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "SeekParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -442,15 +442,13 @@ class BaseParser(object):
 # <p class="OldWarning"><strong>Cache Issues:</strong></p><ul class="OldWarning"><li>This cache is temporarily unavailable. Read the logs below to read the status for this cache.</li></ul></span>
 __pcresMask["disabled"] = ("<p class=['\"]OldWarning['\"][^>]*><strong>Cache Issues:</strong></p><ul[^>]*><li>This cache (has been archived|is temporarily unavailable)[^<]*</li>", re.I)
 __pcresMask["waypoint"] = ("GC[A-Z0-9]+", 0)
-# <meta name="og:url" content="http://www.geocaching.com/seek/cache_details.aspx?guid=92322d1b-d354-4190-980e-8964d7740161" property="og:url" />
-__pcresMask["cacheGuid"] = ("<meta\s+name=\"og:url\"\s+content=\"http://www\.geocaching.com/seek/cache_details\.aspx\?guid=([a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+)\"", re.I)
 # <meta name="description" content="Cajova chyse/ Tea hut (GCRBCA) was created by adp. on 11/15/2005. It's a Micro size geocache, with difficulty of 1, terrain of 1. It's located in Hlavni mesto Praha, Czech Republic. Cache je um&amp;iacute;stena v Japonske casti botanicke zahrady vTroji/ Cache is located in Japan compartment of the Prague botanicgarden in Troja. Souradnice v&amp;#225;s zavedou doJaponsk&amp;#233; zahrady v Botanick&amp;#233; zahrade v Tr&amp;#243;ji." />
 # <meta name="description" content="PGME - Neco pro deti (GC25HWC) was created by gordici on 06/26/2010. It's a Other size geocache, with difficulty of 1.5, terrain of 1.5. It's located in Hlavni mesto Praha, Czech Republic. Mezi nami je rada rodin s detmi, tak aby deti neprisly zkratka,pripravili jsme pro ne take nejakou zabavu." />
 __pcresMask["cacheDetails"] = ("<meta\s+name=\"description\" content=\"([^\"]+) \(GC[A-Z0-9]+\) was created by ([^\"]+) on ([0-9]+)/([0-9]+)/([0-9]+)\. It's a ([a-zA-Z ]+) size geocache, with difficulty of ([0-9.]+), terrain of ([0-9.]+). It's located in (([^,.]+), )?([^.]+)\.[^\"]*\"[^>]*>", re.I|re.S)
 # <a href="/about/cache_types.aspx" target="_blank" title="About Cache Types"><img src="/images/WptTypes/8.gif" alt="Unknown Cache" width="32" height="32" />
 __pcresMask["cacheType"] = ("<img src=['\"]/images/WptTypes/[^'\"]+['\"] alt=\"([^\"]+)\"[^>]*></a>", re.I)
 # by <a href="http://www.geocaching.com/profile/?guid=ed7a2040-3bbb-485b-9b03-21ae8507d2d7&wid=92322d1b-d354-4190-980e-8964d7740161&ds=2">
-__pcresMask["cacheOwnerId"] = ("by <a href=['\"]http://www\.geocaching\.com/profile/\?guid=[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+&wid=([a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+)&ds=2['\"][^>]*>", re.I)
+__pcresMask["cacheOwnerId"] = ("by <a href=['\"]http://www\.geocaching\.com/profile/\?guid=([a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+)&wid=([a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+)&ds=2['\"][^>]*>", re.I)
 # <span id="ctl00_ContentBody_LatLon" style="font-weight:bold;">N 50° 02.173 E 015° 46.386</span>
 __pcresMask["cacheLatLon"] = ("<span id=['\"]ctl00_ContentBody_LatLon['\"][^>]*>([NS]) ([0-9]+)° ([0-9.]+) ([WE]) ([0-9]+)° ([0-9.]+)</span>", re.I)
 __pcresMask["cacheShortDesc"] = ("<div class=['\"]UserSuppliedContent['\"]>\s*<span id=['\"]ctl00_ContentBody_ShortDescription['\"]>(.*?)</span>\s+</div>", re.I|re.S)
@@ -539,21 +537,14 @@ class CacheParser(BaseParser):
 
         self.details = {}
 
-        match = pcre("cacheGuid").search(self.data)
-        if match is not None:
-            self.details["guid"] = match.group(1)
-            self.log.log(LOG_PARSER, "guid = {0}".format(self.details["guid"]))
+        if self.type == "guid":
+            self.details["guid"] = self.id
         else:
-            self.details["guid"] = ""
-            self.log.error("GUID not found.")
+            self.details["waypoint"] = self.id
 
         match = pcre("PMonly").search(self.data)
         if match is not None:
             self.log.warn("PM only cache at '{0}'.".format(self.url))
-            if self.type == "guid":
-                self.details["guid"] = self.id
-            else:
-                self.details["waypoint"] = self.id
             return self.details
 
         match = pcre("waypoint").search(self.data)
@@ -563,6 +554,19 @@ class CacheParser(BaseParser):
         else:
             self.details["waypoint"] = ""
             self.log.error("Waypoint not found.")
+
+        match = pcre("cacheOwnerId").search(self.data)
+        if match is not None:
+            self.details["owner_id"] = match.group(1)
+            self.details["guid"] = match.group(2)
+            self.log.log(LOG_PARSER, "guid = {0}".format(self.details["guid"]))
+            self.log.log(LOG_PARSER, "owner_id = {0}".format(self.details["owner_id"]))
+        else:
+            self.details["owner_id"] = ""
+            if "guid" not in self.details:
+                self.details["guid"] = ""
+            self.log.error("Guid not found.")
+            self.log.error("Owner id not found.")
 
         self.details["disabled"] = 0
         self.details["archived"] = 0
@@ -614,14 +618,6 @@ class CacheParser(BaseParser):
         else:
             self.details["type"] = ""
             self.log.error("Type not found.")
-
-        match = pcre("cacheOwnerId").search(self.data)
-        if match is not None:
-            self.details["owner_id"] = match.group(1)
-            self.log.log(LOG_PARSER, "owner_id = {0}".format(self.details["owner_id"]))
-        else:
-            self.details["owner_id"] = ""
-            self.log.error("Owner id not found.")
 
         match = pcre("cacheLatLon").search(self.data)
         if match is not None:

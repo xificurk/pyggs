@@ -51,9 +51,13 @@ class Plugin(base.Plugin):
         if oldVersion < "0.2.5":
             # fix cache types Uknown -> Mystery/Puzzle
             storage = self.master.globalStorage
-            if storage.query("SELECT COUNT(*) AS [exists] FROM [sqlite_master] WHERE [type] = 'table' AND [name] = 'cache'")[0]["exists"] > 0:
-                self.log.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle."))
-                storage.query("UPDATE [cache] SET [type] = 'Mystery/Puzzle Cache' WHERE [type] = 'Unknown Cache'")
+            self.log.warn(_("Fixing change of cache type name Unknown - Mystery/Puzzle."))
+            storage.query("UPDATE [cache] SET [type] = 'Mystery/Puzzle Cache' WHERE [type] = 'Unknown Cache'")
+        if oldVersion < "0.2.10":
+            # fix missing guid
+            storage = self.master.globalStorage
+            self.log.warn(_("Deleting data for caches with missing guid."))
+            storage.query("DELETE FROM [cache] WHERE [guid] = '' OR [guid] IS NULL")
         return True
 
 
@@ -89,6 +93,7 @@ class Plugin(base.Plugin):
 
 
     def prepare(self):
+        self.storage = Storage(self.master.globalStorage.filename, self)
         base.Plugin.prepare(self)
         self.config["timeout"] = int(self.config["timeout"])
 
@@ -97,7 +102,6 @@ class Plugin(base.Plugin):
         self.homecoord["lon"] = float(self.master.config.get("general", "homelon"))
 
         self.master.registerHandler("cache", self.parseCache)
-        self.storage = Storage(self.master.globalStorage.filename, self)
 
 
     def parseCache(self, cache):

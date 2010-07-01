@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-06-07 01:19+CEST\n"
+"POT-Creation-Date: 2010-07-01 08:43+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,27 +64,31 @@ msgstr ""
 msgid "Use only digits, please."
 msgstr ""
 
-#: plugins/cache.py:55
+#: plugins/cache.py:54
 msgid "Fixing change of cache type name Unknown - Mystery/Puzzle."
 msgstr ""
 
-#: plugins/cache.py:70
+#: plugins/cache.py:59
+msgid "Deleting data for caches with missing guid."
+msgstr ""
+
+#: plugins/cache.py:74
 msgid "Creating column for elevation in cache database."
 msgstr ""
 
-#: plugins/cache.py:72
+#: plugins/cache.py:76
 msgid "Updating cache database with elevation data... this may take a while."
 msgstr ""
 
-#: plugins/cache.py:82
+#: plugins/cache.py:86
 msgid "Re-trying..."
 msgstr ""
 
-#: plugins/cache.py:110
+#: plugins/cache.py:114
 msgid "Updating Cache database for {0}: {1}."
 msgstr ""
 
-#: plugins/cache.py:174
+#: plugins/cache.py:178
 msgid "No guid passed, not updating."
 msgstr ""
 

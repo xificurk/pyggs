@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Pyggs 0.2.8\n"
-"POT-Creation-Date: 2010-06-07 01:19+CEST\n"
+"POT-Creation-Date: 2010-07-01 08:43+CEST\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Petr Morávek <xificurk@gmail.com>\n"
 "Language-Team: \n"
@@ -70,27 +70,31 @@ msgstr "Platnost uložených podrobností o keši v dnech:"
 msgid "Use only digits, please."
 msgstr "Vložte prosím pouze číslice."
 
-#: plugins/cache.py:55
+#: plugins/cache.py:54
 msgid "Fixing change of cache type name Unknown - Mystery/Puzzle."
 msgstr "Upravuji název typu keší Uknown - Mystery/Puzzle."
 
-#: plugins/cache.py:70
+#: plugins/cache.py:59
+msgid "Deleting data for caches with missing guid."
+msgstr "Mažu data pro keše bez guidu."
+
+#: plugins/cache.py:74
 msgid "Creating column for elevation in cache database."
 msgstr "Vytvářím sloupec pro výšková data v databázi keší."
 
-#: plugins/cache.py:72
+#: plugins/cache.py:76
 msgid "Updating cache database with elevation data... this may take a while."
 msgstr "Aktualizuji výšková data v databázi keší... tato operace může chvíli trvat."
 
-#: plugins/cache.py:82
+#: plugins/cache.py:86
 msgid "Re-trying..."
 msgstr "Zkouším znovu..."
 
-#: plugins/cache.py:110
+#: plugins/cache.py:114
 msgid "Updating Cache database for {0}: {1}."
 msgstr "Aktualizuji data v databázi keší pro {0}: {1}."
 
-#: plugins/cache.py:174
+#: plugins/cache.py:178
 msgid "No guid passed, not updating."
 msgstr "Nebyl zadán guid, nemůžu provést aktualizaci."
 
@@ -588,21 +592,27 @@ msgstr "Aktualizuji proměnné v uživatelském uložišti."
 #~ msgid ""
 #~ "Fixing change of cache type name Unknown - Mystery/Puzzle SUCCESSFUL."
 #~ msgstr "Změna názvu typu keší Uknown - Mystery/Puzzle ÚSPĚŠNÁ."
+
 #~ msgid "Fixing change of cache type name Unknown - Mystery/Puzzle FAILED."
 #~ msgstr "Změna názvu typu keší Uknown - Mystery/Puzzle SELHALA."
+
 #~ msgid "Theme '%s' not found."
 #~ msgstr "Motiv '%s' nenalezen."
+
 #~ msgid "You have to select a profile."
 #~ msgstr "Musíte nastavit profil."
+
 #~ msgid "Let's setup your profile named '%s'."
 #~ msgstr "Nastavení profilu pojmenovaného '%s'."
+
 #~ msgid "Template"
 #~ msgstr "Šablona"
+
 #~ msgid "Theme"
 #~ msgstr "Motiv"
+
 #~ msgid ""
 #~ "Configuration file not found for profile '%s', please run setup.py script."
 #~ msgstr ""
 #~ "Konfigurační soubor profilu '%s' nenalezen, spusťte prosím setup.py "
 #~ "skript."
-

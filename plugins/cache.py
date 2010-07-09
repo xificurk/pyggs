@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2"
+__version__ = "0.2.1"
 
 
 import logging
@@ -195,7 +195,7 @@ class Storage(base.Storage):
             if (len(cur.fetchall()) > 0):
                 cur.execute("UPDATE cache SET lastCheck = ? WHERE guid = ?", (time.time(), data["guid"]))
             else:
-                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,'','','','','','','','','','','','','','','','',?,?)", (data["guid"], data["waypoint"], time.time(), -9999))
+                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,'','','','','','','','','','','','','','','','','',?,?)", (data["guid"], time.time(), -9999))
         db.commit()
         db.close()
 

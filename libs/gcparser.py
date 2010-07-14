@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.4.6"
+__version__ = "0.4.7"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "SeekParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -542,11 +542,6 @@ class CacheParser(BaseParser):
         else:
             self.details["waypoint"] = self.id
 
-        match = pcre("PMonly").search(self.data)
-        if match is not None:
-            self.log.warn("PM only cache at '{0}'.".format(self.url))
-            return self.details
-
         match = pcre("waypoint").search(self.data)
         if match is not None:
             self.details["waypoint"] = match.group(0)
@@ -554,6 +549,11 @@ class CacheParser(BaseParser):
         else:
             self.details["waypoint"] = ""
             self.log.error("Waypoint not found.")
+
+        match = pcre("PMonly").search(self.data)
+        if match is not None:
+            self.log.warn("PM only cache at '{0}'.".format(self.url))
+            return self.details
 
         match = pcre("cacheOwnerId").search(self.data)
         if match is not None:

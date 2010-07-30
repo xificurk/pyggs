@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.4.7"
+__version__ = "0.4.8"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "SeekParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -694,14 +694,16 @@ class CacheParser(BaseParser):
 
 
 """ PCRE: logs list """
-# <td><img src="/images/icons/icon_smile.gif" width="16" height="16" alt="Found it" /></td>
-__pcresMask["logsFound"] = ("<td[^>]*><img[^>]*(Found it|Webcam Photo Taken|Attended)[^>]*></td>", re.I)
-# <td>7/23/2008</td>
-__pcresMask["logsDate"] = ("<td[^>]*>([0-9]+)/([0-9]+)/([0-9]+)</td>", re.I)
-# <td><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=2bb2acc4-1689-4169-953c-4a69e7ccd43d"><span class="Strike Warning">Zumberk</span></a>&nbsp;</td>
-__pcresMask["logsName"] = ("<td[^>]*><a href=['\"][^'\"]*/seek/cache_details.aspx\?guid=([a-z0-9-]+)['\"][^>]*>(<span class=\"Strike Warning\">)?(<strike>)?([^<]+)(</strike>)?[^<]*(</span>)?[^<]*</a>[^<]*</td>", re.I)
-# <td><a href="http://www.geocaching.com/seek/log.aspx?LUID=a3e234b3-7d34-4a26-bde5-487e4297133c" target="_blank" title="Visit Log">Visit Log</a></td>
-__pcresMask["logsLog"] = ("<td[^>]*><a href=['\"][^'\"]*/seek/log.aspx\?LUID=([a-z0-9-]+)['\"][^>]*>Visit Log</a></td>", re.I)
+# <img src="/images/icons/icon_smile.gif" width="16" height="16" alt="Found it" />
+__pcresMask["logsFound"] = ("\s*<img[^>]*(Found it|Webcam Photo Taken|Attended)[^>]*>", re.I)
+# 7/23/2008
+__pcresMask["logsDate"] = ("\s*([0-9]+)/([0-9]+)/([0-9]+)", re.I)
+# <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=331f0c62-ef78-4ab3-b8d7-be569246771d" class="lnk"><img src="http://www.geocaching.com/images/wpttypes/sm/2.gif" title="Traditional Cache" width="16" height="16" border="0"/> <span>Stepankovi hrosi</span></a>&nbsp;
+# <strike><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=d3e80a41-4218-4136-bb63-ac0de3ef0b5a" class="lnk"><img src="http://www.geocaching.com/images/wpttypes/sm/8.gif" title="Unknown Cache" width="16" height="16" border="0"/> <span><strike>Barva Kouzel</strike></span></a></strike>&nbsp;
+# <span class="Strike Warning"><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=29444383-4607-4e2d-bc65-bcf2e9919e5d" class="lnk"><img src="http://www.geocaching.com/images/wpttypes/sm/2.gif" title="Traditional Cache" width="16" height="16" border="0"/> <span><strike><font color="red">Krizovatka na kopci / Crossroad on a hill</font></strike></span></a></span>&nbsp;
+__pcresMask["logsName"] = ("\s*(<span class=\"Strike Warning\">)?(<strike>)?<a href=['\"][^'\"]*/seek/cache_details.aspx\?guid=([a-z0-9-]+)['\"][^>]*><img[^>]*>\s*<span>(<strike>)?(<font color=\"red\">)?([^<]+)(</font>)?(</strike>)?</span></a>", re.I)
+# <a href="http://www.geocaching.com/seek/log.aspx?LUID=a3e234b3-7d34-4a26-bde5-487e4297133c" target="_blank" title="Visit Log">Visit Log</a>
+__pcresMask["logsLog"] = ("\s*<a href=['\"][^'\"]*/seek/log.aspx\?LUID=([a-z0-9-]+)['\"][^>]*>Visit Log</a>", re.I)
 
 class MyFindsParser(BaseParser):
     def __init__(self, fetcher):
@@ -731,7 +733,7 @@ class MyFindsParser(BaseParser):
         if total > 0:
             cache = None
             for line in self.data.splitlines():
-                match = pcre("logsFound").search(line)
+                match = pcre("logsFound").match(line)
                 if match is not None:
                     cache = {"sequence":total-len(self.cacheList)}
                     self.log.debug("NEW cache record.")
@@ -739,22 +741,22 @@ class MyFindsParser(BaseParser):
 
                 if cache is not None:
                     if "f_date" not in cache:
-                        match = pcre("logsDate").search(line)
+                        match = pcre("logsDate").match(line)
                         if match is not None:
                             cache["f_date"] = "{0:04d}-{1:02d}-{2:02d}".format(int(match.group(3)), int(match.group(1)), int(match.group(2)))
                             self.log.log(LOG_PARSER, "f_date = {0}".format(cache["f_date"]))
 
                     if "guid" not in cache:
-                        match = pcre("logsName").search(line)
+                        match = pcre("logsName").match(line)
                         if match is not None:
-                            cache["guid"] = match.group(1)
-                            cache["name"] = unescape(match.group(4)).strip()
-                            if match.group(2):
+                            cache["guid"] = match.group(3)
+                            cache["name"] = unescape(match.group(6)).strip()
+                            if match.group(1):
                                 cache["archived"] = 1
                                 cache["disabled"] = 1
                             else:
                                 cache["archived"] = 0
-                                if match.group(3):
+                                if match.group(2):
                                     cache["disabled"] = 1
                                 else:
                                     cache["disabled"] = 0
@@ -763,7 +765,7 @@ class MyFindsParser(BaseParser):
                             self.log.log(LOG_PARSER, "disabled = {0}".format(cache["disabled"]))
                             self.log.log(LOG_PARSER, "archived = {0}".format(cache["archived"]))
 
-                    match = pcre("logsLog").search(line)
+                    match = pcre("logsLog").match(line)
                     if match is not None:
                         cache["f_luid"] = match.group(1)
                         self.log.log(LOG_PARSER, "f_luid = {0}".format(cache["f_luid"]))
@@ -790,7 +792,7 @@ class MyFindsParser(BaseParser):
 # <td class="PageBuilderWidget"><span>Total Records: <b>5371</b> - Page: <b>1</b> of <b>269</b>
 __pcresMask["searchTotals"] = ("<td class=\"PageBuilderWidget\"><span>Total Records: <b>([0-9]+)</b> - Page: <b>[0-9]+</b> of <b>([0-9]+)</b>", re.I)
 # <img src="/images/icons/compass/NW.gif" alt="NW" />NW<br />0.19mi
-__pcresMask["listCompass"] = ("<img src=['\"]/images/icons/compass/[EWNS]+.gif['\"][^>]*>[EWNS]+<br />([0-9.]+)(ft|mi)", re.I)
+__pcresMask["listCompass"] = ("\s*<br />(Here)|\s*<img src=['\"]/images/icons/compass/[EWNS]+.gif['\"][^>]*>[EWNS]+<br />([0-9.]+)(ft|mi)", re.I)
 # <img src="/images/small_profile.gif" alt="Premium Member Only Cache" with="15" height="13" />
 __pcresMask["listPMonly"] = ("<img src=['\"]/images/small_profile.gif['\"] alt=['\"]Premium Member Only Cache['\"][^>]*>", re.I)
 # <img src="http://www.geocaching.com/images/wpttypes/794.gif" alt="Police Geocaching Squad 2007 Geocoin (1 item(s))" />
@@ -887,14 +889,17 @@ class SeekParser(BaseParser):
             if match is not None:
                 self.postData[match.group(1)] = match.group(2)
 
-            match = pcre("listCompass").search(line)
+            match = pcre("listCompass").match(line)
             if match is not None:
                 self.log.debug("NEW cache record.")
                 cache = {"PMonly":False, "items":False, "found":False}
-                if match.group(2) == "ft":
-                    cache["distance"] = float(match.group(1)) * 0.0003048
+                if match.group(1) == "Here":
+                    cache["distance"] = 0.0
                 else:
-                    cache["distance"] = float(match.group(1)) * 1.609344
+                    if match.group(3) == "ft":
+                        cache["distance"] = float(match.group(2)) * 0.0003048
+                    else:
+                        cache["distance"] = float(match.group(2)) * 1.609344
                 self.log.log(LOG_PARSER, "distance = {0:.3f}".format(cache["distance"]))
 
             if cache is not None:

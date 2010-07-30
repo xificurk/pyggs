@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.12"
+__version__ = "0.2.13"
 
 
 from collections import OrderedDict

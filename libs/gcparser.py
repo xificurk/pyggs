@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.4.8"
+__version__ = "0.4.9"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "SeekParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -349,6 +349,19 @@ class Fetcher(object):
 
 monthsAbbr = {"Jan":1, "Feb":2, "Mar":3, "Apr":4, "May":5, "Jun":6, "Jul":7, "Aug":8, "Sep":9, "Oct":10, "Nov":11, "Dec":12}
 months = {"January":1, "February":2, "March":3, "April":4, "May":5, "June":6, "July":7, "August":8, "September":9, "October":10, "November":11, "December":12}
+ctypes = {}
+ctypes["2"] = "Traditional Cache"
+ctypes["3"] = "Multi-cache"
+ctypes["8"] = "Mystery/Puzzle Cache"
+ctypes["5"] = "Letterbox Hybrid"
+ctypes["earthcache"] = "Earthcache"
+ctypes["1858"] = "Wherigo Cache"
+ctypes["6"] = "Event Cache"
+ctypes["4"] = "Virtual Cache"
+ctypes["11"] = "Webcam Cache"
+ctypes["13"] = "Cache In Trash Out Event"
+ctypes["mega"] = "Mega-Event Cache"
+ctypes["3653"] = "Lost and Found Event Cache"
 
 
 __pcres = {}
@@ -420,7 +433,6 @@ logging.addLevelName(5, "PARSER")
 
 """ PCRE: geocaching.com general """
 __pcresMask["hiddenInput"] = ("<input type=[\"']hidden[\"'] name=\"([^\"]+)\"[^>]+value=\"([^\"]*)\"", re.I)
-__pcresMask["PMonly"] = ("<p class=['\"]Warning['\"][^>]*>Sorry, the owner of this listing has made it viewable to Premium Members only", re.I)
 __pcresMask["guid"] = ("^[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+$", re.I)
 
 
@@ -439,16 +451,29 @@ class BaseParser(object):
 
 
 """ PCRE: cache details """
-# <p class="OldWarning"><strong>Cache Issues:</strong></p><ul class="OldWarning"><li>This cache is temporarily unavailable. Read the logs below to read the status for this cache.</li></ul></span>
-__pcresMask["disabled"] = ("<p class=['\"]OldWarning['\"][^>]*><strong>Cache Issues:</strong></p><ul[^>]*><li>This cache (has been archived|is temporarily unavailable)[^<]*</li>", re.I)
 __pcresMask["waypoint"] = ("GC[A-Z0-9]+", 0)
+# The owner of <strong>The first Czech premium member cache</strong> has chosen to make this cache listing visible to Premium Members only.
+__pcresMask["PMonly"] = ("<img [^>]*alt=['\"]Premium Members only['\"][^>]*/>\s*The owner of <strong>\s*([^<]+)\s*</strong> has chosen to make this cache listing visible to Premium Members only.", re.I)
+# <span id="ctl00_ContentBody_uxCacheType">A cache by Pc-romeo</span>
+__pcresMask["PMowner"] = ("<span[^>]*>\s*A cache by ([^<]+)\s*</span>", re.I)
+# <img src="/images/icons/container/regular.gif" alt="Size: Regular" />&nbsp<small>(Regular)</small>
+__pcresMask["PMsize"] = ("\s*<img [^>]*alt=['\"]Size: ([^'\"]+)['\"][^>]*/>\s*(&nbsp;?)?\s*<small>\([^)]+\)</small>", re.I)
+# <strong><span id="ctl00_ContentBody_lblDifficulty">Difficulty:</span></strong>
+# <img src="http://www.geocaching.com/images/stars/stars1.gif" alt="1 out of 5" />
+__pcresMask["PMdifficulty"] = ("<strong><span[^>]*>Difficulty:</span></strong>\s*<img [^>]*alt=['\"]([0-9.]+) out of 5['\"][^>]*/>", re.I)
+# <strong><span id="ctl00_ContentBody_lblTerrain">Terrain:</span></strong>
+# <img src="http://www.geocaching.com/images/stars/stars1_5.gif" alt="1.5 out of 5" />
+__pcresMask["PMterrain"] = ("<strong><span[^>]*>Terrain:</span></strong>\s*<img [^>]*alt=['\"]([0-9.]+) out of 5['\"][^>]*/>", re.I)
+# <img id="ctl00_ContentBody_uxWptTypeImage" src="http://www.geocaching.com/images/wpttypes/2.gif" style="border-width:0px;vertical-align:middle" />
+__pcresMask["PMcacheType"] = ("<img id=['\"]ctl00_ContentBody_uxWptTypeImage['\"] src=['\"][^'\"]*/images/wpttypes/(earthcache|mega|[0-9]+).gif['\"][^>]*>", re.I)
 # <meta name="description" content="Cajova chyse/ Tea hut (GCRBCA) was created by adp. on 11/15/2005. It's a Micro size geocache, with difficulty of 1, terrain of 1. It's located in Hlavni mesto Praha, Czech Republic. Cache je um&amp;iacute;stena v Japonske casti botanicke zahrady vTroji/ Cache is located in Japan compartment of the Prague botanicgarden in Troja. Souradnice v&amp;#225;s zavedou doJaponsk&amp;#233; zahrady v Botanick&amp;#233; zahrade v Tr&amp;#243;ji." />
-# <meta name="description" content="PGME - Neco pro deti (GC25HWC) was created by gordici on 06/26/2010. It's a Other size geocache, with difficulty of 1.5, terrain of 1.5. It's located in Hlavni mesto Praha, Czech Republic. Mezi nami je rada rodin s detmi, tak aby deti neprisly zkratka,pripravili jsme pro ne take nejakou zabavu." />
 __pcresMask["cacheDetails"] = ("<meta\s+name=\"description\" content=\"([^\"]+) \(GC[A-Z0-9]+\) was created by ([^\"]+) on ([0-9]+)/([0-9]+)/([0-9]+)\. It's a ([a-zA-Z ]+) size geocache, with difficulty of ([0-9.]+), terrain of ([0-9.]+). It's located in (([^,.]+), )?([^.]+)\.[^\"]*\"[^>]*>", re.I|re.S)
 # <a href="/about/cache_types.aspx" target="_blank" title="About Cache Types"><img src="/images/WptTypes/8.gif" alt="Unknown Cache" width="32" height="32" />
 __pcresMask["cacheType"] = ("<img src=['\"]/images/WptTypes/[^'\"]+['\"] alt=\"([^\"]+)\"[^>]*></a>", re.I)
 # by <a href="http://www.geocaching.com/profile/?guid=ed7a2040-3bbb-485b-9b03-21ae8507d2d7&wid=92322d1b-d354-4190-980e-8964d7740161&ds=2">
 __pcresMask["cacheOwnerId"] = ("by <a href=['\"]http://www\.geocaching\.com/profile/\?guid=([a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+)&wid=([a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+)&ds=2['\"][^>]*>", re.I)
+# <p class="OldWarning"><strong>Cache Issues:</strong></p><ul class="OldWarning"><li>This cache is temporarily unavailable. Read the logs below to read the status for this cache.</li></ul></span>
+__pcresMask["disabled"] = ("<p class=['\"]OldWarning['\"][^>]*><strong>Cache Issues:</strong></p><ul[^>]*><li>This cache (has been archived|is temporarily unavailable)[^<]*</li>", re.I)
 # <span id="ctl00_ContentBody_LatLon" style="font-weight:bold;">N 50° 02.173 E 015° 46.386</span>
 __pcresMask["cacheLatLon"] = ("<span id=['\"]ctl00_ContentBody_LatLon['\"][^>]*>([NS]) ([0-9]+)° ([0-9.]+) ([WE]) ([0-9]+)° ([0-9.]+)</span>", re.I)
 __pcresMask["cacheShortDesc"] = ("<div class=['\"]UserSuppliedContent['\"]>\s*<span id=['\"]ctl00_ContentBody_ShortDescription['\"]>(.*?)</span>\s+</div>", re.I|re.S)
@@ -552,142 +577,187 @@ class CacheParser(BaseParser):
 
         match = pcre("PMonly").search(self.data)
         if match is not None:
+            self.details["PMonly"] = True
             self.log.warn("PM only cache at '{0}'.".format(self.url))
-            return self.details
 
-        match = pcre("cacheOwnerId").search(self.data)
-        if match is not None:
-            self.details["owner_id"] = match.group(1)
-            self.details["guid"] = match.group(2)
-            self.log.log(LOG_PARSER, "guid = {0}".format(self.details["guid"]))
-            self.log.log(LOG_PARSER, "owner_id = {0}".format(self.details["owner_id"]))
-        else:
-            self.details["owner_id"] = ""
-            if "guid" not in self.details:
-                self.details["guid"] = ""
-            self.log.error("Guid not found.")
-            self.log.error("Owner id not found.")
-
-        self.details["disabled"] = 0
-        self.details["archived"] = 0
-        match = pcre("disabled").search(self.data)
-        if match is not None:
-            if match.group(1) == "has been archived":
-                self.details["archived"] = 1
-            self.details["disabled"] = 1
-            self.log.log(LOG_PARSER, "archived = {0}".format(self.details["archived"]))
-            self.log.log(LOG_PARSER, "disabled = {0}".format(self.details["disabled"]))
-
-        match = pcre("cacheDetails").search(self.data)
-        if match is not None:
-            self.details["name"] = unescape(unescape(match.group(1))).strip()
-            self.details["owner"] = unescape(unescape(match.group(2))).strip()
-            self.details["hidden"] = "{0:04d}-{1:02d}-{2:02d}".format(int(match.group(5)), int(match.group(3)), int(match.group(4)))
-            self.details["size"] = unescape(match.group(6)).strip()
-            self.details["difficulty"] = float(match.group(7))
-            self.details["terrain"] = float(match.group(8))
-            if match.group(10) is not None:
-                self.details["province"] = unescape(match.group(10)).strip()
-            else:
-                self.details["province"] = ""
-            self.details["country"] = unescape(match.group(11)).strip()
+            self.details["name"] = unescape(match.group(1)).strip()
             self.log.log(LOG_PARSER, "name = {0}".format(self.details["name"]))
-            self.log.log(LOG_PARSER, "owner = {0}".format(self.details["owner"]))
-            self.log.log(LOG_PARSER, "hidden = {0}".format(self.details["hidden"]))
-            self.log.log(LOG_PARSER, "size = {0}".format(self.details["size"]))
-            self.log.log(LOG_PARSER, "difficulty = {0:.1f}".format(self.details["difficulty"]))
-            self.log.log(LOG_PARSER, "terrain = {0:.1f}".format(self.details["terrain"]))
-            self.log.log(LOG_PARSER, "country = {0}".format(self.details["country"]))
-            self.log.log(LOG_PARSER, "province = {0}".format(self.details["province"]))
+
+            match = pcre("PMowner").search(self.data)
+            if match is not None:
+                self.details["owner"] = unescape(match.group(1)).strip()
+                self.log.log(LOG_PARSER, "owner = {0}".format(self.details["owner"]))
+            else:
+                self.details["owner"] = ""
+                self.log.error("Could not parse cache owner.")
+
+            match = pcre("PMsize").search(self.data)
+            if match is not None:
+                self.details["size"] = unescape(match.group(1)).strip()
+                self.log.log(LOG_PARSER, "size = {0}".format(self.details["size"]))
+            else:
+                self.details["size"] = ""
+                self.log.error("Could not parse cache size.")
+
+            match = pcre("PMdifficulty").search(self.data)
+            if match is not None:
+                self.details["difficulty"] = unescape(match.group(1)).strip()
+                self.log.log(LOG_PARSER, "difficulty = {0}".format(self.details["difficulty"]))
+            else:
+                self.details["difficulty"] = 0
+                self.log.error("Could not parse cache difficulty.")
+
+            match = pcre("PMterrain").search(self.data)
+            if match is not None:
+                self.details["terrain"] = unescape(match.group(1)).strip()
+                self.log.log(LOG_PARSER, "terrain = {0}".format(self.details["terrain"]))
+            else:
+                self.details["terrain"] = 0
+                self.log.error("Could not parse cache terrain.")
+
+            match = pcre("PMcacheType").search(self.data)
+            if match is not None and match.group(1) in ctypes:
+                self.details["type"] = ctypes[match.group(1)]
+                self.log.log(LOG_PARSER, "type = {0}".format(self.details["type"]))
+            else:
+                self.details["type"] = ""
+                self.log.error("Type not found.")
         else:
-            self.details["name"] = ""
-            self.details["owner"] = ""
-            self.details["hidden"] = "1980-01-01"
-            self.details["size"] = ""
-            self.details["difficulty"] = 0
-            self.details["terrain"] = 0
-            self.log.error("Could not parse cache details.")
+            self.details["PMonly"] = False
 
-        match = pcre("cacheType").search(self.data)
-        if match is not None:
-            self.details["type"] = unescape(match.group(1)).strip()
-            # GS weird changes bug
-            if self.details["type"] == "Unknown Cache":
-                self.details["type"] = "Mystery/Puzzle Cache"
-            self.log.log(LOG_PARSER, "type = {0}".format(self.details["type"]))
-        else:
-            self.details["type"] = ""
-            self.log.error("Type not found.")
+            match = pcre("cacheDetails").search(self.data)
+            if match is not None:
+                self.details["name"] = unescape(unescape(match.group(1))).strip()
+                self.details["owner"] = unescape(unescape(match.group(2))).strip()
+                self.details["hidden"] = "{0:04d}-{1:02d}-{2:02d}".format(int(match.group(5)), int(match.group(3)), int(match.group(4)))
+                self.details["size"] = unescape(match.group(6)).strip()
+                self.details["difficulty"] = float(match.group(7))
+                self.details["terrain"] = float(match.group(8))
+                if match.group(10) is not None:
+                    self.details["province"] = unescape(match.group(10)).strip()
+                else:
+                    self.details["province"] = ""
+                self.details["country"] = unescape(match.group(11)).strip()
+                self.log.log(LOG_PARSER, "name = {0}".format(self.details["name"]))
+                self.log.log(LOG_PARSER, "owner = {0}".format(self.details["owner"]))
+                self.log.log(LOG_PARSER, "hidden = {0}".format(self.details["hidden"]))
+                self.log.log(LOG_PARSER, "size = {0}".format(self.details["size"]))
+                self.log.log(LOG_PARSER, "difficulty = {0:.1f}".format(self.details["difficulty"]))
+                self.log.log(LOG_PARSER, "terrain = {0:.1f}".format(self.details["terrain"]))
+                self.log.log(LOG_PARSER, "country = {0}".format(self.details["country"]))
+                self.log.log(LOG_PARSER, "province = {0}".format(self.details["province"]))
+            else:
+                self.details["name"] = ""
+                self.details["owner"] = ""
+                self.details["hidden"] = "1980-01-01"
+                self.details["size"] = ""
+                self.details["difficulty"] = 0
+                self.details["terrain"] = 0
+                self.log.error("Could not parse cache details.")
 
-        match = pcre("cacheLatLon").search(self.data)
-        if match is not None:
-            self.details["lat"] = float(match.group(2)) + float(match.group(3))/60
-            if match.group(1) == "S":
-                self.details["lat"] = -self.details["lat"]
-            self.details["lon"] = float(match.group(5)) + float(match.group(6))/60
-            if match.group(4) == "W":
-                self.details["lon"] = -self.details["lon"]
-            self.log.log(LOG_PARSER, "lat = {0:.5f}".format(self.details["lat"]))
-            self.log.log(LOG_PARSER, "lon = {0:.5f}".format(self.details["lon"]))
-        else:
-            self.details["lat"] = 0
-            self.details["lon"] = 0
-            self.log.error("Lat, lon not found.")
+            match = pcre("cacheType").search(self.data)
+            if match is not None:
+                self.details["type"] = unescape(match.group(1)).strip()
+                # GS weird changes bug
+                if self.details["type"] == "Unknown Cache":
+                    self.details["type"] = "Mystery/Puzzle Cache"
+                self.log.log(LOG_PARSER, "type = {0}".format(self.details["type"]))
+            else:
+                self.details["type"] = ""
+                self.log.error("Type not found.")
 
-        match = pcre("cacheShortDesc").search(self.data)
-        if match is not None:
-            self.details["shortDescHTML"] = match.group(1)
-            self.details["shortDesc"] = cleanHTML(match.group(1))
-            self.log.log(LOG_PARSER, "shortDesc = {0}...".format(self.details["shortDesc"].replace("\n"," ")[0:50]))
-        else:
-            self.details["shortDescHTML"] = ""
-            self.details["shortDesc"] = ""
+            match = pcre("cacheOwnerId").search(self.data)
+            if match is not None:
+                self.details["owner_id"] = match.group(1)
+                self.details["guid"] = match.group(2)
+                self.log.log(LOG_PARSER, "guid = {0}".format(self.details["guid"]))
+                self.log.log(LOG_PARSER, "owner_id = {0}".format(self.details["owner_id"]))
+            else:
+                self.details["owner_id"] = ""
+                if "guid" not in self.details:
+                    self.details["guid"] = ""
+                self.log.error("Guid not found.")
+                self.log.error("Owner id not found.")
 
-        match = pcre("cacheLongDesc").search(self.data)
-        if match is not None:
-            self.details["longDescHTML"] = match.group(1)
-            self.details["longDesc"] = cleanHTML(match.group(1))
-            self.log.log(LOG_PARSER, "longDesc = {0}...".format(self.details["longDesc"].replace("\n"," ")[0:50]))
-        else:
-            self.details["longDescHTML"] = ""
-            self.details["longDesc"] = ""
+            self.details["disabled"] = 0
+            self.details["archived"] = 0
+            match = pcre("disabled").search(self.data)
+            if match is not None:
+                if match.group(1) == "has been archived":
+                    self.details["archived"] = 1
+                self.details["disabled"] = 1
+                self.log.log(LOG_PARSER, "archived = {0}".format(self.details["archived"]))
+                self.log.log(LOG_PARSER, "disabled = {0}".format(self.details["disabled"]))
 
-        match = pcre("cacheHint").search(self.data)
-        if match is not None:
-            self.details["hint"] = unescape(match.group(1).replace("<br>", "\n")).strip()
-            self.log.log(LOG_PARSER, "hint = {0}...".format(self.details["hint"].replace("\n"," ")[0:50]))
-        else:
-            self.details["hint"] = ""
+            match = pcre("cacheLatLon").search(self.data)
+            if match is not None:
+                self.details["lat"] = float(match.group(2)) + float(match.group(3))/60
+                if match.group(1) == "S":
+                    self.details["lat"] = -self.details["lat"]
+                self.details["lon"] = float(match.group(5)) + float(match.group(6))/60
+                if match.group(4) == "W":
+                    self.details["lon"] = -self.details["lon"]
+                self.log.log(LOG_PARSER, "lat = {0:.5f}".format(self.details["lat"]))
+                self.log.log(LOG_PARSER, "lon = {0:.5f}".format(self.details["lon"]))
+            else:
+                self.details["lat"] = 0
+                self.details["lon"] = 0
+                self.log.error("Lat, lon not found.")
 
-        match = pcre("cacheAttributes").search(self.data)
-        if match is not None:
-            self.details["attributes"] = []
-            for item in pcre("cacheAttributesItem").finditer(match.group(1)):
-                attr = unescape(item.group(1)).strip()
-                if attr != "blank":
-                    self.details["attributes"].append(attr)
-            self.details["attributes"] = ", ".join(self.details["attributes"])
-            self.log.log(LOG_PARSER, "attributes = {0}".format(self.details["attributes"]))
-        else:
-            self.details["attributes"] = ""
+            match = pcre("cacheShortDesc").search(self.data)
+            if match is not None:
+                self.details["shortDescHTML"] = match.group(1)
+                self.details["shortDesc"] = cleanHTML(match.group(1))
+                self.log.log(LOG_PARSER, "shortDesc = {0}...".format(self.details["shortDesc"].replace("\n"," ")[0:50]))
+            else:
+                self.details["shortDescHTML"] = ""
+                self.details["shortDesc"] = ""
 
-        self.details["inventory"] = {}
-        match = pcre("cacheInventory").search(self.data)
-        if match is not None:
-            for part in match.group(1).split("</li>"):
-                match = pcre("cacheInventoryItem").search(part)
-                if match is not None:
-                    self.details["inventory"][match.group(1)] = unescape(match.group(2)).strip()
-            self.log.log(LOG_PARSER, "inventory = {0}".format(self.details["inventory"]))
+            match = pcre("cacheLongDesc").search(self.data)
+            if match is not None:
+                self.details["longDescHTML"] = match.group(1)
+                self.details["longDesc"] = cleanHTML(match.group(1))
+                self.log.log(LOG_PARSER, "longDesc = {0}...".format(self.details["longDesc"].replace("\n"," ")[0:50]))
+            else:
+                self.details["longDescHTML"] = ""
+                self.details["longDesc"] = ""
 
-        self.details["visits"] = {}
-        match = pcre("cacheVisits").search(self.data)
-        if match is not None:
-            for part in match.group(1).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"):
-                match = pcre("cacheLogCount").search(part)
-                if match is not None:
-                    self.details["visits"][unescape(match.group(1)).strip()] = int(match.group(2))
-            self.log.log(LOG_PARSER, "visits = {0}".format(self.details["visits"]))
+            match = pcre("cacheHint").search(self.data)
+            if match is not None:
+                self.details["hint"] = unescape(match.group(1).replace("<br>", "\n")).strip()
+                self.log.log(LOG_PARSER, "hint = {0}...".format(self.details["hint"].replace("\n"," ")[0:50]))
+            else:
+                self.details["hint"] = ""
+
+            match = pcre("cacheAttributes").search(self.data)
+            if match is not None:
+                self.details["attributes"] = []
+                for item in pcre("cacheAttributesItem").finditer(match.group(1)):
+                    attr = unescape(item.group(1)).strip()
+                    if attr != "blank":
+                        self.details["attributes"].append(attr)
+                self.details["attributes"] = ", ".join(self.details["attributes"])
+                self.log.log(LOG_PARSER, "attributes = {0}".format(self.details["attributes"]))
+            else:
+                self.details["attributes"] = ""
+
+            self.details["inventory"] = {}
+            match = pcre("cacheInventory").search(self.data)
+            if match is not None:
+                for part in match.group(1).split("</li>"):
+                    match = pcre("cacheInventoryItem").search(part)
+                    if match is not None:
+                        self.details["inventory"][match.group(1)] = unescape(match.group(2)).strip()
+                self.log.log(LOG_PARSER, "inventory = {0}".format(self.details["inventory"]))
+
+            self.details["visits"] = {}
+            match = pcre("cacheVisits").search(self.data)
+            if match is not None:
+                for part in match.group(1).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"):
+                    match = pcre("cacheLogCount").search(part)
+                    if match is not None:
+                        self.details["visits"][unescape(match.group(1)).strip()] = int(match.group(2))
+                self.log.log(LOG_PARSER, "visits = {0}".format(self.details["visits"]))
 
         return self.details
 
@@ -698,10 +768,10 @@ class CacheParser(BaseParser):
 __pcresMask["logsFound"] = ("\s*<img[^>]*(Found it|Webcam Photo Taken|Attended)[^>]*>", re.I)
 # 7/23/2008
 __pcresMask["logsDate"] = ("\s*([0-9]+)/([0-9]+)/([0-9]+)", re.I)
-# <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=331f0c62-ef78-4ab3-b8d7-be569246771d" class="lnk"><img src="http://www.geocaching.com/images/wpttypes/sm/2.gif" title="Traditional Cache" width="16" height="16" border="0"/> <span>Stepankovi hrosi</span></a>&nbsp;
-# <strike><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=d3e80a41-4218-4136-bb63-ac0de3ef0b5a" class="lnk"><img src="http://www.geocaching.com/images/wpttypes/sm/8.gif" title="Unknown Cache" width="16" height="16" border="0"/> <span><strike>Barva Kouzel</strike></span></a></strike>&nbsp;
-# <span class="Strike Warning"><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=29444383-4607-4e2d-bc65-bcf2e9919e5d" class="lnk"><img src="http://www.geocaching.com/images/wpttypes/sm/2.gif" title="Traditional Cache" width="16" height="16" border="0"/> <span><strike><font color="red">Krizovatka na kopci / Crossroad on a hill</font></strike></span></a></span>&nbsp;
-__pcresMask["logsName"] = ("\s*(<span class=\"Strike Warning\">)?(<strike>)?<a href=['\"][^'\"]*/seek/cache_details.aspx\?guid=([a-z0-9-]+)['\"][^>]*><img[^>]*>\s*<span>(<strike>)?(<font color=\"red\">)?([^<]+)(</font>)?(</strike>)?</span></a>", re.I)
+# <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=331f0c62-ef78-4ab3-b8d7-be569246771d" class="ImageLink"><img src="http://www.geocaching.com/images/wpttypes/sm/2.gif" title="Traditional Cache" /></a> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=331f0c62-ef78-4ab3-b8d7-be569246771d">Stepankovi hrosi</a>&nbsp;
+# <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=d3e80a41-4218-4136-bb63-ac0de3ef0b5a" class="ImageLink"><img src="http://www.geocaching.com/images/wpttypes/sm/8.gif" title="Unknown Cache" /></a> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=d3e80a41-4218-4136-bb63-ac0de3ef0b5a"><span class="Strike">Barva Kouzel</span></a>&nbsp;
+# <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=29444383-4607-4e2d-bc65-bcf2e9919e5d" class="ImageLink"><img src="http://www.geocaching.com/images/wpttypes/sm/2.gif" title="Traditional Cache" /></a> <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=29444383-4607-4e2d-bc65-bcf2e9919e5d"><span class="Strike OldWarning">Krizovatka na kopci / Crossroad on a hill</span></a>&nbsp;
+__pcresMask["logsName"] = ("\s*<a[^>]*>\s*<img[^>]*>\s*</a>\s*<a href=['\"][^'\"]*/seek/cache_details.aspx\?guid=([a-z0-9-]+)['\"][^>]*>\s*(<span class=['\"]Strike(\s*OldWarning)?['\"]>)?\s*([^<]+)\s*(</span>)?\s*</a>", re.I)
 # <a href="http://www.geocaching.com/seek/log.aspx?LUID=a3e234b3-7d34-4a26-bde5-487e4297133c" target="_blank" title="Visit Log">Visit Log</a>
 __pcresMask["logsLog"] = ("\s*<a href=['\"][^'\"]*/seek/log.aspx\?LUID=([a-z0-9-]+)['\"][^>]*>Visit Log</a>", re.I)
 
@@ -749,17 +819,14 @@ class MyFindsParser(BaseParser):
                     if "guid" not in cache:
                         match = pcre("logsName").match(line)
                         if match is not None:
-                            cache["guid"] = match.group(3)
-                            cache["name"] = unescape(match.group(6)).strip()
-                            if match.group(1):
-                                cache["archived"] = 1
+                            cache["guid"] = match.group(1)
+                            cache["name"] = unescape(match.group(4)).strip()
+                            cache["disabled"] = 0
+                            cache["archived"] = 0
+                            if match.group(2):
                                 cache["disabled"] = 1
-                            else:
-                                cache["archived"] = 0
-                                if match.group(2):
-                                    cache["disabled"] = 1
-                                else:
-                                    cache["disabled"] = 0
+                                if match.group(3):
+                                    cache["archived"] = 1
                             self.log.log(LOG_PARSER, "guid = {0}".format(cache["guid"]))
                             self.log.log(LOG_PARSER, "name = {0}".format(cache["name"]))
                             self.log.log(LOG_PARSER, "disabled = {0}".format(cache["disabled"]))

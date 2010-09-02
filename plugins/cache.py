@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 
 import logging
@@ -182,7 +182,7 @@ class Storage(base.Storage):
         cur = db.cursor()
 
         cur.execute("DELETE FROM cache_inventory WHERE guid = ?", (data["guid"],))
-        if "name" in data:
+        if not data["PMonly"]:
             for tbid in data["inventory"]:
                 cur.execute("INSERT INTO cache_inventory(guid, tbid, name) VALUES(?,?,?)", (data["guid"], tbid, data["inventory"][tbid]))
             cur.execute("DELETE FROM cache WHERE guid = ?", (data["guid"],))
@@ -191,11 +191,12 @@ class Storage(base.Storage):
             for logtype in data["visits"]:
                 cur.execute("INSERT INTO cache_visits(guid, type, count) VALUES(?,?,?)", (data["guid"], logtype, data["visits"][logtype]))
         else:
+            # PMonly: guid, waypoint, name, owner, type, difficulty, terrain, size
             cur.execute("SELECT * FROM cache WHERE guid=?", (data["guid"],))
             if (len(cur.fetchall()) > 0):
-                cur.execute("UPDATE cache SET lastCheck = ? WHERE guid = ?", (time.time(), data["guid"]))
+                cur.execute("UPDATE cache SET waypoint = ?, name = ?, owner = ?, type = ?, difficulty = ?, terrain = ?, size = ?, lastCheck = ? WHERE guid = ?", (data["waypoint"], data["name"], data["owner"], data["type"], data["difficulty"], data["terrain"], data["size"], time.time(), data["guid"]))
             else:
-                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,'','','','','','','','','','','','','','','','',?,?)", (data["guid"], data["waypoint"], time.time(), -9999))
+                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,?,?,'','',?,'','','','',?,?,?,'','','','',?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["type"], data["difficulty"], data["terrain"], data["size"], time.time(), -9999))
         db.commit()
         db.close()
 

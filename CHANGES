@@ -1,6 +1,18 @@
 CHANGES
 ============================================================================
 
+Release 0.2.14 (2010-09-03)
+--------------------------
+
+[Enhancements]
+
+  * plugins/cache now stores more information about PMonly caches.
+
+[Bugfixes]
+
+  * GCparser update v0.4.9.
+
+
 Release 0.2.13 (2010-07-30)
 --------------------------
 

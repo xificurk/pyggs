@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.4.9"
+__version__ = "0.5.0"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "SeekParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -522,6 +522,9 @@ __pcresMask["cacheVisits"] = ("<span id=['\"]ctl00_ContentBody_lblFindCounts['\"
 # <img src="/images/icons/icon_smile.gif" alt="Found it" />113
 __pcresMask["cacheLogCount"] = ("<img[^>]*alt=\"([^\"]+)\"[^>]*/>([0-9]+)", re.I)
 
+__pcresMask["cacheLogs"] = ("<table class=\"LogsTable Table\">(.*?)</table>\s", re.I)
+__pcresMask["cacheLog"] = ("<tr><td[^>]*><strong><img.*?title=\"([^\"]+)\"[^>]*/>&nbsp;([a-z]+) ([0-9]+)(, ([0-9]+))? by <a[^>]*>([^<]+)</a></strong> \([0-9]+ found\)<br /><br />(.*?)<br /><br /><small><a href=\"log.aspx\?LUID=[^\"]+\" title=\"View Log\">View Log</a></small>", re.I)
+
 class CacheParser(BaseParser):
     def __init__(self, fetcher, id, logs=False):
         BaseParser.__init__(self, fetcher)
@@ -759,6 +762,20 @@ class CacheParser(BaseParser):
                         self.details["visits"][unescape(match.group(1)).strip()] = int(match.group(2))
                 self.log.log(LOG_PARSER, "visits = {0}".format(self.details["visits"]))
 
+            self.details["logs"] = []
+            match = pcre("cacheLogs").search(self.data)
+            if match is not None:
+                for part in match.group(1).split("</tr>"):
+                    match = pcre("cacheLog").match(part)
+                    if match is not None:
+                        if match.group(5) is not None:
+                            year = match.group(5)
+                        else:
+                            year = datetime.datetime.now().year
+                        date = "{0:04d}-{1:02d}-{2:02d}".format(int(year), int(months[match.group(2)]), int(match.group(3)))
+                        self.details["logs"].append((match.group(1), date, match.group(6), match.group(7)))
+                self.log.log(LOG_PARSER, "found {0} logs".format(len(self.details["logs"])))
+
         return self.details
 
 
@@ -858,6 +875,10 @@ class MyFindsParser(BaseParser):
 """ PCRE: cache search """
 # <td class="PageBuilderWidget"><span>Total Records: <b>5371</b> - Page: <b>1</b> of <b>269</b>
 __pcresMask["searchTotals"] = ("<td class=\"PageBuilderWidget\"><span>Total Records: <b>([0-9]+)</b> - Page: <b>[0-9]+</b> of <b>([0-9]+)</b>", re.I)
+# <img src="/images/icons/compass/N.gif" alt="Direction and Distance" />
+__pcresMask["listStart"] = ("\s*<img src=\"/images/icons/compass/N\.gif\" alt=\"Direction and Distance\" />", re.I)
+__pcresMask["listEnd"] = ("\s*</table>", re.I)
+__pcresMask["listUserStart"] = ("\s+<br\s*/>\s*", re.I)
 # <img src="/images/icons/compass/NW.gif" alt="NW" />NW<br />0.19mi
 __pcresMask["listCompass"] = ("\s*<br />(Here)|\s*<img src=['\"]/images/icons/compass/[EWNS]+.gif['\"][^>]*>[EWNS]+<br />([0-9.]+)(ft|mi)", re.I)
 # <img src="/images/small_profile.gif" alt="Premium Member Only Cache" with="15" height="13" />
@@ -871,7 +892,7 @@ __pcresMask["listSize"] = ("^\s+<img[^>]*src=['\"][^'\"]*/icons/container/[^'\"]
 # 25 Jun 10 <img src="/images/new3.gif" alt="New!" />
 __pcresMask["listHidden"] = ("([0-9]+) ([A-Za-z]+) ([0-9]+)( <img[^>]*alt=['\"]New!['\"][^>]*>)?", re.I)
 # <a href="/seek/cache_details.aspx?guid=673d255f-45e8-4b91-8c61-a47878ec65de"><span class="Strike">Pribehy Franty Omacky 3.: Dochazi benzin</span></a>
-__pcresMask["listName"] = ("<a href=['\"][^'\"]*/seek/cache_details.aspx\?guid=([a-z0-9-]+)['\"]>(<span class=\"Strike\">)?([^<]+)(</span>)?</a>", re.I)
+__pcresMask["listName"] = ("<a href=['\"][^'\"]*/seek/cache_details.aspx\?guid=([a-z0-9-]+)['\"]>(<span class=\"(OldWarning )?Strike\">)?([^<]+)(</span>)?</a>", re.I)
 # by Franta Omacka
 __pcresMask["listOwner"] = ("^\s*by (.*)\s*$", re.I)
 # (GC1NF8Y)<br />
@@ -886,13 +907,14 @@ __pcresMask["listFoundDays"] = ("^\s*([0-9]+) days ago((<strong>)?\*(</strong>)?
 # Today<strong>*</strong><br />
 __pcresMask["listFoundWords"] = ("^\s*((Yester|To)day)((<strong>)?\*(</strong>)?)?<br />\s*$", re.I)
 # End
-__pcresMask["listEnd"] = ("</tr>", re.I)
+__pcresMask["listCacheEnd"] = ("</tr>", re.I)
 
 class SeekParser(BaseParser):
     def __init__(self, fetcher, type="coord", data={}):
         BaseParser.__init__(self, fetcher)
         self.log = logging.getLogger("GCparser.SeekParser")
         self.url = "http://www.geocaching.com/seek/nearest.aspx?"
+        self.type = type
 
         if type == "coord":
             if "lat" not in data.keys() or "lon" not in data.keys():
@@ -901,19 +923,15 @@ class SeekParser(BaseParser):
                 self.log.critical("LatLon needs to be float.")
             if not "dist" in data.keys() or not isinstance(data["dist"], int):
                 data["dist"] = ""
-            if data["lat"] == 0:
-                data["lat_ns"] = 1
-            else:
-                data["lat_ns"] = int(data["lat"]/abs(data["lat"]))
-            if data["lon"] == 0:
-                data["lon_ew"] = 1
-            else:
-                data["lon_ew"] = int(data["lon"]/abs(data["lon"]))
-            data["lat_mmss"] = (data["lat"] - int(abs(data["lat"])))*60
-            data["lon_mmss"] = (data["lon"] - int(abs(data["lon"])))*60
-            data["lat"] = int(abs(data["lat"]))
-            data["lon"] = int(abs(data["lon"]))
-            self.url += "lat_ns={lat_ns:d}&lat_h={lat:d}&lat_mmss={lat_mmss:.4f}&long_ew={lon_ew:d}&long_h={lon:d}&long_mmss={lon_mmss:.4f}&dist={dist}&submit8=Search".format(**data)
+            self.url += "origin_lat={lat:.5f}&origin_long={lon:.5f}&dist={dist}&submit3=Search".format(**data)
+        elif type == "user":
+            if "user" not in data.keys():
+                self.log.critical("'user' type seek needs 'user' parameter.")
+            self.url += urllib.parse.urlencode({"ul":data["user"], "submit4":"Go"})
+        elif type == "owner":
+            if "user" not in data.keys():
+                self.log.critical("'owner' type seek needs 'user' parameter.")
+            self.url += urllib.parse.urlencode({"u":data["user"], "submit4":"Go"})
         else:
             self.log.critical("Uknown seek type.")
 
@@ -938,6 +956,8 @@ class SeekParser(BaseParser):
     def getNextPage(self):
         """ Returns parsed list of caches from next page, or False.
         """
+        if self.getPageCount() < 1:
+            return False
         if self.postData is not None:
             if self.page >= self.getPageCount():
                 return False
@@ -950,24 +970,42 @@ class SeekParser(BaseParser):
 
         cacheList = []
         cache = None
+        started = False
         for line in self.data.splitlines():
             # POST data
             match = pcre("hiddenInput").search(line)
             if match is not None:
                 self.postData[match.group(1)] = match.group(2)
 
-            match = pcre("listCompass").match(line)
-            if match is not None:
-                self.log.debug("NEW cache record.")
-                cache = {"PMonly":False, "items":False, "found":False}
-                if match.group(1) == "Here":
-                    cache["distance"] = 0.0
+            if started:
+                match = pcre("listEnd").match(line)
+                if match is not None:
+                    self.log.debug("Cache table ended")
+                    started = False
+                    cache = None
+                elif self.type == "coord":
+                    match = pcre("listCompass").match(line)
+                    if match is not None:
+                        self.log.debug("NEW cache record.")
+                        cache = {"PMonly":False, "items":False, "found":False}
+                        if match.group(1) == "Here":
+                            cache["distance"] = 0.0
+                        else:
+                            if match.group(3) == "ft":
+                                cache["distance"] = float(match.group(2)) * 0.0003048
+                            else:
+                                cache["distance"] = float(match.group(2)) * 1.609344
+                        self.log.log(LOG_PARSER, "distance = {0:.3f}".format(cache["distance"]))
                 else:
-                    if match.group(3) == "ft":
-                        cache["distance"] = float(match.group(2)) * 0.0003048
-                    else:
-                        cache["distance"] = float(match.group(2)) * 1.609344
-                self.log.log(LOG_PARSER, "distance = {0:.3f}".format(cache["distance"]))
+                    match = pcre("listUserStart").match(line)
+                    if match is not None:
+                        self.log.debug("NEW cache record.")
+                        cache = {"PMonly":False, "items":False, "found":False}
+            else:
+                match = pcre("listStart").match(line)
+                if match is not None:
+                    self.log.debug("Cache table started")
+                    started = True
 
             if cache is not None:
                 if "type" not in cache:
@@ -1008,14 +1046,19 @@ class SeekParser(BaseParser):
                     match = pcre("listName").search(line)
                     if match is not None:
                         cache["guid"] = match.group(1)
-                        cache["name"] = unescape(match.group(3)).strip()
+                        cache["name"] = unescape(match.group(4)).strip()
                         if match.group(2):
                             cache["disabled"] = 1
                         else:
                             cache["disabled"] = 0
+                        if match.group(3):
+                            cache["archived"] = 1
+                        else:
+                            cache["archived"] = 0
                         self.log.log(LOG_PARSER, "guid = {0}".format(cache["guid"]))
                         self.log.log(LOG_PARSER, "name = {0}".format(cache["name"]))
                         self.log.log(LOG_PARSER, "disabled = {0}".format(cache["disabled"]))
+                        self.log.log(LOG_PARSER, "archived = {0}".format(cache["archived"]))
                 elif "owner" not in cache:
                     match = pcre("listOwner").search(line)
                     if match is not None:
@@ -1050,9 +1093,9 @@ class SeekParser(BaseParser):
                     if cache["found"]:
                         self.log.log(LOG_PARSER, "found = {0}".format(cache["found"]))
 
-                match = pcre("listEnd").search(line)
+                match = pcre("listCacheEnd").search(line)
                 if match is not None:
-                    if "distance" in cache and "type" in cache and "difficulty" in cache and "size" in cache and "hidden" in cache and "name" in cache and "owner" in cache and "waypoint" in cache and "location" in cache:
+                    if (self.type != "coord" or "distance" in cache) and "type" in cache and "difficulty" in cache and "size" in cache and "hidden" in cache and "name" in cache and "owner" in cache and "waypoint" in cache and "location" in cache:
                         self.log.debug("END of cache record {0}.".format(cache["name"]))
                         cacheList.append(cache)
                         cache = None
@@ -1109,7 +1152,9 @@ class SeekParser(BaseParser):
             self.cacheCount = int(match.group(1))
             self.pageCount = int(match.group(2))
         else:
-            self.log.error("Could not find cacheCount and pageCount.")
+            self.log.warn("Could not find cacheCount and pageCount... assuming empty result.")
+            self.cacheCount = 0
+            self.pageCount = 0
 
 
 

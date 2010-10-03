@@ -89,7 +89,7 @@ class Storage(base.Storage):
 
         lastCheck = self.getEnv("lastcheck")
         timeout = self.plugin.config["timeout"]*3600
-        if lastCheck is not None and float(lastCheck)+timeout >= time.time():
+        if lastCheck is not None and float(lastCheck)+timeout >= int(time.time()):
             self.valid = True
         else:
             self.log.info(_("MyFinds database out of date, initiating refresh."))
@@ -107,7 +107,7 @@ class Storage(base.Storage):
             cur.execute("INSERT INTO myfinds(guid, sequence, date, luid) VALUES(?,?,?,?)", (find["guid"], find["sequence"], find["f_date"], find["f_luid"]))
         db.commit()
         db.close()
-        self.setEnv("lastcheck", time.time())
+        self.setEnv("lastcheck", int(time.time()))
         self.valid = True
 
 

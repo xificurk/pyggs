@@ -71,7 +71,7 @@ class Storage(base.Storage):
 
         lastCheck = self.getEnv("lastcheck")
         timeout = self.plugin.config["timeout"]*3600
-        if lastCheck is not None and float(lastCheck)+timeout >= time.time():
+        if lastCheck is not None and float(lastCheck)+timeout >= int(time.time()):
             self.valid = True
         else:
             self.log.info(_("Geocaching.cz MyRatings database out of date, initiating refresh."))
@@ -113,7 +113,7 @@ class Storage(base.Storage):
         self.log.info(_("Geocaching.cz MyRatings database successfully updated."))
         db.commit()
         db.close()
-        self.setEnv("lastcheck", time.time())
+        self.setEnv("lastcheck", int(time.time()))
         self.valid = True
 
 

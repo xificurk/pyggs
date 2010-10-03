@@ -186,7 +186,7 @@ class Storage(base.Storage):
             for tbid in data["inventory"]:
                 cur.execute("INSERT INTO cache_inventory(guid, tbid, name) VALUES(?,?,?)", (data["guid"], tbid, data["inventory"][tbid]))
             cur.execute("DELETE FROM cache WHERE guid = ?", (data["guid"],))
-            cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["owner_id"], data["hidden"], data["type"], data["country"], data["province"], data["lat"], data["lon"], data["difficulty"], data["terrain"], data["size"], data["disabled"], data["archived"], data["hint"], data["attributes"], time.time(), data["elevation"]))
+            cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["owner_id"], data["hidden"], data["type"], data["country"], data["province"], data["lat"], data["lon"], data["difficulty"], data["terrain"], data["size"], data["disabled"], data["archived"], data["hint"], data["attributes"], int(time.time()), data["elevation"]))
             cur.execute("DELETE FROM cache_visits WHERE guid = ?", (data["guid"],))
             for logtype in data["visits"]:
                 cur.execute("INSERT INTO cache_visits(guid, type, count) VALUES(?,?,?)", (data["guid"], logtype, data["visits"][logtype]))
@@ -194,9 +194,9 @@ class Storage(base.Storage):
             # PMonly: guid, waypoint, name, owner, type, difficulty, terrain, size
             cur.execute("SELECT * FROM cache WHERE guid=?", (data["guid"],))
             if (len(cur.fetchall()) > 0):
-                cur.execute("UPDATE cache SET waypoint = ?, name = ?, owner = ?, type = ?, difficulty = ?, terrain = ?, size = ?, lastCheck = ? WHERE guid = ?", (data["waypoint"], data["name"], data["owner"], data["type"], data["difficulty"], data["terrain"], data["size"], time.time(), data["guid"]))
+                cur.execute("UPDATE cache SET waypoint = ?, name = ?, owner = ?, type = ?, difficulty = ?, terrain = ?, size = ?, lastCheck = ? WHERE guid = ?", (data["waypoint"], data["name"], data["owner"], data["type"], data["difficulty"], data["terrain"], data["size"], int(time.time()), data["guid"]))
             else:
-                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,?,?,'','',?,'','','','',?,?,?,'','','','',?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["type"], data["difficulty"], data["terrain"], data["size"], time.time(), -9999))
+                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,?,?,'','',?,'','','','',?,?,?,'','','','',?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["type"], data["difficulty"], data["terrain"], data["size"], int(time.time()), -9999))
         db.commit()
         db.close()
 
@@ -209,7 +209,7 @@ class Storage(base.Storage):
         cur = db.cursor()
         for guid in guids:
             row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
-            if row is None or (timeout + float(row["lastCheck"])) <= time.time():
+            if row is None or (timeout + float(row["lastCheck"])) <= int(time.time()):
                 self.log.debug("Data about cache guid {0} out of date, initiating refresh.".format(guid))
                 self.plugin.master.parse("cache", guid)
                 row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()

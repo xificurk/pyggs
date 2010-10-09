@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 
 import logging
@@ -63,20 +63,21 @@ class Plugin(base.Plugin):
 
     def onPluginUpgrade(self, oldVersion):
         if oldVersion < "0.2":
-            storage = self.master.globalStorage
-            if storage.query("SELECT COUNT(*) AS [exists] FROM [sqlite_master] WHERE [type] = 'table' AND [name] = 'cache'")[0]["exists"] > 0:
+            if self.storage.query("SELECT COUNT(*) AS [exists] FROM [sqlite_master] WHERE [type] = 'table' AND [name] = 'cache'")[0]["exists"] > 0:
                 exists = False
-                for row in storage.query("PRAGMA TABLE_INFO([cache])"):
+                for row in self.storage.query("PRAGMA TABLE_INFO([cache])"):
                     if row["name"] == "elevation":
                         exists = True
                         break
                 if not exists:
                     self.log.info(_("Creating column for elevation in cache database."))
-                    storage.query("ALTER TABLE [cache] ADD COLUMN [elevation] int(5) NOT NULL DEFAULT -9999")
+                    self.storage.query("ALTER TABLE [cache] ADD COLUMN [elevation] int(5) NOT NULL DEFAULT -9999")
                 self.log.warn(_("Updating cache database with elevation data... this may take a while."))
-                for cache in storage.query("SELECT guid, lat, lon FROM [cache] WHERE [elevation] = -9999"):
+                for cache in self.storage.query("SELECT guid, lat, lon FROM [cache] WHERE [elevation] = -9999"):
                     elevation = self.getElevation(cache["lat"], cache["lon"])
-                    storage.query("UPDATE [cache] SET [elevation] = ? WHERE [guid] = ?", (elevation, cache["guid"]))
+                    self.storage.query("UPDATE [cache] SET [elevation] = ? WHERE [guid] = ?", (elevation, cache["guid"]))
+        elif oldVersion < "0.2.3":
+            self.storage.query("UPDATE cache SET elevation = -9999 WHERE elevation <= -1000")
         return True
 
 
@@ -86,7 +87,9 @@ class Plugin(base.Plugin):
             self.log.warn(_("Re-trying..."))
             elevation = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
         if elevation is not None:
-            elevation = max(int(elevation.read().strip()), -9999)
+            elevation = int(elevation.read().strip())
+            if elevation < -1000:
+                elevation = -9999
         else:
             elevation = -9999
         return elevation

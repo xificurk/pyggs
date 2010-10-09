@@ -71,7 +71,7 @@ class Storage(base.Storage):
 
         lastCheck = self.getEnv("lastcheck")
         timeout = self.plugin.config["timeout"]*3600
-        if lastCheck is not None and float(lastCheck)+timeout >= int(time.time()):
+        if lastCheck is not None and int(lastCheck)+timeout >= int(time.time()):
             self.valid = True
         else:
             self.log.info(_("Geocaching.cz MyRatings database out of date, initiating refresh."))
@@ -102,9 +102,10 @@ class Storage(base.Storage):
             self.log.debug("Response: {0}".format(result))
             return
 
+        self.query("DROP TABLE gccz_myratings")
+        self.createTables()
         db = self.getDb()
         cur = db.cursor()
-        cur.execute("DELETE FROM gccz_myratings")
         result = result[2].split(":",1)[-1]
         for row in result.split("|"):
             row = row.split(";")

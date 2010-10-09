@@ -2,7 +2,7 @@
 """
     plugins/gccz_ratings_top.py - Add best/worst found cache to general
       statistics.
-    Copyright (C) 2009 Petr Morávek
+    Copyright (C) 2009-2010 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -52,7 +52,7 @@ class Plugin(base.Plugin):
         except KeyError:
             pass
 
-        ratings = self.gccz_ratings.storage.getRatings(caches.keys(), minCount=3)
+        ratings = self.gccz_ratings.storage.getRatings(caches.keys(), maxDeviation=12)
         ratings = fetchAssoc(ratings, "waypoint")
 
         for wpt in caches:
@@ -63,12 +63,12 @@ class Plugin(base.Plugin):
 
         if len(ratings) > 0:
             result = {}
-            result["best"] = {"rating":-1,"count":0}
-            result["worst"] = {"rating":101,"count":0}
+            result["best"] = {"rating":-1,"count":0,"deviation":100}
+            result["worst"] = {"rating":101,"count":0,"deviation":100}
             for wpt in ratings:
-                if caches[wpt]["rating"] > result["best"]["rating"] or (caches[wpt]["rating"] == result["best"]["rating"] and caches[wpt]["count"] > result["best"]["count"]):
+                if caches[wpt]["rating"] > result["best"]["rating"] or (caches[wpt]["rating"] == result["best"]["rating"] and (caches[wpt]["deviation"] < result["best"]["deviation"] or (caches[wpt]["deviation"] == result["best"]["deviation"] and caches[wpt]["count"] > result["best"]["count"]))):
                     result["best"] = caches[wpt]
-                if caches[wpt]["rating"] < result["worst"]["rating"] or (caches[wpt]["rating"] == result["worst"]["rating"] and caches[wpt]["count"] > result["worst"]["count"]):
+                if caches[wpt]["rating"] < result["worst"]["rating"] or (caches[wpt]["rating"] == result["worst"]["rating"] and (caches[wpt]["deviation"] < result["worst"]["deviation"] or (caches[wpt]["deviation"] == result["worst"]["deviation"] and caches[wpt]["count"] > result["worst"]["count"]))):
                     result["worst"] = caches[wpt]
             return result
         else:

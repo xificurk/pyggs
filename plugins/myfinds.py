@@ -44,15 +44,15 @@ class Plugin(base.Plugin):
     def onPyggsUpgrade(self, oldVersion):
         # Force update of myFinds database
         self.log.warn(_("New version of Pyggs: forcing database update."))
-        self.master.profileStorage.delEnv("{0}.lastcheck".format(self.NS))
+        self.storage.delEnv("lastcheck")
         return True
 
 
     def prepare(self):
+        self.storage = Storage(self.master.profileStorage.filename, self)
         base.Plugin.prepare(self)
         self.config["timeout"] = int(self.config["timeout"])
         self.master.registerHandler("myFinds", self.parseMyFinds)
-        self.storage = Storage(self.master.profileStorage.filename, self)
 
 
     def parseMyFinds(self, myFinds):
@@ -60,8 +60,12 @@ class Plugin(base.Plugin):
         self.log.info(_("Updating MyFinds database."))
         myFinds = list(myFinds.getList())
         if len(myFinds) == 0:
-            self.log.error(_("Got zero myFinds records (bug?), leaving old database in place."))
-        self.storage.update(myFinds)
+            if self.storage.query("SELECT COUNT(*) FROM myfinds")[0][0] == 0:
+                self.log.critical(_("Got zero myFinds records (bug?) and local databse is empty too."))
+            else:
+                self.log.error(_("Got zero myFinds records (bug?), leaving old database in place."))
+        else:
+            self.storage.update(myFinds)
 
 
 
@@ -89,7 +93,7 @@ class Storage(base.Storage):
 
         lastCheck = self.getEnv("lastcheck")
         timeout = self.plugin.config["timeout"]*3600
-        if lastCheck is not None and float(lastCheck)+timeout >= int(time.time()):
+        if lastCheck is not None and float(lastCheck)+timeout >= int(time.time()) and self.query("SELECT COUNT(*) FROM myfinds")[0][0] > 0:
             self.valid = True
         else:
             self.log.info(_("MyFinds database out of date, initiating refresh."))
@@ -100,9 +104,10 @@ class Storage(base.Storage):
 
     def update(self, data):
         """Update MyFinds database by data"""
+        self.query("DROP TABLE myfinds")
+        self.createTables()
         db = self.getDb()
         cur = db.cursor()
-        cur.execute("DELETE FROM myfinds")
         for find in data:
             cur.execute("INSERT INTO myfinds(guid, sequence, date, luid) VALUES(?,?,?,?)", (find["guid"], find["sequence"], find["f_date"], find["f_luid"]))
         db.commit()

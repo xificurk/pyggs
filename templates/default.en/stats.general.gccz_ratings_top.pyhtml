@@ -1,9 +1,9 @@
 <tr>
 <td#{{css("td")}}>Best rated cache found</td>
-<td#{{css("td")}}><span#{{css("databox")}} title="#{{best["count"]}} votes"><strong>#{{best["rating"]}}</strong> ± #{{best["deviation"]}}%</span><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{best["guid"]}}">${{best["name"]}}</a></td>
+<td#{{css("td")}}><span#{{css("databox")}} title="#{{best["count"]}} votes"><strong>#{{best["rating"]}}</strong> ±&nbsp;#{{best["deviation"]}}%</span><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{best["guid"]}}">${{best["name"]}}</a></td>
 </tr>
 
 <tr>
 <td#{{css("td", "endsection")}}>Worst rated cache found</td>
-<td#{{css("td", "endsection")}}><span#{{css("databox")}} title="#{{best["count"]}} votes"><strong>#{{worst["rating"]}}</strong> ± #{{worst["deviation"]}}%</span><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{worst["guid"]}}">${{worst["name"]}}</a></td>
+<td#{{css("td", "endsection")}}><span#{{css("databox")}} title="#{{best["count"]}} votes"><strong>#{{worst["rating"]}}</strong> ±&nbsp;#{{worst["deviation"]}}%</span><a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{worst["guid"]}}">${{worst["name"]}}</a></td>
 </tr>

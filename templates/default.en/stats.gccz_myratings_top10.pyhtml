@@ -11,7 +11,7 @@ for cache in top10:
         break
     #
 ?>
-<tr><td#{{css("td","right")}}>#{{cache["myrating"]}}%</td><td#{{css("td","right")}}>#{{cache["rating"]}}% by #{{cache["count"]}} cachers</td><td#{{css("td")}}>#{{ctype(cache["type"])}} <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{cache["guid"]}}">${{cache["name"]}}</a></td><td#{{css("td","right")}}>#{{date(cache["date"])}}</td></tr>
+<tr><td#{{css("td","right")}}>#{{cache["myrating"]}}%</td><td#{{css("td","right")}} title="#{{cache["count"]}} votes">#{{cache["rating"]}} ± #{{cache["deviation"]}}%</td><td#{{css("td")}}>#{{ctype(cache["type"])}} <a href="http://www.geocaching.com/seek/cache_details.aspx?guid=#{{cache["guid"]}}">${{cache["name"]}}</a></td><td#{{css("td","right")}}>#{{date(cache["date"])}}</td></tr>
 <?py #endfor ?>
 
 </table>

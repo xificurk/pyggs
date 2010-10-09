@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     plugins/gccz_myratings_top10.py - Your Top10 rated caches.
-    Copyright (C) 2009 Petr Morávek
+    Copyright (C) 2009-2010 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -66,8 +66,8 @@ class Plugin(base.Plugin):
             try:
                 caches[wpt].update(ratings[wpt])
             except KeyError:
-                caches[wpt].update({"rating":0,"count":0})
+                caches[wpt].update({"rating":0,"count":0,"deviation":100})
 
         caches = list(caches.values())
-        caches.sort(key=lambda x: int(x["myrating"]) + int(x["rating"])/1000 + int(x["count"])/10000000, reverse=True)
+        caches.sort(key=lambda x: int(x["myrating"]) + (int(x["rating"]) - int(x["deviation"])/1000)/1000, reverse=True)
         return caches

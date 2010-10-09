@@ -52,7 +52,7 @@ class Plugin(base.Plugin):
         except KeyError:
             pass
 
-        ratings = self.gccz_ratings.storage.getRatings(caches.keys(), min=3)
+        ratings = self.gccz_ratings.storage.getRatings(caches.keys(), minCount=3)
         ratings = fetchAssoc(ratings, "waypoint")
 
         for wpt in caches:

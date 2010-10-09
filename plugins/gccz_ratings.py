@@ -21,9 +21,12 @@
 """
 
 import logging
+import re
 import time
 
 from . import base
+
+__version__ = "0.2.15"
 
 
 class Plugin(base.Plugin):
@@ -41,10 +44,17 @@ class Plugin(base.Plugin):
         config.update(self.NS, "timeout", _("Timeout for stored geocaching.cz ratings in days:"), validate=lambda val: None if val.isdigit() else _("Use only digits, please."))
 
 
+    def onPluginUpgrade(self, oldVersion):
+        if oldVersion < "0.2.15":
+            self.log.info(_("Preparing new version of cache ratings storage."))
+            self.storage.delEnv("lastcheck")
+        return True
+
+
     def prepare(self):
+        self.storage = Storage(self.master.globalStorage.filename, self)
         base.Plugin.prepare(self)
         self.config["timeout"] = int(self.config["timeout"])
-        self.storage = Storage(self.master.globalStorage.filename, self)
 
 
 
@@ -61,6 +71,7 @@ class Storage(base.Storage):
                 waypoint varchar(9) NOT NULL,
                 rating int(3) NOT NULL,
                 count int(5) NOT NULL,
+                deviation int(3) NOT NULL,
                 PRIMARY KEY (waypoint))""")
 
 
@@ -71,7 +82,7 @@ class Storage(base.Storage):
 
         lastCheck = self.getEnv("lastcheck")
         timeout = self.plugin.config["timeout"]*3600*24
-        if lastCheck is not None and float(lastCheck)+timeout >= int(time.time()):
+        if lastCheck is not None and int(lastCheck)+timeout >= int(time.time()):
             self.valid = True
         else:
             self.log.info(_("Geocaching.cz Ratings database out of date, initiating refresh."))
@@ -82,7 +93,7 @@ class Storage(base.Storage):
 
     def update(self):
         """Re-download ragings data"""
-        data = {"a":"ctihodnoceni","v":"1"}
+        data = {"a":"ctihodnoceni","v":"3"}
         result = self.plugin.master.fetch("http://www.geocaching.cz/api.php", data=data)
         if result is None:
             self.log.error(_("Unable to load Geocaching.cz Ratings, extending validity of current data."))
@@ -102,14 +113,15 @@ class Storage(base.Storage):
             self.log.debug("Response: {0}".format(result))
             return
 
+        self.query("DROP TABLE gccz_ratings")
+        self.createTables()
         db = self.getDb()
         cur = db.cursor()
-        cur.execute("DELETE FROM gccz_ratings")
         result = result[2].split(":",1)[-1]
         for row in result.split("|"):
             row = row.split(";")
-            if len(row) >= 3:
-                cur.execute("INSERT INTO gccz_ratings(waypoint, rating, count) VALUES(?,?,?)", (row[0], row[1], row[2]))
+            if re.match("GC[0-9A-Z]+", row[0]):
+                cur.execute("INSERT INTO gccz_ratings(waypoint, rating, count, deviation) VALUES(?,?,?,?)", (row[0], int(row[3]), int(row[2]), int(row[5])))
         self.log.info(_("Geocaching.cz Ratings database successfully updated."))
         db.commit()
         db.close()
@@ -117,14 +129,14 @@ class Storage(base.Storage):
         self.valid = True
 
 
-    def getRatings(self, waypoints, min=0):
+    def getRatings(self, waypoints, minCount=0, maxDeviation=100):
         """Selects data from database, performs update if neccessary"""
         self.checkValidity()
         result = []
         db = self.getDb()
         cur = db.cursor()
         for wpt in waypoints:
-            row = cur.execute("SELECT * FROM gccz_ratings WHERE waypoint = ? AND count >= ?", (wpt,min)).fetchone()
+            row = cur.execute("SELECT * FROM gccz_ratings WHERE waypoint = ? AND count >= ? AND deviation <= ?", (wpt,minCount,maxDeviation)).fetchone()
             if row is not None:
                 row = dict(row)
                 result.append(row)

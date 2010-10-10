@@ -3,10 +3,16 @@
 
 <?py
 for year in history:
+    if year == max(history.keys()):
+        link = "hide"
+        showCss = {"display": "table-row"}
+    else:
+        link = "show"
+        showCss = {"display": "none"}
     year = str(year)
 ?>
-<tr><th#{{css("th")}} colspan="2"><strong>#{{year}}</strong></th></tr>
-<tr>
+<tr><th#{{css("th")}} colspan="2"><strong>#{{year}}</strong> <small>(<a href="#" onclick="if($(this).text()=='show'){$(this).parents('tr').next().fadeIn();$(this).text('hide')}else{$(this).parents('tr').next().fadeOut();$(this).text('show')}; return false;">#{{link}}</a>)</small></th></tr>
+<tr#{{css(showCss)}}>
 <td#{{css("td","td-layouttable")}}>
   <table#{{css("table","fixedtable","graph")}}>
     <col#{{css("col-graph-header")}} />

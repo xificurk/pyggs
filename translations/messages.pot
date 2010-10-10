@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-07-01 08:43+CEST\n"
+"POT-Creation-Date: 2010-10-10 03:03+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,7 +60,7 @@ msgid "Cache details data timeout in days:"
 msgstr ""
 
 #: plugins/cache.py:47 plugins/gccz.py:38 plugins/gccz_myratings.py:42
-#: plugins/gccz_ratings.py:41 plugins/myfinds.py:41
+#: plugins/gccz_ratings.py:44 plugins/myfinds.py:41
 msgid "Use only digits, please."
 msgstr ""
 
@@ -72,23 +72,23 @@ msgstr ""
 msgid "Deleting data for caches with missing guid."
 msgstr ""
 
-#: plugins/cache.py:74
+#: plugins/cache.py:73
 msgid "Creating column for elevation in cache database."
 msgstr ""
 
-#: plugins/cache.py:76
+#: plugins/cache.py:75
 msgid "Updating cache database with elevation data... this may take a while."
 msgstr ""
 
-#: plugins/cache.py:86
+#: plugins/cache.py:87
 msgid "Re-trying..."
 msgstr ""
 
-#: plugins/cache.py:114
+#: plugins/cache.py:117
 msgid "Updating Cache database for {0}: {1}."
 msgstr ""
 
-#: plugins/cache.py:178
+#: plugins/cache.py:181
 msgid "No guid passed, not updating."
 msgstr ""
 
@@ -160,7 +160,7 @@ msgstr ""
 msgid "Unable to load Geocaching.cz MyRatings, extending validity of current data."
 msgstr ""
 
-#: plugins/gccz_myratings.py:113
+#: plugins/gccz_myratings.py:114
 msgid "Geocaching.cz MyRatings database successfully updated."
 msgstr ""
 
@@ -168,23 +168,27 @@ msgstr ""
 msgid "List of top 10 user rated caches."
 msgstr ""
 
-#: plugins/gccz_ratings.py:32
+#: plugins/gccz_ratings.py:35
 msgid "Global storage for ratings of caches from geocaching.cz."
 msgstr ""
 
-#: plugins/gccz_ratings.py:41
+#: plugins/gccz_ratings.py:44
 msgid "Timeout for stored geocaching.cz ratings in days:"
 msgstr ""
 
-#: plugins/gccz_ratings.py:77
+#: plugins/gccz_ratings.py:49
+msgid "Preparing new version of cache ratings storage."
+msgstr ""
+
+#: plugins/gccz_ratings.py:88
 msgid "Geocaching.cz Ratings database out of date, initiating refresh."
 msgstr ""
 
-#: plugins/gccz_ratings.py:88 plugins/gccz_ratings.py:101
+#: plugins/gccz_ratings.py:99 plugins/gccz_ratings.py:112
 msgid "Unable to load Geocaching.cz Ratings, extending validity of current data."
 msgstr ""
 
-#: plugins/gccz_ratings.py:113
+#: plugins/gccz_ratings.py:125
 msgid "Geocaching.cz Ratings database successfully updated."
 msgstr ""
 
@@ -252,11 +256,15 @@ msgstr ""
 msgid "Updating MyFinds database."
 msgstr ""
 
-#: plugins/myfinds.py:63
+#: plugins/myfinds.py:64
+msgid "Got zero myFinds records (bug?) and local databse is empty too."
+msgstr ""
+
+#: plugins/myfinds.py:66
 msgid "Got zero myFinds records (bug?), leaving old database in place."
 msgstr ""
 
-#: plugins/myfinds.py:95
+#: plugins/myfinds.py:99
 msgid "MyFinds database out of date, initiating refresh."
 msgstr ""
 

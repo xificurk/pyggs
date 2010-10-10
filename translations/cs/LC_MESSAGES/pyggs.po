@@ -5,10 +5,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Pyggs 0.2.8\n"
-"POT-Creation-Date: 2010-07-01 08:43+CEST\n"
+"POT-Creation-Date: 2010-10-10 03:03+CEST\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Petr Morávek <xificurk@gmail.com>\n"
 "Language-Team: \n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -65,7 +66,7 @@ msgstr "Platnost uložených podrobností o keši v dnech:"
 #: plugins/cache.py:47
 #: plugins/gccz.py:38
 #: plugins/gccz_myratings.py:42
-#: plugins/gccz_ratings.py:41
+#: plugins/gccz_ratings.py:44
 #: plugins/myfinds.py:41
 msgid "Use only digits, please."
 msgstr "Vložte prosím pouze číslice."
@@ -78,23 +79,23 @@ msgstr "Upravuji název typu keší Uknown - Mystery/Puzzle."
 msgid "Deleting data for caches with missing guid."
 msgstr "Mažu data pro keše bez guidu."
 
-#: plugins/cache.py:74
+#: plugins/cache.py:73
 msgid "Creating column for elevation in cache database."
 msgstr "Vytvářím sloupec pro výšková data v databázi keší."
 
-#: plugins/cache.py:76
+#: plugins/cache.py:75
 msgid "Updating cache database with elevation data... this may take a while."
 msgstr "Aktualizuji výšková data v databázi keší... tato operace může chvíli trvat."
 
-#: plugins/cache.py:86
+#: plugins/cache.py:87
 msgid "Re-trying..."
 msgstr "Zkouším znovu..."
 
-#: plugins/cache.py:114
+#: plugins/cache.py:117
 msgid "Updating Cache database for {0}: {1}."
 msgstr "Aktualizuji data v databázi keší pro {0}: {1}."
 
-#: plugins/cache.py:178
+#: plugins/cache.py:181
 msgid "No guid passed, not updating."
 msgstr "Nebyl zadán guid, nemůžu provést aktualizaci."
 
@@ -167,7 +168,7 @@ msgstr "Platnost databáze vlastních hodnocení z geocaching.cz vypršela, zaha
 msgid "Unable to load Geocaching.cz MyRatings, extending validity of current data."
 msgstr "Nepodařilo se načíst vlastní hodnocení z geocaching.cz, prodlužuji platnost stávajících dat."
 
-#: plugins/gccz_myratings.py:113
+#: plugins/gccz_myratings.py:114
 msgid "Geocaching.cz MyRatings database successfully updated."
 msgstr "Databáze vlastních hodnocení z geocaching.cz úspěšně aktualizována."
 
@@ -175,24 +176,28 @@ msgstr "Databáze vlastních hodnocení z geocaching.cz úspěšně aktualizová
 msgid "List of top 10 user rated caches."
 msgstr "Seznam 10 nejlépe hodnocených keší uživatelem."
 
-#: plugins/gccz_ratings.py:32
+#: plugins/gccz_ratings.py:35
 msgid "Global storage for ratings of caches from geocaching.cz."
 msgstr "Globální uložiště pro hodnocení z geocaching.cz."
 
-#: plugins/gccz_ratings.py:41
+#: plugins/gccz_ratings.py:44
 msgid "Timeout for stored geocaching.cz ratings in days:"
 msgstr "Platnost uložených hodnocení z geocaching.cz v dnech:"
 
-#: plugins/gccz_ratings.py:77
+#: plugins/gccz_ratings.py:49
+msgid "Preparing new version of cache ratings storage."
+msgstr "Připravuji nové uložiště pro hodnocení keší."
+
+#: plugins/gccz_ratings.py:88
 msgid "Geocaching.cz Ratings database out of date, initiating refresh."
 msgstr "Platnost databáze hodnocení z geocaching.cz vypršela, zahajuji aktualizaci."
 
-#: plugins/gccz_ratings.py:88
-#: plugins/gccz_ratings.py:101
+#: plugins/gccz_ratings.py:99
+#: plugins/gccz_ratings.py:112
 msgid "Unable to load Geocaching.cz Ratings, extending validity of current data."
 msgstr "Nepodařilo se načíst hodnocení z geocaching.cz, prodlužuji platnost stávajících dat."
 
-#: plugins/gccz_ratings.py:113
+#: plugins/gccz_ratings.py:125
 msgid "Geocaching.cz Ratings database successfully updated."
 msgstr "Databáze hodnocení z geocaching.cz úspěšně aktualizována."
 
@@ -261,11 +266,15 @@ msgstr "Detekována nová verze Pyggs: databáze nálezů bude aktualizována."
 msgid "Updating MyFinds database."
 msgstr "Aktualizuji databázi nálezů."
 
-#: plugins/myfinds.py:63
+#: plugins/myfinds.py:64
+msgid "Got zero myFinds records (bug?) and local databse is empty too."
+msgstr "Stažený seznam nálezů je prázdný (bug?) a lokální databáze taktéž."
+
+#: plugins/myfinds.py:66
 msgid "Got zero myFinds records (bug?), leaving old database in place."
 msgstr "Stažený seznam nálezů je prázdný (bug?), ponechávám starou databázi."
 
-#: plugins/myfinds.py:95
+#: plugins/myfinds.py:99
 msgid "MyFinds database out of date, initiating refresh."
 msgstr "Platnost databáze nálezů vypršela, zahajuji aktualizaci."
 

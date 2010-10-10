@@ -1,9 +1,11 @@
 CHANGES
 ============================================================================
 
-Release 0.2.15
+Release 0.2.15 (2010-10-10)
 --------------------------
 [Enhancements]
+  * gccz_ratings now uses standard deviations instead of vote count.
+  * plugins/myfinds_history javascript show/hide function.
 [Bugfixes]
   * Negative elevation data bug.
   * Empty myFinds list bug.

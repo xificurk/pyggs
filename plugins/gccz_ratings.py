@@ -20,18 +20,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+__version__ = "0.2.16"
+
+
 import logging
 import re
 import time
 
 from . import base
-
-__version__ = "0.2.15"
+from libs.versioning import VersionInfo
 
 
 class Plugin(base.Plugin):
     def __init__(self, master):
         base.Plugin.__init__(self, master)
+        self.version = VersionInfo(__version__)
         self.about = _("Global storage for ratings of caches from geocaching.cz.")
 
 
@@ -45,7 +48,7 @@ class Plugin(base.Plugin):
 
 
     def onPluginUpgrade(self, oldVersion):
-        if oldVersion < "0.2.15":
+        if oldVersion < "0.2.16":
             self.log.info(_("Preparing new version of cache ratings storage."))
             self.storage.delEnv("lastcheck")
         return True

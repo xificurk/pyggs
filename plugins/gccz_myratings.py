@@ -20,15 +20,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+__version__ = "0.2.16"
+
+
 import logging
 import time
 
 from . import base
+from libs.versioning import VersionInfo
 
 
 class Plugin(base.Plugin):
     def __init__(self, master):
         base.Plugin.__init__(self, master)
+        self.version = VersionInfo(__version__)
         self.dependencies = ["gccz"]
         self.about = _("Storage for user's ratings of caches from geocaching.cz.")
 
@@ -42,10 +47,17 @@ class Plugin(base.Plugin):
         config.update(self.NS, "timeout", _("Timeout for stored geocaching.cz ratings of the user in hours:"), validate=lambda val: None if val.isdigit() else _("Use only digits, please."))
 
 
+    def onPluginUpgrade(self, oldVersion):
+        if oldVersion < "0.2.16":
+            self.log.info(_("Preparing new version of cache ratings storage."))
+            self.storage.delEnv("lastcheck")
+        return True
+
+
     def prepare(self):
+        self.storage = Storage(self.master.profileStorage.filename, self)
         base.Plugin.prepare(self)
         self.config["timeout"] = int(self.config["timeout"])
-        self.storage = Storage(self.master.profileStorage.filename, self)
 
 
 

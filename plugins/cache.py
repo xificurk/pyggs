@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.3"
+__version__ = "0.2.16"
 
 
 import logging
@@ -58,6 +58,15 @@ class Plugin(base.Plugin):
             storage = self.master.globalStorage
             self.log.warn(_("Deleting data for caches with missing guid."))
             storage.query("DELETE FROM [cache] WHERE [guid] = '' OR [guid] IS NULL")
+        if oldVersion < "0.2.16":
+            # fix floating timeouts
+            storage = self.master.globalStorage
+            db = storage.getDb()
+            cur = db.cursor()
+            for cache in cur.execute("SELECT guid, lastCheck FROM cache").fetchall():
+                cur.execute("UPDATE cache SET lastCheck = ? WHERE guid = ?", (int(float(cache["lastCheck"])), cache["guid"]))
+            db.commit()
+            db.close()
         return True
 
 
@@ -212,7 +221,7 @@ class Storage(base.Storage):
         cur = db.cursor()
         for guid in guids:
             row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()
-            if row is None or (timeout + float(row["lastCheck"])) <= int(time.time()):
+            if row is None or (timeout + int(row["lastCheck"])) <= int(time.time()):
                 self.log.debug("Data about cache guid {0} out of date, initiating refresh.".format(guid))
                 self.plugin.master.parse("cache", guid)
                 row = cur.execute("SELECT * FROM cache WHERE guid = ?", (guid,)).fetchone()

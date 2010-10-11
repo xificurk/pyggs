@@ -1,3 +1,6 @@
+* libs.console cleanup
+* refactor setup, fix dependency detection
+* cache plugin - warn before large download
 * autodetect new plugins
 * Templates: css gradient feature like in Google chart API
 * new gccom plugin: store credentials, use of PQ, download limits, warn on big amount of downloads

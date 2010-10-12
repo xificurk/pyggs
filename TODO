@@ -1,13 +1,17 @@
-* libs.console cleanup
-* refactor setup, fix dependency detection
-* cache plugin - warn before large download
+* Get rid of tenjin
+* refactor setup (config validation), fix dependency detection
+* make some plugins "system" (only as dependencies)
 * autodetect new plugins
+* cache plugin - warn before large download
+* refactor plugin APIs
 * Templates: css gradient feature like in Google chart API
+
 * new gccom plugin: store credentials, use of PQ, download limits, warn on big amount of downloads
 * cache plugin: base refresh of data on probability
+* manual
+
 * Unrated caches page - make possible to rate it from there + show basic info
 * Czech template
 * XTF list via scanning logs
 * hidden caches stats
 * TB stats
-* manual

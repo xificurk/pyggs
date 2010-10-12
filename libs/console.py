@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    console.py - colored console output, menu&prompt helpers.
-    Copyright (C) 2009 Petr Morávek
+    console.py - colored console output, menu & prompt helpers.
+    Copyright (C) 2009-2010 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -20,12 +20,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.1"
-__all__ = ["ColorLogging"]
+__version__ = "0.3.0"
+__all__ = ["ColorLogging", "prompt", "menu", "color"]
 
 
 import logging
 import platform
+import re
 import sys
 
 if platform.system() == "Windows":
@@ -154,12 +155,32 @@ def prompt(question, padding=0, default=None, validate=None):
         error = None
         if isinstance(validate, list):
             if value not in validate:
-                error = _("You have to input a value from {0}.").format(", ".join(validate))
+                error = _("Please, input a value from {0}.").format(", ".join(validate))
         elif hasattr(validate, "__call__"):
             error = validate(value)
+        elif validate == "BOOLEAN":
+            if value.lower() in (_("y"), _("yes")):
+                value = True
+            elif value.lower() in (_("n"), _("no")):
+                value = False
+            else:
+                error = _("Please, answer yes/no (y/n).")
+        elif validate == "INTEGER":
+            if value.isdigit():
+                value = int(value)
+            else:
+                error = _("Use only digits, please.")
+        elif validate == "DECIMAL":
+            if re.match("^-?[0-9]+\.?[0-9]*$", value) is not None:
+                value = float(value)
+            else:
+                error = _("Please, input a decimal number.")
+        elif validate == "ALNUM":
+            if not value.isalnum():
+                error = _("Please, use only alpha-numeric characters.")
         elif validate is not None:
             if len(value) == 0:
-                error = _("You have to input a non-empty string.")
+                error = _("Please, input a non-empty string.")
 
         if error is not None:
             writeln("{0}{1}: {2}".format("  "*padding, _("ERROR"), error), color("R", False, ""))
@@ -169,13 +190,13 @@ def prompt(question, padding=0, default=None, validate=None):
 
 
 def menuValidator(choices, value):
-    if (not value.isdigit() or int(value) < 1 or int(value) > len(choices)) and value not in choices:
-        return _("You have to chose from the list. Please input a number, or full text of desired option.")
+    if not (value in choices or (value.isdigit() and int(value) >= 1 and int(value) <= len(choices))):
+        return _("Please, chose an option from the list - input a number, or a full text of the desired option.")
 
 
 def menu(header, choices, padding=0, default=None):
     writeln("{0}{1}".format("  "*padding, header), color("RGB", True, ""))
-    for i in range(0,len(choices)):
+    for i in range(len(choices)):
         print("{0}{1:2d}) {2}".format("  "*(padding+1), i+1, choices[i]))
     value = prompt(_("Select") + ":", padding+1, default, lambda val: menuValidator(choices, val))
     if value.isdigit() and int(value) >= 1 and int(value) <= len(choices):

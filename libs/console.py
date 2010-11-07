@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 __all__ = ["ColorLogging", "prompt", "menu", "color"]
 
 
@@ -114,12 +114,6 @@ else:
 
 colors = {}
 colors["reset"] = color("RGB", False, "")
-colors["notset"] = color("GB", False, "")
-colors["debug"] = color("RB", False, "")
-colors["info"] = color("RGB", True, "")
-colors["warn"] = color("RG", True, "")
-colors["error"] = color("R", True, "")
-colors["critical"] = color("RG", True, "R")
 
 
 def writeln(message, color, stream=sys.stdout):
@@ -207,25 +201,42 @@ def menu(header, choices, padding=0, default=None):
 
 
 class ColorLogging(logging.StreamHandler):
-    def __init__(self, useColor=True, fmt="%(levelname)-8s %(name)-15s %(message)s", datefmt=None):
+    colors = {}
+    colors["notset"] = color("GB", False, "")
+    colors["debug"] = color("RB", False, "")
+    colors["info"] = color("RGB", True, "")
+    colors["warning"] = color("RG", True, "")
+    colors["error"] = color("R", True, "")
+    colors["critical"] = color("RG", True, "R")
+
+    def __init__(self, useColor=True, fmt="%(levelname)-8s %(name)-15s %(message)s", datefmt=None, colors={}):
+        self.colors.update(colors)
         logging.StreamHandler.__init__(self)
         useColor = useColor
         self.setFormatter(logging.Formatter(fmt=fmt, datefmt=datefmt))
 
 
-    def emit(self, record):
-        if record.levelno >= 50:
-            color = colors["critical"]
+    def getColor(self, record):
+        if self.colors.get(record.levelname.lower()) is not None:
+            return self.colors.get(record.levelname.lower())
+        elif record.levelno >= 50:
+            return self.colors["critical"]
         elif record.levelno >= 40:
-            color = colors["error"]
+            return self.colors["error"]
         elif record.levelno >= 30:
-            color = colors["warn"]
+            return self.colors["warn"]
         elif record.levelno >= 20:
-            color = colors["info"]
+            return self.colors["info"]
         elif record.levelno >= 10:
-            color = colors["debug"]
+            return self.colors["debug"]
         else:
-            color = colors["notset"]
+            return self.colors["notset"]
+
+
+    def emit(self, record):
+        color = colors["reset"]
+        if useColor:
+            color = self.getColor(record)
 
         try:
             msg = self.format(record)

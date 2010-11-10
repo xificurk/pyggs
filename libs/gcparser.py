@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.5.1"
+__version__ = "0.5.2"
 __all__ = ["GCparser", "Fetcher", "BaseParser", "CacheParser", "MyFindsParser", "SeekParser", "EditProfile", "CredentialsException", "LoginException"]
 
 
@@ -59,6 +59,9 @@ class GCparser(object):
     def parse(self, name, *args, **kwargs):
         """ Call parser of the name.
         """
+        if name not in self.parsers:
+            self.log.error("Uknown parser {0}".format(name))
+            return None
         return self.parsers[name](self.fetcher, *args, **kwargs)
 
 
@@ -436,7 +439,7 @@ unescape = HTMLParser().unescape
 """
 
 LOG_PARSER = 5
-logging.addLevelName(5, "PARSER")
+logging.addLevelName(LOG_PARSER, "PARSER")
 
 """ PCRE: geocaching.com general """
 __pcresMask["hiddenInput"] = ("<input type=[\"']hidden[\"'] name=\"([^\"]+)\"[^>]+value=\"([^\"]*)\"", re.I)
@@ -473,8 +476,8 @@ __pcresMask["PMdifficulty"] = ("<strong><span[^>]*>Difficulty:</span></strong>\s
 __pcresMask["PMterrain"] = ("<strong><span[^>]*>Terrain:</span></strong>\s*<img [^>]*alt=['\"]([0-9.]+) out of 5['\"][^>]*/>", re.I)
 # <img id="ctl00_ContentBody_uxWptTypeImage" src="http://www.geocaching.com/images/wpttypes/2.gif" style="border-width:0px;vertical-align:middle" />
 __pcresMask["PMcacheType"] = ("<img id=['\"]ctl00_ContentBody_uxWptTypeImage['\"] src=['\"][^'\"]*/images/wpttypes/(earthcache|mega|[0-9]+).gif['\"][^>]*>", re.I)
-# <meta name="description" content="Cajova chyse/ Tea hut (GCRBCA) was created by adp. on 11/15/2005. It's a Micro size geocache, with difficulty of 1, terrain of 1. It's located in Hlavni mesto Praha, Czech Republic. Cache je um&amp;iacute;stena v Japonske casti botanicke zahrady vTroji/ Cache is located in Japan compartment of the Prague botanicgarden in Troja. Souradnice v&amp;#225;s zavedou doJaponsk&amp;#233; zahrady v Botanick&amp;#233; zahrade v Tr&amp;#243;ji." />
-__pcresMask["cacheDetails"] = ("<meta\s+name=\"description\" content=\"([^\"]+) \(GC[A-Z0-9]+\) was created by ([^\"]+) on ([0-9]+)/([0-9]+)/([0-9]+)\. It's a ([a-zA-Z ]+) size geocache, with difficulty of ([0-9.]+), terrain of ([0-9.]+). It's located in (([^,.]+), )?([^.]+)\.[^\"]*\"[^>]*>", re.I|re.S)
+# <meta name="description" content="Pendulum - Prague Travel Bug Hotel (GCHCE0) was created by Saman on 12/23/2003. It&#39;s a Regular size geocache, with difficulty of 2, terrain of 2.5. It&#39;s located in Hlavni mesto Praha, Czech Republic. Literary - kinetic cache with the superb view of the Praguepanorama. A suitable place for the incoming and outgoing travelbugs." />
+__pcresMask["cacheDetails"] = ("<meta\s+name=\"description\" content=\"([^\"]+) \(GC[A-Z0-9]+\) was created by ([^\"]+) on ([0-9]+)/([0-9]+)/([0-9]+)\. It('|(&#39;))s a ([a-zA-Z ]+) size geocache, with difficulty of ([0-9.]+), terrain of ([0-9.]+). It('|(&#39;))s located in (([^,.]+), )?([^.]+)\.[^\"]*\"[^>]*>", re.I|re.S)
 # <a href="/about/cache_types.aspx" target="_blank" title="About Cache Types"><img src="/images/WptTypes/8.gif" alt="Unknown Cache" width="32" height="32" />
 __pcresMask["cacheType"] = ("<img src=['\"]/images/WptTypes/[^'\"]+['\"] alt=\"([^\"]+)\"[^>]*></a>", re.I)
 # by <a href="http://www.geocaching.com/profile/?guid=ed7a2040-3bbb-485b-9b03-21ae8507d2d7&wid=92322d1b-d354-4190-980e-8964d7740161&ds=2">
@@ -530,7 +533,8 @@ __pcresMask["cacheVisits"] = ("<span id=['\"]ctl00_ContentBody_lblFindCounts['\"
 __pcresMask["cacheLogCount"] = ("<img[^>]*alt=\"([^\"]+)\"[^>]*/>([0-9]+)", re.I)
 
 __pcresMask["cacheLogs"] = ("<table class=\"LogsTable Table\">(.*?)</table>\s", re.I)
-__pcresMask["cacheLog"] = ("<tr><td[^>]*><strong><img.*?title=\"([^\"]+)\"[^>]*/>&nbsp;([a-z]+) ([0-9]+)(, ([0-9]+))? by <a[^>]*>([^<]+)</a></strong> \([0-9]+ found\)<br /><br />(.*?)<br /><br /><small><a href=\"log.aspx\?LUID=[^\"]+\" title=\"View Log\">View Log</a></small>", re.I)
+__pcresMask["cacheLog"] = ("<tr><td[^>]*><strong><img.*?title=['\"]([^\"']+)['\"][^>]*/>&nbsp;([a-z]+) ([0-9]+)(, ([0-9]+))? by <a[^>]*>([^<]+)</a></strong>(&nbsp;| )\([0-9]+ found\)<br\s*/><br\s*/>(.*?)<br\s*/><br\s*/><small><a href=['\"]log.aspx\?LUID=[^\"]+['\"] title=['\"]View Log['\"]>View Log</a></small>", re.I)
+
 
 class CacheParser(BaseParser):
     def __init__(self, fetcher, id, logs=False):
@@ -640,14 +644,14 @@ class CacheParser(BaseParser):
                 self.details["name"] = unescape(unescape(match.group(1))).strip()
                 self.details["owner"] = unescape(unescape(match.group(2))).strip()
                 self.details["hidden"] = "{0:04d}-{1:02d}-{2:02d}".format(int(match.group(5)), int(match.group(3)), int(match.group(4)))
-                self.details["size"] = unescape(match.group(6)).strip()
-                self.details["difficulty"] = float(match.group(7))
-                self.details["terrain"] = float(match.group(8))
-                if match.group(10) is not None:
-                    self.details["province"] = unescape(match.group(10)).strip()
+                self.details["size"] = unescape(match.group(8)).strip()
+                self.details["difficulty"] = float(match.group(9))
+                self.details["terrain"] = float(match.group(10))
+                if match.group(14) is not None:
+                    self.details["province"] = unescape(match.group(14)).strip()
                 else:
                     self.details["province"] = ""
-                self.details["country"] = unescape(match.group(11)).strip()
+                self.details["country"] = unescape(match.group(15)).strip()
                 self.log.log(LOG_PARSER, "name = {0}".format(self.details["name"]))
                 self.log.log(LOG_PARSER, "owner = {0}".format(self.details["owner"]))
                 self.log.log(LOG_PARSER, "hidden = {0}".format(self.details["hidden"]))
@@ -780,7 +784,7 @@ class CacheParser(BaseParser):
                         else:
                             year = datetime.datetime.now().year
                         date = "{0:04d}-{1:02d}-{2:02d}".format(int(year), int(months[match.group(2)]), int(match.group(3)))
-                        self.details["logs"].append((match.group(1), date, match.group(6), match.group(7)))
+                        self.details["logs"].append((match.group(1), date, match.group(6), match.group(8)))
                 self.log.log(LOG_PARSER, "found {0} logs".format(len(self.details["logs"])))
 
         return self.details

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     plugins/myfinds.py - handles myFinds database for each profile.
-    Copyright (C) 2009-2010 Petr Morávek
+    Copyright (C) 2009-2011 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -58,7 +58,7 @@ class Plugin(base.Plugin):
     def parseMyFinds(self, myFinds):
         """Update MyFinds database"""
         self.log.info(_("Updating MyFinds database."))
-        myFinds = list(myFinds.getList())
+        myFinds = list(myFinds)
         if len(myFinds) == 0:
             if self.storage.query("SELECT COUNT(*) FROM myfinds")[0][0] == 0:
                 self.log.critical(_("Got zero myFinds records (bug?) and local databse is empty too."))
@@ -108,8 +108,8 @@ class Storage(base.Storage):
         self.createTables()
         db = self.getDb()
         cur = db.cursor()
-        for find in data:
-            cur.execute("INSERT INTO myfinds(guid, sequence, date, luid) VALUES(?,?,?,?)", (find["guid"], find["sequence"], find["f_date"], find["f_luid"]))
+        for i in range(len(data)):
+            cur.execute("INSERT INTO myfinds(guid, sequence, date, luid) VALUES(?,?,?,?)", (data[i].cache["guid"], i+1, data[i].date, data[i].luid))
         db.commit()
         db.close()
         self.setEnv("lastcheck", int(time.time()))

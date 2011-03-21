@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     plugins/cache.py - handles global database of cache details.
-    Copyright (C) 2009-2010 Petr Morávek
+    Copyright (C) 2009-2011 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.16"
+__version__ = "0.2.18"
 
 
 import logging
@@ -98,9 +98,9 @@ class Plugin(base.Plugin):
         if elevation is not None:
             elevation = int(elevation.read().strip())
             if elevation < -1000:
-                elevation = -9999
+                elevation = None
         else:
-            elevation = -9999
+            elevation = None
         return elevation
 
 
@@ -118,11 +118,11 @@ class Plugin(base.Plugin):
 
     def parseCache(self, cache):
         """Update Cache database"""
-        details = dict(cache.getDetails())
+        details = dict(cache)
         if "lat" in details and "lon" in details:
-            details["elevation"] = self.getElevation(details["lat"], details["lon"])
-        else:
-            details["elevation"] = -9999
+            elevation = self.getElevation(details["lat"], details["lon"])
+            if elevation is not None:
+                details["elevation"] = elevation
         self.log.info(_("Updating Cache database for {0}: {1}.").format(details.get("waypoint"), details.get("name")))
         self.storage.update(details)
 
@@ -194,21 +194,29 @@ class Storage(base.Storage):
         cur = db.cursor()
 
         cur.execute("DELETE FROM cache_inventory WHERE guid = ?", (data["guid"],))
-        if not data["PMonly"]:
-            for tbid in data["inventory"]:
-                cur.execute("INSERT INTO cache_inventory(guid, tbid, name) VALUES(?,?,?)", (data["guid"], tbid, data["inventory"][tbid]))
-            cur.execute("DELETE FROM cache WHERE guid = ?", (data["guid"],))
-            cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["owner_id"], data["hidden"], data["type"], data["country"], data["province"], data["lat"], data["lon"], data["difficulty"], data["terrain"], data["size"], data["disabled"], data["archived"], data["hint"], data["attributes"], int(time.time()), data["elevation"]))
+        for tbid in data.get("inventory", {}):
+            cur.execute("INSERT INTO cache_inventory(guid, tbid, name) VALUES(?,?,?)", (data["guid"], tbid, data["inventory"][tbid]))
+
+        if len(data.get("visits", [])) > 0:
             cur.execute("DELETE FROM cache_visits WHERE guid = ?", (data["guid"],))
             for logtype in data["visits"]:
                 cur.execute("INSERT INTO cache_visits(guid, type, count) VALUES(?,?,?)", (data["guid"], logtype, data["visits"][logtype]))
+
+        old = cur.execute("SELECT * FROM cache WHERE guid=?", (data["guid"],)).fetchone()
+        if old is None:
+            sql = "INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            sql_data = (data["guid"], data.get("waypoint", "GC"), data.get("name", ""), data.get("owner", ""), data.get("owner_id", ""), data.get("hidden", ""), data.get("type", ""), data.get("country", ""), data.get("province", ""), data.get("lat", ""), data.get("lon", ""), data.get("difficulty", ""), data.get("terrain", ""), data.get("size", ""), data.get("disabled", ""), data.get("archived", ""), data.get("hint", ""), data.get("attributes", ""), int(time.time()), data.get("elevation", -9999))
         else:
-            # PMonly: guid, waypoint, name, owner, type, difficulty, terrain, size
-            cur.execute("SELECT * FROM cache WHERE guid=?", (data["guid"],))
-            if (len(cur.fetchall()) > 0):
-                cur.execute("UPDATE cache SET waypoint = ?, name = ?, owner = ?, type = ?, difficulty = ?, terrain = ?, size = ?, lastCheck = ? WHERE guid = ?", (data["waypoint"], data["name"], data["owner"], data["type"], data["difficulty"], data["terrain"], data["size"], int(time.time()), data["guid"]))
-            else:
-                cur.execute("INSERT INTO cache(guid, waypoint, name, owner, owner_id, hidden, type, country, province, lat, lon, difficulty, terrain, size, disabled, archived, hint, attributes, lastCheck, elevation) VALUES(?,?,?,?,'','',?,'','','','',?,?,?,'','','','',?,?)", (data["guid"], data["waypoint"], data["name"], data["owner"], data["type"], data["difficulty"], data["terrain"], data["size"], int(time.time()), -9999))
+            update = {"lastCheck": int(time.time())}
+            for k in ("waypoint", "name", "owner", "owner_id", "hidden", "type", "country", "province", "lat", "lon", "difficulty", "terrain", "size", "disabled", "archived", "hint", "attributes", "elevation"):
+                if k in data:
+                    update[k] = data[k]
+                else:
+                    self.log.debug("{0} not found in downloaded cache details.".format(k))
+            sql = "UPDATE cache SET {0} = ? WHERE guid = ?".format(" = ?, ".join(update.keys()))
+            sql_data = tuple(list(update.values()) + [data["guid"]])
+        self.log.debug(sql)
+        cur.execute(sql, sql_data)
         db.commit()
         db.close()
 

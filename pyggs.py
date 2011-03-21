@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
     pyggs.py - base script for Pyggs.
-    Copyright (C) 2009-2010 Petr Morávek
+    Copyright (C) 2009-2011 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.17"
+__version__ = "0.2.18"
 
 
 from collections import OrderedDict
@@ -39,7 +39,7 @@ import urllib.request
 from configuration import ProfileConfig
 from output import Templar, Theme
 import libs.console as console
-from libs.gcparser import GCparser
+import libs.gcparser as gcparser
 from libs.versioning import VersionInfo
 
 from plugins.base import Storage
@@ -321,7 +321,13 @@ class Pyggs(object):
         """
         config = self.config
         # Init GCparser, and redefine again self.log
-        self.gcp = GCparser(username=config.get("geocaching.com", "username"), password=config.get("geocaching.com", "password"), dataDir=os.path.join(self.workDir, "parser"))
+        gcparser.HTTPInterface.set_data_dir(os.path.join(self.workDir, "parser"))
+        gcparser.HTTPInterface.set_credentials(gcparser.Credentials(config.get("geocaching.com", "username"), password=config.get("geocaching.com", "password")))
+
+        self.parsers = {}
+        self.parsers["cache"] = gcparser.CacheDetails().get
+        self.parsers["myFinds"] = gcparser.MyGeocachingLogs().get_finds
+        self.parsers["editProfile"] = gcparser.Profile().update
 
         self.globalStorage = Storage(os.path.join(self.workDir, "pyggs", "storage.sqlite"))
         self.profileStorage = Storage(os.path.join(self.workDir, "pyggs", "profiles", profile, "storage.sqlite"))
@@ -378,9 +384,9 @@ class Pyggs(object):
         """
         handlers = self.handlers.get(name)
         if handlers is not None:
-            parser = self.gcp.parse(name, *args, **kwargs)
+            result = self.parsers[name](*args, **kwargs)
             for handler in handlers:
-                handler(parser)
+                handler(result)
 
 
     def loadPlugin(self, name):

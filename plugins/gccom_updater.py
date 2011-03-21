@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     plugins/gccom_updater.py - Updates generated profile at geocaching.com.
-    Copyright (C) 2009 Petr Morávek
+    Copyright (C) 2009-2011 Petr Morávek
 
     This file is part of Pyggs.
 
@@ -81,4 +81,3 @@ class Plugin(base.Plugin):
     def update(self, parser):
         """Updates profile data"""
         self.log.debug("Saving...")
-        parser.save()

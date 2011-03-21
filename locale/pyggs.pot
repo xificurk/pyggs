@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-10-12 02:37+CEST\n"
+"POT-Creation-Date: 2011-03-21 22:52+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,57 +15,57 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: libs/console.py:158
+#: libs/console.py:152
 msgid "Please, input a value from {0}."
 msgstr ""
 
-#: libs/console.py:162
+#: libs/console.py:156
 msgid "y"
 msgstr ""
 
-#: libs/console.py:162
+#: libs/console.py:156
 msgid "yes"
 msgstr ""
 
-#: libs/console.py:164
+#: libs/console.py:158
 msgid "n"
 msgstr ""
 
-#: libs/console.py:164
+#: libs/console.py:158
 msgid "no"
 msgstr ""
 
-#: libs/console.py:167
+#: libs/console.py:161
 msgid "Please, answer yes/no (y/n)."
 msgstr ""
 
-#: libs/console.py:172 plugins/cache.py:47 plugins/gccz.py:38
+#: libs/console.py:166 plugins/cache.py:50 plugins/gccz.py:38
 #: plugins/gccz_myratings.py:47 plugins/gccz_ratings.py:47
 #: plugins/myfinds.py:41
 msgid "Use only digits, please."
 msgstr ""
 
-#: libs/console.py:177
+#: libs/console.py:171
 msgid "Please, input a decimal number."
 msgstr ""
 
-#: libs/console.py:180 pyggs.py:606
+#: libs/console.py:174 pyggs.py:613
 msgid "Please, use only alpha-numeric characters."
 msgstr ""
 
-#: libs/console.py:183
+#: libs/console.py:177
 msgid "Please, input a non-empty string."
 msgstr ""
 
-#: libs/console.py:186
+#: libs/console.py:180
 msgid "ERROR"
 msgstr ""
 
-#: libs/console.py:194
+#: libs/console.py:188
 msgid "Please, chose an option from the list - input a number, or a full text of the desired option."
 msgstr ""
 
-#: libs/console.py:201
+#: libs/console.py:195
 msgid "Select"
 msgstr ""
 
@@ -97,39 +97,43 @@ msgstr ""
 msgid "There is no field '{0}' in the result set."
 msgstr ""
 
-#: plugins/cache.py:38
+#: plugins/cache.py:41
 msgid "Global storage for detailed info about caches."
 msgstr ""
 
-#: plugins/cache.py:47
+#: plugins/cache.py:50
 msgid "Cache details data timeout in days:"
 msgstr ""
 
-#: plugins/cache.py:54
+#: plugins/cache.py:57
 msgid "Fixing change of cache type name Unknown - Mystery/Puzzle."
 msgstr ""
 
-#: plugins/cache.py:59
+#: plugins/cache.py:62
 msgid "Deleting data for caches with missing guid."
 msgstr ""
 
-#: plugins/cache.py:82
+#: plugins/cache.py:85
 msgid "Creating column for elevation in cache database."
 msgstr ""
 
-#: plugins/cache.py:84
+#: plugins/cache.py:87
 msgid "Updating cache database with elevation data... this may take a while."
 msgstr ""
 
-#: plugins/cache.py:96
-msgid "Re-trying..."
+#: plugins/cache.py:106
+msgid "Elevation data download failed, re-trying in {0} seconds..."
 msgstr ""
 
-#: plugins/cache.py:126
+#: plugins/cache.py:109
+msgid "Elevation data download failed."
+msgstr ""
+
+#: plugins/cache.py:132
 msgid "Updating Cache database for {0}: {1}."
 msgstr ""
 
-#: plugins/cache.py:190
+#: plugins/cache.py:196
 msgid "No guid passed, not updating."
 msgstr ""
 
@@ -481,127 +485,127 @@ msgstr ""
 msgid "Note: You can always edit these setings by running pyggs with --setup (-s) switch."
 msgstr ""
 
-#: pyggs.py:337
+#: pyggs.py:343
 msgid "Preparing plugin {0}..."
 msgstr ""
 
-#: pyggs.py:343
+#: pyggs.py:349
 msgid "Running plugin {0}..."
 msgstr ""
 
-#: pyggs.py:349
+#: pyggs.py:355
 msgid "Invalid ouput directory {0}."
 msgstr ""
 
-#: pyggs.py:356
+#: pyggs.py:362
 msgid "Finishing plugin {0}..."
 msgstr ""
 
-#: pyggs.py:390
+#: pyggs.py:396
 msgid "Loading plugin {0}."
 msgstr ""
 
-#: pyggs.py:404
+#: pyggs.py:410
 msgid "Missing dependencies {0}."
 msgstr ""
 
-#: pyggs.py:438
+#: pyggs.py:444
 msgid "Cannot make plugin depedency tree for {0}. Possible circular dependencies."
 msgstr ""
 
-#: pyggs.py:469
+#: pyggs.py:475
 msgid "Cannot find template {0}."
 msgstr ""
 
-#: pyggs.py:492
+#: pyggs.py:498
 msgid "Cannot find theme {0}."
 msgstr ""
 
-#: pyggs.py:512
+#: pyggs.py:519
 msgid "Could not fetch URL {0}."
 msgstr ""
 
-#: pyggs.py:515
+#: pyggs.py:522
 msgid "Got error code {0} while fetching {1}."
 msgstr ""
 
-#: pyggs.py:530
+#: pyggs.py:537
 msgid "choose profile"
 msgstr ""
 
-#: pyggs.py:531
+#: pyggs.py:538
 msgid "disable usage of colored output"
 msgstr ""
 
-#: pyggs.py:532
+#: pyggs.py:539
 msgid "run setup script"
 msgstr ""
 
-#: pyggs.py:533
+#: pyggs.py:540
 msgid "set working directory, default is {0}"
 msgstr ""
 
-#: pyggs.py:534
+#: pyggs.py:541
 msgid "set logging to ERROR"
 msgstr ""
 
-#: pyggs.py:535
+#: pyggs.py:542
 msgid "set logging to INFO"
 msgstr ""
 
-#: pyggs.py:536
+#: pyggs.py:543
 msgid "set logging to DEBUG"
 msgstr ""
 
-#: pyggs.py:537
+#: pyggs.py:544
 msgid "set logging to ALL"
 msgstr ""
 
-#: pyggs.py:553
+#: pyggs.py:560
 msgid "You need at least Python {0} to run this script."
 msgstr ""
 
-#: pyggs.py:569
+#: pyggs.py:576
 msgid "Detected incompatible version of working directory {0}. Please, delete the directory and set up your profiles from start."
 msgstr ""
 
-#: pyggs.py:570
+#: pyggs.py:577
 msgid "Do you want to delete the working directory and enter the setup script now ({CHOICES})?"
 msgstr ""
 
-#: pyggs.py:574
+#: pyggs.py:581
 msgid "Deleting content of working directory {0}."
 msgstr ""
 
-#: pyggs.py:582
+#: pyggs.py:589
 msgid "Updating environment variables in global storage."
 msgstr ""
 
-#: pyggs.py:588
+#: pyggs.py:595
 msgid "Working directory is not set up properly, initiating setup script."
 msgstr ""
 
-#: pyggs.py:600
+#: pyggs.py:607
 msgid "No profile name given, auto-chosing the only available profile '{0}'."
 msgstr ""
 
-#: pyggs.py:603
+#: pyggs.py:610
 msgid "Create new"
 msgstr ""
 
-#: pyggs.py:604
+#: pyggs.py:611
 msgid "No profile name given, please select your profile."
 msgstr ""
 
-#: pyggs.py:606
+#: pyggs.py:613
 msgid "Profile name"
 msgstr ""
 
-#: pyggs.py:611
+#: pyggs.py:618
 msgid "Profile '{0}' does not exist, creating profile directory and initiating setup script."
 msgstr ""
 
-#: pyggs.py:627
+#: pyggs.py:634
 msgid "Updating environment variables in profile storage."
 msgstr ""
 

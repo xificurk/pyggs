@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.18"
+__version__ = "0.2.19"
 
 
 import logging
@@ -32,6 +32,9 @@ from libs.versioning import VersionInfo
 
 
 class Plugin(base.Plugin):
+    _elevation_retry = 3
+    _elevation_wait = 5
+
     def __init__(self, master):
         base.Plugin.__init__(self, master)
         self.version = VersionInfo(__version__)
@@ -91,16 +94,19 @@ class Plugin(base.Plugin):
 
 
     def getElevation(self, lat, lon):
-        elevation = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
-        if elevation is None:
-            self.log.warn(_("Re-trying..."))
-            elevation = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
-        if elevation is not None:
-            elevation = int(elevation.read().strip())
-            if elevation < -1000:
-                elevation = None
-        else:
-            elevation = None
+        elevation = None
+        for i in range(self._elevation_retry):
+            data = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
+            if data is not None:
+                data = data.read().strip()
+                if data.isdigit() and int(data) > -1000:
+                    elevation = int(data)
+                    break
+            if i+1 < self._elevation_retry:
+                self.log.warn(_("Elevation data download failed, re-trying in {0} seconds...").format(self._elevation_wait))
+                time.sleep(self._elevation_wait)
+            else:
+                self.log.error(_("Elevation data download failed."))
         return elevation
 
 

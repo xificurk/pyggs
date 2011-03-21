@@ -21,7 +21,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.18"
+__version__ = "0.2.19"
 
 
 from collections import OrderedDict
@@ -46,7 +46,7 @@ from plugins.base import Storage
 import plugins
 
 # Autodetect translations
-localeDir = os.path.join(os.path.dirname(__file__), "translations")
+localeDir = os.path.join(os.path.dirname(__file__), "locale")
 langs = {}
 for lang in os.listdir(localeDir):
     if os.path.isdir(os.path.join(localeDir, lang)):
@@ -510,6 +510,7 @@ class Pyggs(object):
 
 
     def fetch(self, url, data=None, timeout=20):
+        self.log.debug("Downloading {0}".format(url))
         try:
             if data is not None:
                 data = urllib.parse.urlencode(data).encode("utf-8")

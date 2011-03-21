@@ -1,147 +1,88 @@
 CHANGES
 ============================================================================
 
-Release 0.2.17 (2010-11-10)
---------------------------
-[Bugfixes]
-  * GCparser update v0.5.2.
+Release 0.2.18 (2011-03-21)
+  [FIX] GCparser update v0.7.0.
 
+Release 0.2.17 (2010-11-10)
+  [FIX] GCparser update v0.5.2.
 
 Release 0.2.16 (2010-10-12)
---------------------------
-[Bugfixes]
-  * Problem with timeout floats.
-
+  [FIX] Problem with timeout floats.
 
 Release 0.2.15 (2010-10-10)
---------------------------
-[Enhancements]
-  * gccz_ratings now uses standard deviations instead of vote count.
-  * plugins/myfinds_history javascript show/hide function.
-[Bugfixes]
-  * Negative elevation data bug.
-  * Empty myFinds list bug.
-  * GCparser update v0.5.1.
-
+  [ADD] plugins/gccz_ratings now uses standard deviations instead of vote count.
+  [ADD] plugins/myfinds_history javascript show/hide function.
+  [FIX] Negative elevation data bug.
+  [FIX] Empty myFinds list bug.
+  [FIX] GCparser update v0.5.1.
 
 Release 0.2.14 (2010-09-03)
---------------------------
-[Enhancements]
-  * plugins/cache now stores more information about PMonly caches.
-[Bugfixes]
-  * GCparser update v0.4.9.
-
+  [ADD] plugins/cache now stores more information about PMonly caches.
+  [FIX] GCparser update v0.4.9.
 
 Release 0.2.13 (2010-07-30)
---------------------------
-[Bugfixes]
-  * GCparser update: fix the issue with parsing myFinds.
-
+  [FIX] GCparser update: fix the issue with parsing myFinds.
 
 Release 0.2.12 (2010-07-14)
---------------------------
-[Bugfixes]
-  * PM-only cache - missing waypoint bug 2.
-
+  [FIX] PM-only cache - missing waypoint bug 2.
 
 Release 0.2.11 (2010-07-09)
---------------------------
-[Bugfixes]
-  * PM-only cache - missing waypoint bug.
-
+  [FIX] PM-only cache - missing waypoint bug.
 
 Release 0.2.10 (2010-07-01)
---------------------------
-[Bugfixes]
-  * Missing cache guid bug (update GCparser).
-
+  [FIX] Missing cache guid bug (update GCparser).
 
 Release 0.2.9 (2010-06-07)
---------------------------
-[Bugfixes]
-  * 10y cache type icon bugfix (again :)).
-
+  [FIX] 10y cache type icon bugfix (again :)).
 
 Release 0.2.8 (2010-06-07)
---------------------------
-[Enhancements]
-  * Update GCparser to v0.4.4.
-  * New plugin: elevations (download SRTM data and generate statistics).
-  * Move update scripts from Pyggs class to plugins.
-[Bugfixes]
-  * Several typos.
-  * Cache type bugfix.
-
+  [ADD] Update GCparser to v0.4.4.
+  [ADD] New plugin: elevations (download SRTM data and generate statistics).
+  [ADD] Move update scripts from Pyggs class to plugins.
+  [FIX] Several typos.
+  [FIX] Cache type bugfix.
 
 Release 0.2.6 (2010-02-01)
---------------------------
-[Enhancements]
-  * Prevent myFinds databse update by empty list and force myFinds databse
-    update on new version of Pyggs.
-  * Update GCparser to v0.4.
-[Bugfixes]
-  * Several typos.
-
+  [ADD] Prevent myFinds databse update by empty list and force myFinds databse
+        update on new version of Pyggs.
+  [ADD] Update GCparser to v0.4.
+  [FIX] Several typos.
 
 Release 0.2.5 (2010-01-13)
---------------------------
-[Bugfixes]
-  * GS webpage design update -> GCParser update.
-  * Minor fixes in colored console output.
-  * Fixed PM-only cache bug.
-
+  [FIX] GS webpage design update -> GCParser update.
+  [FIX] Minor fixes in colored console output.
+  [FIX] Fixed PM-only cache bug.
 
 Release 0.2.4 (2009-11-27)
---------------------------
-[Bugfixes]
-  * Weird GS changes in type name Unknown vs. Mystery/Puzzle.
-
+  [FIX] Weird GS changes in type name Unknown vs. Mystery/Puzzle.
 
 Release 0.2.3 (2009-11-27)
---------------------------
-[Enhancements]
-  * GCparser update: lessen the load on geocaching servers.
-  * Change console text color on startup.
-[Bugfixes]
-  * Refresh version info in pyggsDir.
-  * PM cache.
-
+  [ADD] GCparser update: lessen the load on geocaching servers.
+  [ADD] Change console text color on startup.
+  [FIX] Refresh version info in pyggsDir.
+  [FIX] PM cache.
 
 Release 0.2.2 (2009-11-10)
---------------------------
-[Bugfixes]
-  * Change of type name Unknown -> Mystery/Puzzle.
-
+  [FIX] Change of type name Unknown -> Mystery/Puzzle.
 
 Release 0.2.1 (2009-11-08)
---------------------------
-[Bugfixes]
-  * GCparser events date - thanks to Ruda Hamak.
-
+  [FIX] GCparser events date - thanks to Ruda Hamak.
 
 Release 0.2 (2009-09-21)
---------------------------
-[Bugfixes]
-  * Config file encoding problem.
-  * Event and Webcam logs are now in MyFinds.
-[Enhancements]
-  * New version of GCparser.
-  * New more intuitive setup system.
-  * A lot of code cleaning:
-      - a lot of minor improvements in plugin system
-      - better colored output handling
-      - working directory is unfortunately backwards incompatible
-
+  [ADD] New version of GCparser.
+  [ADD] New more intuitive setup system.
+  [ADD] A lot of code cleaning:
+        - a lot of minor improvements in plugin system
+        - better colored output handling
+        - working directory is unfortunately backwards incompatible
+  [FIX] Config file encoding problem.
+  [FIX] Event and Webcam logs are now in MyFinds.
 
 Release 0.1.1 (2009-09-11)
---------------------------
-[Bugfixes]
-  * Plugin setup script in alphabetical order.
-  * Missing translations.
-  * gcczMyRatingsTop10 plugin fix.
-
+  [FIX] Plugin setup script in alphabetical order.
+  [FIX] Missing translations.
+  [FIX] gcczMyRatingsTop10 plugin fix.
 
 Release 0.1 (2009-09-09)
---------------------------
-[Enhancements]
-  * Initial set of plugins.
+  [ADD] Initial set of plugins.

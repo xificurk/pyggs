@@ -1,6 +1,9 @@
 CHANGES
 ============================================================================
 
+Release 0.2.19 (2011-03-21)
+  [FIX] Check the validity of downloaded elevation data.
+
 Release 0.2.18 (2011-03-21)
   [FIX] GCparser update v0.7.0.
 

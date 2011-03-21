@@ -506,7 +506,7 @@ class Pyggs(object):
     def fetch(self, url, data=None, timeout=20):
         try:
             if data is not None:
-                data = urllib.parse.urlencode(data)
+                data = urllib.parse.urlencode(data).encode("utf-8")
             response = urllib.request.urlopen(url, data=data, timeout=timeout)
         except IOError:
             self.log.error(_("Could not fetch URL {0}.").format(url))

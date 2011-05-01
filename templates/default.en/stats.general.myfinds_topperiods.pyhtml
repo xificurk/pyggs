@@ -3,10 +3,16 @@
 <td#{{css("td")}}>#{{date(day["date"])}} (<strong>#{{day["count"]}}</strong> finds)</td>
 </tr>
 
+<?py
+if weekend["date"] != "NA":
+?>
 <tr>
 <td#{{css("td")}}>Top weekend</td>
 <td#{{css("td")}}>#{{dateRange(weekend["date"], datetime.timedelta(-1))}} (<strong>#{{weekend["count"]}}</strong> finds)</td>
 </tr>
+<?py
+#endif
+?>
 
 <tr>
 <td#{{css("td")}}>Top week</td>
@@ -28,7 +34,13 @@
 <td#{{css("td")}}>#{{dateRange(gcperiod["start"], gcperiod["end"])}} (<strong>#{{gcperiod["count"]}}</strong> days)</td>
 </tr>
 
+<?py
+if nongcperiod["start"] != "NA":
+?>
 <tr>
 <td#{{css("td", "endsection")}}>Longest non-caching period</td>
 <td#{{css("td", "endsection")}}>#{{dateRange(nongcperiod["start"], nongcperiod["end"])}} (<strong>#{{nongcperiod["count"]}}</strong> days)</td>
 </tr>
+<?py
+#endif
+?>

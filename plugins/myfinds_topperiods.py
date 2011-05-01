@@ -58,7 +58,7 @@ class Plugin(base.Plugin):
                 ret["day"]["count"] = len(days[day])
                 ret["day"]["date"] = day
 
-        ret["weekend"] = {"date":"", "count":0}
+        ret["weekend"] = {"date":"NA", "count":0}
         weekends = fetchAssoc(result, "weekend,sunday,#").get(1, [])
         for weekend in weekends:
             if len(weekends[weekend]) > ret["weekend"]["count"]:

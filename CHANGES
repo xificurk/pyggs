@@ -1,6 +1,12 @@
 CHANGES
 ============================================================================
 
+Release 0.2.20 (2011-05-05)
+  [FIX] Update GCparser to v0.7.3 and adjust templates & theme to reflect
+        changes on geocaching.com website.
+  [FIX] Fix issues with database containing just a few finds (thanks hans
+        for reporting).
+
 Release 0.2.19 (2011-03-21)
   [FIX] Check the validity of downloaded elevation data.
 

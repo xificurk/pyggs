@@ -46,6 +46,7 @@ font-family = Verdana,'Geneva CE',lucida,sans-serif
 color = black
 background = white
 line-height = normal
+margin = 1em 0
 
 # Some basic classes, that should be used on every element of that kind
 [caption]
@@ -61,16 +62,19 @@ width = 100%
 margin = 0 auto 0.5em auto
 border-collapse = separate
 border-spacing = 2px
+max-width = 1280px
 
 [td]
 background = rgb(220,220,220)
-padding = 0.2em 0.5em
+padding = 0.2em 0.5em !important
+max-width = 1280px
 
 [th]
 background = rgb(190,190,190)
-padding = 0.2em 0.5em
+padding = 0.2em 0.5em !important
 font-weight = normal
 text-align = center
+max-width = 1280px
 
 [small]
 font-size = 0.75em
@@ -120,8 +124,8 @@ width = 20px
 [graph-cell]
 vertical-align = bottom
 text-align = center
-padding = 0
-padding-top = 5px
+padding = 0 !important
+padding-top = 5px !important
 
 [graph-bar]
 font-size = 0
@@ -129,11 +133,11 @@ border = 1px solid black
 border-bottom = none
 
 [graph-header]
-padding = 1px 0
+padding = 1px 0 !important
 
 [graph-leftheader]
 text-align = left
-padding = 0 3px
+padding = 0 3px !important
 
 # History table in :myfinds_history
 [col-history-header]

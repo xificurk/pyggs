@@ -40,7 +40,7 @@ for year in history:
         #
         bar  = {"height":"{0}px".format(round(count/top*140)),"background":gradient("lightmin","lightmax",share),"border-color":gradient("bordermin","bordermax",share)}
 ?>
-    <td#{{css("td","graph-cell",{"height":"160px"})}}>#{{count}}<br /><div#{{css("graph-bar",bar)}}>&nbsp;</div></td>
+    <td#{{css("td","graph-cell",{"height":"160px", "padding-top":"{0}px !important".format(145-round(count/top*140))})}}>#{{count}}<br /><div#{{css("graph-bar",bar)}}>&nbsp;</div></td>
 <?py
     #endfor
 ?>

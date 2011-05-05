@@ -1,0 +1,29 @@
+.	X,X
+/	    X,    X,   X ,   X ,  X  ,  X  , X   , X   ,X    ,X    
+0	 XXX ,X   X,X   X,X   X,X   X,X   X,X   X, XXX 
+1	  X  ,XXX  ,  X  ,  X  ,  X  ,  X  ,  X  ,XXXXX
+2	 XXX ,X   X,    X,   X ,  X  , X   ,X    ,XXXXX
+3	 XXX ,X   X,    X,  XX ,    X,    X,X   X, XXX 
+4	    X ,   XX ,  X X , X  X ,X   X ,XXXXXX,    X ,    X 
+5	XXXXX,X    ,X    ,XXXX ,    X,    X,X   X, XXX 
+6	  XX , X   ,X    ,XXXX ,X   X,X   X,X   X, XXX 
+7	XXXXX,    X,   X ,   X ,  X  ,  X  , X   , X   
+8	 XXX ,X   X,X   X, XXX ,X   X,X   X,X   X, XXX 
+9	 XXX ,X   X,X   X,X   X, XXXX,    X,   X , XX  
+E	XXXXX,X    ,X    ,XXXXX,X    ,X    ,X    ,XXXXX
+H	X    X,X    X,X    X,XXXXXX,X    X,X    X,X    X,X    X
+Large	XXXXXXXX,XXXXXXXX,XXXXXXXX,XXXXXXXX,XXXXXXXX,XXXXXXXX,XXXXXXXX,XXXXXXXX
+Micro	XXX,XXX,XXX
+N	XX   X,XX   X,X X  X,X X  X,X  X X,X  X X,X   XX,X   XX
+Not chosen	X    X, X  X ,  XX  ,  XX  , X  X ,X    X
+Other	XXXXXX,XXXXXX,     X,  XXX ,  XX  ,      ,  XX  ,  XX  
+Regular	XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX,XXXXXXX
+S	 XXXX ,X    X,X     , XX   ,   XX ,     X,X    X, XXXX 
+Small	XXXXX,XXXXX,XXXXX,XXXXX,XXXXX
+Virtual	X XX X X,        ,X      X,X       ,       X,X      X,        ,X X XX X
+W	X   X   X,X   X   X, X X X X , X X X X , X X X X , X X X X ,  X   X  ,  X   X  
+e	 XXX ,X   X,XXXXX,X    ,X   X, XXX 
+ft	  XX    , X   X  , X   X  ,XXXXXXXX, X   X  , X   X  , X   X  , X   X  , X    XX
+i	X, , ,X,X,X,X,X,X
+m	XXXX XXX ,X   X   X,X   X   X,X   X   X,X   X   X,X   X   X
+r	X XX,XX  ,X   ,X   ,X   ,X   

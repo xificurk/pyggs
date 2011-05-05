@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-03-21 22:52+CET\n"
+"POT-Creation-Date: 2011-05-05 18:51+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Please, input a decimal number."
 msgstr ""
 
-#: libs/console.py:174 pyggs.py:613
+#: libs/console.py:174 pyggs.py:615
 msgid "Please, use only alpha-numeric characters."
 msgstr ""
 
@@ -69,15 +69,15 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: output.py:202
+#: libs/output.py:202
 msgid "Unknown cache type '{0}'."
 msgstr ""
 
-#: output.py:221
+#: libs/output.py:221
 msgid "This theme has no section {0}."
 msgstr ""
 
-#: output.py:272 output.py:275
+#: libs/output.py:272 libs/output.py:275
 msgid "Cannot parse color {0}."
 msgstr ""
 
@@ -333,279 +333,279 @@ msgstr ""
 msgid "Generates page with the list of found but unrated caches by user."
 msgstr ""
 
-#: pyggs.py:78
+#: pyggs.py:80
 msgid "Entering setup menu for profile {0}."
 msgstr ""
 
-#: pyggs.py:83 pyggs.py:229 pyggs.py:285
+#: pyggs.py:85 pyggs.py:231 pyggs.py:287
 msgid "Exit"
 msgstr ""
 
-#: pyggs.py:84 pyggs.py:155
+#: pyggs.py:86 pyggs.py:157
 msgid "General options"
 msgstr ""
 
-#: pyggs.py:86 pyggs.py:186
+#: pyggs.py:88 pyggs.py:188
 msgid "Output"
 msgstr ""
 
-#: pyggs.py:87
+#: pyggs.py:89
 msgid "Enable/Disable plugins"
 msgstr ""
 
-#: pyggs.py:88
+#: pyggs.py:90
 msgid "Plugins settings"
 msgstr ""
 
-#: pyggs.py:91
+#: pyggs.py:93
 msgid "Main menu"
 msgstr ""
 
-#: pyggs.py:92
+#: pyggs.py:94
 msgid "Action:"
 msgstr ""
 
-#: pyggs.py:110
+#: pyggs.py:112
 msgid "Entering full setup for profile {0}."
 msgstr ""
 
-#: pyggs.py:126
+#: pyggs.py:128
 msgid "Unable to create working directory {0}."
 msgstr ""
 
-#: pyggs.py:138
+#: pyggs.py:140
 msgid "Unable to set up base directory structure in working directory {0}."
 msgstr ""
 
-#: pyggs.py:140
+#: pyggs.py:142
 msgid "Working directory is {0}."
 msgstr ""
 
-#: pyggs.py:146
+#: pyggs.py:148
 msgid "Unable to create profile directory {0}."
 msgstr ""
 
-#: pyggs.py:158
+#: pyggs.py:160
 msgid "Please, select user interface language ({CHOICES})."
 msgstr ""
 
-#: pyggs.py:161
+#: pyggs.py:163
 msgid "Enter your home coordinates in degrees as decimal number (N means positive value, S negative; E means positive value, W negative)."
 msgstr ""
 
-#: pyggs.py:162
+#: pyggs.py:164
 msgid "Latitude:"
 msgstr ""
 
-#: pyggs.py:162 pyggs.py:163
+#: pyggs.py:164 pyggs.py:165
 msgid "Please, use decimal number."
 msgstr ""
 
-#: pyggs.py:163
+#: pyggs.py:165
 msgid "Longitude:"
 msgstr ""
 
-#: pyggs.py:175
+#: pyggs.py:177
 msgid "Username:"
 msgstr ""
 
-#: pyggs.py:176
+#: pyggs.py:178
 msgid "Password:"
 msgstr ""
 
-#: pyggs.py:189
+#: pyggs.py:191
 msgid "Templates are looked up in these directories (consecutively):"
 msgstr ""
 
-#: pyggs.py:190
+#: pyggs.py:192
 msgid "Template ({CHOICES}):"
 msgstr ""
 
-#: pyggs.py:193
+#: pyggs.py:195
 msgid "Themes are looked up in these directories (consecutively):"
 msgstr ""
 
-#: pyggs.py:194
+#: pyggs.py:196
 msgid "Theme ({CHOICES}):"
 msgstr ""
 
-#: pyggs.py:196
+#: pyggs.py:198
 msgid "Output directory:"
 msgstr ""
 
-#: pyggs.py:196
+#: pyggs.py:198
 msgid "You have to input existing directory."
 msgstr ""
 
-#: pyggs.py:206
+#: pyggs.py:208
 msgid "Plugins"
 msgstr ""
 
-#: pyggs.py:218
+#: pyggs.py:220
 msgid "Plugin"
 msgstr ""
 
-#: pyggs.py:219
+#: pyggs.py:221
 msgid "Enable"
 msgstr ""
 
-#: pyggs.py:237
+#: pyggs.py:239
 msgid "Enable/Disable plugins menu"
 msgstr ""
 
-#: pyggs.py:238 pyggs.py:297
+#: pyggs.py:240 pyggs.py:299
 msgid "Plugins:"
 msgstr ""
 
-#: pyggs.py:248
+#: pyggs.py:250
 msgid "Cannot disable plugin {0}, because {1} depend on it."
 msgstr ""
 
-#: pyggs.py:250
+#: pyggs.py:252
 msgid "Disabling plugin {0}."
 msgstr ""
 
-#: pyggs.py:253
+#: pyggs.py:255
 msgid "Enabling plugin {0}."
 msgstr ""
 
-#: pyggs.py:263 pyggs.py:301
+#: pyggs.py:265 pyggs.py:303
 msgid "Configuration of"
 msgstr ""
 
-#: pyggs.py:273
+#: pyggs.py:275
 msgid "Plugin {0} pulled in as dependency."
 msgstr ""
 
-#: pyggs.py:296
+#: pyggs.py:298
 msgid "Plugins settings menu"
 msgstr ""
 
-#: pyggs.py:316
+#: pyggs.py:318
 msgid "Note: You can always edit these setings by running pyggs with --setup (-s) switch."
 msgstr ""
 
-#: pyggs.py:343
+#: pyggs.py:345
 msgid "Preparing plugin {0}..."
 msgstr ""
 
-#: pyggs.py:349
+#: pyggs.py:351
 msgid "Running plugin {0}..."
 msgstr ""
 
-#: pyggs.py:355
+#: pyggs.py:357
 msgid "Invalid ouput directory {0}."
 msgstr ""
 
-#: pyggs.py:362
+#: pyggs.py:364
 msgid "Finishing plugin {0}..."
 msgstr ""
 
-#: pyggs.py:396
+#: pyggs.py:398
 msgid "Loading plugin {0}."
 msgstr ""
 
-#: pyggs.py:410
+#: pyggs.py:412
 msgid "Missing dependencies {0}."
 msgstr ""
 
-#: pyggs.py:444
+#: pyggs.py:446
 msgid "Cannot make plugin depedency tree for {0}. Possible circular dependencies."
 msgstr ""
 
-#: pyggs.py:475
+#: pyggs.py:477
 msgid "Cannot find template {0}."
 msgstr ""
 
-#: pyggs.py:498
+#: pyggs.py:500
 msgid "Cannot find theme {0}."
 msgstr ""
 
-#: pyggs.py:519
+#: pyggs.py:521
 msgid "Could not fetch URL {0}."
 msgstr ""
 
-#: pyggs.py:522
+#: pyggs.py:524
 msgid "Got error code {0} while fetching {1}."
 msgstr ""
 
-#: pyggs.py:537
+#: pyggs.py:539
 msgid "choose profile"
 msgstr ""
 
-#: pyggs.py:538
+#: pyggs.py:540
 msgid "disable usage of colored output"
 msgstr ""
 
-#: pyggs.py:539
+#: pyggs.py:541
 msgid "run setup script"
 msgstr ""
 
-#: pyggs.py:540
+#: pyggs.py:542
 msgid "set working directory, default is {0}"
 msgstr ""
 
-#: pyggs.py:541
+#: pyggs.py:543
 msgid "set logging to ERROR"
 msgstr ""
 
-#: pyggs.py:542
+#: pyggs.py:544
 msgid "set logging to INFO"
 msgstr ""
 
-#: pyggs.py:543
+#: pyggs.py:545
 msgid "set logging to DEBUG"
 msgstr ""
 
-#: pyggs.py:544
+#: pyggs.py:546
 msgid "set logging to ALL"
 msgstr ""
 
-#: pyggs.py:560
+#: pyggs.py:562
 msgid "You need at least Python {0} to run this script."
 msgstr ""
 
-#: pyggs.py:576
+#: pyggs.py:578
 msgid "Detected incompatible version of working directory {0}. Please, delete the directory and set up your profiles from start."
 msgstr ""
 
-#: pyggs.py:577
+#: pyggs.py:579
 msgid "Do you want to delete the working directory and enter the setup script now ({CHOICES})?"
 msgstr ""
 
-#: pyggs.py:581
+#: pyggs.py:583
 msgid "Deleting content of working directory {0}."
 msgstr ""
 
-#: pyggs.py:589
+#: pyggs.py:591
 msgid "Updating environment variables in global storage."
 msgstr ""
 
-#: pyggs.py:595
+#: pyggs.py:597
 msgid "Working directory is not set up properly, initiating setup script."
 msgstr ""
 
-#: pyggs.py:607
+#: pyggs.py:609
 msgid "No profile name given, auto-chosing the only available profile '{0}'."
 msgstr ""
 
-#: pyggs.py:610
+#: pyggs.py:612
 msgid "Create new"
 msgstr ""
 
-#: pyggs.py:611
+#: pyggs.py:613
 msgid "No profile name given, please select your profile."
 msgstr ""
 
-#: pyggs.py:613
+#: pyggs.py:615
 msgid "Profile name"
 msgstr ""
 
-#: pyggs.py:618
+#: pyggs.py:620
 msgid "Profile '{0}' does not exist, creating profile directory and initiating setup script."
 msgstr ""
 
-#: pyggs.py:634
+#: pyggs.py:636
 msgid "Updating environment variables in profile storage."
 msgstr ""
 

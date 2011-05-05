@@ -24,7 +24,7 @@ import configparser
 import logging
 import os.path
 
-import libs.console as console
+import console as console
 
 
 class BaseConfig(configparser.RawConfigParser):

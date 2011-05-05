@@ -28,7 +28,7 @@ import math
 import time
 
 from . import base
-from libs.versioning import VersionInfo
+from versioning import VersionInfo
 
 
 class Plugin(base.Plugin):

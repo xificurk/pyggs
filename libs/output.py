@@ -31,7 +31,7 @@ import re
 import sys
 
 from configuration import BaseConfig
-import libs.tenjin as tenjin
+import tenjin as tenjin
 
 
 # Double the brackets

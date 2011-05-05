@@ -24,7 +24,7 @@ from collections import OrderedDict
 import logging
 import sqlite3
 
-from libs.versioning import VersionInfo
+from versioning import VersionInfo
 
 
 class Plugin(object):

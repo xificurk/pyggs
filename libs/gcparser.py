@@ -27,7 +27,7 @@ __author__ = "Petr Morávek (xificurk@gmail.com)"
 __copyright__ = "Copyright (C) 2009-2011 Petr Morávek"
 __license__ = "GPL"
 
-__version__ = "0.7.3"
+__version__ = "0.7.4"
 
 from collections import defaultdict, namedtuple, Sequence, Callable
 from datetime import date, datetime, timedelta
@@ -212,13 +212,12 @@ class HTTPInterface(StaticClass):
         """
         opener = cls.build_opener(auth)
         cls.wait(auth)
-        webpage = cls.download_url(opener, url, data)
+        webpage = cls.download_url(opener, url, data).decode("utf-8")
         if auth:
             cls._save_cookies()
             today = date.today().isoformat()
             cls.stats[today] += 1
             cls._save_stats()
-        webpage = webpage.read().decode("utf-8")
         if auth and check and not cls._check_login(webpage):
             cls._log.debug("We're not actually logged in, refreshing login and redownloading page.")
             cls._login()
@@ -248,7 +247,7 @@ class HTTPInterface(StaticClass):
         return opener
 
     @classmethod
-    def download_url(cls, opener, url, data=None, retry=1):
+    def download_url(cls, opener, url, data=None, retryTime=1):
         """
         Download data from URL.
 
@@ -258,20 +257,21 @@ class HTTPInterface(StaticClass):
 
         Keyworded arguments:
             data        --- POST data.
-            retry       --- Number of seconds to retry in on failed download.
+            retryTime   --- Number of seconds to wait before retry when download fails.
 
         """
         cls._log.debug("Downloading page '{0}'.".format(url))
         try:
             if data is not None:
-                webpage = opener.open(url, urllib.parse.urlencode(data).encode("utf-8"))
+                response = opener.open(url, urllib.parse.urlencode(data).encode("utf-8"))
             else:
-                webpage = opener.open(url)
+                response = opener.open(url)
+            response = response.read()
         except IOError:
-            cls._log.error("An error occured while downloading '{0}', will retry in {1} seconds.".format(url, retry))
-            sleep(retry)
-            return cls.download_url(opener, url, data, retry=min(5*retry, 600))
-        return webpage
+            cls._log.error("An error occured while downloading '{0}', will retry in {1} seconds.".format(url, retryTime))
+            sleep(retryTime)
+            return cls.download_url(opener, url, data, retryTime=min(5*retryTime, 600))
+        return response
 
     @classmethod
     def _user_file_name(cls):
@@ -1496,7 +1496,7 @@ class ImageDownloader(threading.Thread):
 
     def run(self):
         opener = self.http.build_opener()
-        self.data = self.http.download_url(opener, self.url).read()
+        self.data = self.http.download_url(opener, self.url)
         try:
             self.image = Image.from_data(self.data)
         except Exception as e:

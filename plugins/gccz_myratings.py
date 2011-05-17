@@ -100,7 +100,7 @@ class Storage(base.Storage):
             self.log.error(_("Unable to load Geocaching.cz MyRatings, extending validity of current data."))
             return
 
-        result = result.read().decode("utf-8","replace").splitlines()
+        result = result.decode("utf-8","replace").splitlines()
 
         succ = False
         for row in result:

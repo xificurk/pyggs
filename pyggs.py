@@ -517,13 +517,14 @@ class Pyggs(object):
             if data is not None:
                 data = urllib.parse.urlencode(data).encode("utf-8")
             response = urllib.request.urlopen(url, data=data, timeout=timeout)
+            responseData = response.read()
         except IOError:
             self.log.error(_("Could not fetch URL {0}.").format(url))
             return None
         if response.getcode() != 200:
             self.log.error(_("Got error code {0} while fetching {1}.").format(response.getcode(), url))
             return None
-        return response
+        return responseData
 
 
 

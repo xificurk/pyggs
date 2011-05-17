@@ -71,7 +71,7 @@ class Plugin(base.Plugin):
             self.log.error(_("Unable to update Geocaching.cz database."))
             return
 
-        result = result.read().decode().splitlines()
+        result = result.decode().splitlines()
 
         succ = False
         for row in result:

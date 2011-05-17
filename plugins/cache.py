@@ -96,18 +96,16 @@ class Plugin(base.Plugin):
     def getElevation(self, lat, lon):
         elevation = None
         for i in range(self._elevation_retry):
-            data = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
-            if data is not None:
-                data = data.read().strip()
-                if data.isdigit() and int(data) > -1000:
-                    elevation = int(data)
-                    break
-            if i+1 < self._elevation_retry:
+            if i > 0:
                 self.log.warn(_("Elevation data download failed, re-trying in {0} seconds...").format(self._elevation_wait))
                 time.sleep(self._elevation_wait)
-            else:
-                self.log.error(_("Elevation data download failed."))
-        return elevation
+            data = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
+            if data is not None:
+                data = data.strip()
+                if data.isdigit() and int(data) > -1000:
+                    elevation = int(data)
+                    return elevation
+        self.log.error(_("Elevation data download failed."))
 
 
     def prepare(self):

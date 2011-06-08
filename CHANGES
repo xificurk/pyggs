@@ -1,7 +1,10 @@
 CHANGES
 ============================================================================
 
-  [FIX] Fix handling of download errors.
+Release 0.2.21 (2011-06-08)
+  [CHG] Update GCparser to v0.7.4.
+  [FIX] Elevation upgrade bug.
+  [FIX] Handling of download errors.
 
 Release 0.2.20 (2011-05-05)
   [FIX] Update GCparser to v0.7.3 and adjust templates & theme to reflect

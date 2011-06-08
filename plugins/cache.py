@@ -87,7 +87,8 @@ class Plugin(base.Plugin):
                 self.log.warn(_("Updating cache database with elevation data... this may take a while."))
                 for cache in self.storage.query("SELECT guid, lat, lon FROM [cache] WHERE [elevation] = -9999"):
                     elevation = self.getElevation(cache["lat"], cache["lon"])
-                    self.storage.query("UPDATE [cache] SET [elevation] = ? WHERE [guid] = ?", (elevation, cache["guid"]))
+                    if elevation is not None:
+                        self.storage.query("UPDATE [cache] SET [elevation] = ? WHERE [guid] = ?", (elevation, cache["guid"]))
         elif oldVersion < "0.2.3":
             self.storage.query("UPDATE cache SET elevation = -9999 WHERE elevation <= -1000")
         return True

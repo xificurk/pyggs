@@ -25,7 +25,7 @@ Classes:
 
 __author__ = "Petr Morávek (xificurk@gmail.com)"
 __copyright__ = "Copyright (C) 2009-2011 Petr Morávek"
-__license__ = "GPL"
+__license__ = "LGPL 3.0"
 
 __version__ = "0.7.4"
 

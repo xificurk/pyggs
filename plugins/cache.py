@@ -102,7 +102,7 @@ class Plugin(base.Plugin):
             if i > 0:
                 self.log.warn(_("Elevation data download failed, re-trying in {0} seconds...").format(self._elevation_wait))
                 time.sleep(self._elevation_wait)
-            data = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}".format(lat, lon))
+            data = self.master.fetch("http://ws.geonames.org/astergdem?lat={0}&lng={1}&username=pyggs-{2}".format(lat, lon, self.master.config.get("geocaching.com", "username")))
             if data is not None:
                 data = data.strip()
                 if data.isdigit() and int(data) > -1000:

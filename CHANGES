@@ -1,6 +1,11 @@
 CHANGES
 ============================================================================
 
+Release 0.2.22 (2011-10-04)
+  [FIX] Send application identification with Elevation data requests (this
+        should prevent some failed attempts).
+  [FIX] Bug caused by change Vysocina -> Kraj Vysocina.
+
 Release 0.2.21 (2011-06-08)
   [CHG] Update GCparser to v0.7.4.
   [FIX] Elevation upgrade bug.

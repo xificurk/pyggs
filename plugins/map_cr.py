@@ -24,6 +24,22 @@ from . import base
 
 
 class Plugin(base.Plugin):
+    abbr = {}
+    abbr["Hlavni mesto Praha"] = "AA"
+    abbr["Jihocesky kraj"] = "CC"
+    abbr["Jihomoravsky kraj"] = "BB"
+    abbr["Karlovarsky kraj"] = "KK"
+    abbr["Kralovehradecky kraj"] = "HH"
+    abbr["Liberecky kraj"] = "LL"
+    abbr["Moravskoslezsky kraj"] = "TT"
+    abbr["Olomoucky kraj"] = "MM"
+    abbr["Pardubicky kraj"] = "EE"
+    abbr["Plzensky kraj"] = "PP"
+    abbr["Stredocesky kraj"] = "SS"
+    abbr["Ustecky kraj"] = "UU"
+    abbr["Kraj Vysocina"] = "JJ"
+    abbr["Zlinsky kraj"] = "ZZ"
+
     def __init__(self, master):
         base.Plugin.__init__(self, master)
         self.dependencies = ["stats", "myfinds", "cache", "gccz"]
@@ -38,46 +54,28 @@ class Plugin(base.Plugin):
         if caches is None:
             return
 
-        provincesAbbr = {}
-        provincesAbbr["Hlavni mesto Praha"] = "AA"
-        provincesAbbr["Jihocesky kraj"] = "CC"
-        provincesAbbr["Jihomoravsky kraj"] = "BB"
-        provincesAbbr["Karlovarsky kraj"] = "KK"
-        provincesAbbr["Kralovehradecky kraj"] = "HH"
-        provincesAbbr["Liberecky kraj"] = "LL"
-        provincesAbbr["Moravskoslezsky kraj"] = "TT"
-        provincesAbbr["Olomoucky kraj"] = "MM"
-        provincesAbbr["Pardubicky kraj"] = "EE"
-        provincesAbbr["Plzensky kraj"] = "PP"
-        provincesAbbr["Stredocesky kraj"] = "SS"
-        provincesAbbr["Ustecky kraj"] = "UU"
-        provincesAbbr["Vysocina"] = "JJ"
-        provincesAbbr["Zlinsky kraj"] = "ZZ"
         total = {"country":0, "province":0}
         tot = 0
         provinces = {}
         for province in caches:
-            total["country"] = total["country"]+len(caches[province])
-            if len(province) > 0:
-                provinces[provincesAbbr[province]] = len(caches[province])
-                tot = tot+len(caches[province])
+            total["country"] += len(caches[province])
+            if len(province) > 0 and province in self.abbr:
+                provinces[self.abbr[province]] = len(caches[province])
+                tot += len(caches[province])
         total["province"] = len(provinces)
 
         prsorted = list(provinces.keys())
         prsorted.sort()
-        tmp1 = ""
-        tmp2 = ""
+        data_count = []
+        data_percent = []
         for province in prsorted:
-            if len(tmp1) > 0 or len(tmp2) > 0:
-                tmp1 = tmp1 + ","
-                tmp2 = tmp2 + ","
-            tmp1 = tmp1 + str(provinces[province])
-            tmp2 = tmp2 + str(round(100*provinces[province]/tot))
+            data_count.append(str(provinces[province]))
+            data_percent.append(str(round(100*provinces[province]/tot)))
 
         templateData = {}
         templateData["map"] = {}
         templateData["map"]["chld"] = "".join(prsorted)
-        templateData["map"]["chd"] = tmp1 + "|" + tmp2
+        templateData["map"]["chd"] = ",".join(data_count) + "|" + ",".join(data_percent)
         templateData["total"] = total
         templateData["uid"] = self.gccz.config["uid"]
         self.stats.registerTemplate(":stats.map_cr", templateData)

@@ -20,7 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-__version__ = "0.2.19"
+__version__ = "0.2.20"
 
 
 import logging
@@ -91,6 +91,8 @@ class Plugin(base.Plugin):
                         self.storage.query("UPDATE [cache] SET [elevation] = ? WHERE [guid] = ?", (elevation, cache["guid"]))
         elif oldVersion < "0.2.3":
             self.storage.query("UPDATE cache SET elevation = -9999 WHERE elevation <= -1000")
+        if oldVersion < "0.2.20":
+            self.storage.query("UPDATE [cache] SET [province] = 'Kraj Vysocina' WHERE [province] = 'Vysocina'")
         return True
 
 

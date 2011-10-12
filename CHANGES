@@ -1,6 +1,9 @@
 CHANGES
 ============================================================================
 
+Release 0.2.23 (2011-10-12)
+  [FIX] gcparser-0.7.7 fixing login issues.
+
 Release 0.2.22 (2011-10-04)
   [FIX] Send application identification with Elevation data requests (this
         should prevent some failed attempts).

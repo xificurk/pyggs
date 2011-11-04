@@ -27,7 +27,7 @@ __author__ = "Petr Morávek (xificurk@gmail.com)"
 __copyright__ = "Copyright (C) 2009-2011 Petr Morávek"
 __license__ = "LGPL 3.0"
 
-__version__ = "0.7.7"
+__version__ = "0.7.8"
 
 from collections import defaultdict, namedtuple, Sequence, Callable
 from datetime import date, datetime, timedelta
@@ -114,6 +114,39 @@ class StaticClass:
 ############################################################
 ### HTTP interface.                                      ###
 ############################################################
+
+class HTTPRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """
+    Modify urllib.request.HTTPRedirectHandler to handle redirect URL without
+    shceme or/and netloc.
+    """
+    def http_error_302(self, req, fp, code, msg, headers):
+        # Some servers (incorrectly) return multiple Location headers
+        # (so probably same goes for URI).  Use first header.
+        if "location" in headers:
+            newurl = headers["location"]
+        elif "uri" in headers:
+            newurl = headers["uri"]
+        else:
+            return
+
+        newparts = list(urllib.request.urlparse(newurl))
+
+        if "" in newparts[0:1]:
+            oldparts = list(urllib.request.urlparse(req.full_url))
+            # fix scheme
+            if newparts[0] == "":
+                newparts[0] = oldparts[0]
+
+            # fix netloc
+            if newparts[1] == "":
+                newparts[1] = oldparts[1]
+
+            del headers["location"]
+            headers["location"] = urllib.request.urlunparse(newparts)
+
+        return urllib.request.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
+
 
 class HTTPInterface(StaticClass):
     """
@@ -236,9 +269,9 @@ class HTTPInterface(StaticClass):
         """
         if auth:
             cookies = cls._get_cookies()
-            opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookies))
+            opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookies), HTTPRedirectHandler)
         else:
-            opener = urllib.request.build_opener()
+            opener = urllib.request.build_opener(HTTPRedirectHandler)
         headers = []
         headers.append(("User-agent", cls._get_user_agent()))
         headers.append(("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8"))
@@ -304,6 +337,7 @@ class HTTPInterface(StaticClass):
                 cls._cookies.load(ignore_discard=True)
                 logged = False
                 for cookie in cls._cookies:
+                    cls._log.debug("{0}: {1}".format(cookie.name, cookie.value))
                     if cookie.name == "userid":
                         logged = True
                         break
@@ -425,7 +459,7 @@ class HTTPInterface(StaticClass):
         cls._log.debug("Attempting to log in.")
         if cls._credentials.username is None or cls._credentials.password is None:
             raise LoginError("Cannot log in - no credentials available.")
-        webpage = cls.request("https://www.geocaching.com/login/", auth=True, check=False)
+        webpage = cls.request("https://www.geocaching.com/login/default.aspx", auth=True, check=False)
         data = {}
         data["ctl00$ContentBody$tbUsername"] = cls._credentials.username
         data["ctl00$ContentBody$tbPassword"] = cls._credentials.password
@@ -433,7 +467,7 @@ class HTTPInterface(StaticClass):
         data["ctl00$ContentBody$cbRememberMe"] = "on"
         for hidden_input in _pcre("hidden_input").findall(webpage):
             data[hidden_input[0]] = hidden_input[1]
-        webpage = cls.request("https://www.geocaching.com/login/", data=data, auth=True, check=False)
+        webpage = cls.request("https://www.geocaching.com/login/default.aspx", data=data, auth=True, check=False)
         for cookie in cls._cookies:
             cls._log.debug("{0}: {1}".format(cookie.name, cookie.value))
             if cookie.name == "userid":

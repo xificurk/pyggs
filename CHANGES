@@ -1,6 +1,9 @@
 CHANGES
 ============================================================================
 
+Release 0.2.24 (2011-11-04)
+  [FIX] gcparser-0.7.8 fixing malformed HTTP Location header send by geocaching.com.
+
 Release 0.2.23 (2011-10-12)
   [FIX] gcparser-0.7.7 fixing login issues.
 

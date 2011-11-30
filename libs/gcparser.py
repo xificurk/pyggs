@@ -27,7 +27,7 @@ __author__ = "Petr Morávek (xificurk@gmail.com)"
 __copyright__ = "Copyright (C) 2009-2011 Petr Morávek"
 __license__ = "LGPL 3.0"
 
-__version__ = "0.7.8"
+__version__ = "0.7.9"
 
 from collections import defaultdict, namedtuple, Sequence, Callable
 from datetime import date, datetime, timedelta
@@ -664,8 +664,8 @@ _pcre_masks["cache_type"] = ("<img src=['\"](http://www\.geocaching\.com)?/image
 _pcre_masks["cache_owner_id"] = ("by <a href=['\"]http://www\.geocaching\.com/profile/\?guid=([a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+)&wid=([a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+)&ds=2['\"][^>]*>", re.I)
 # <p class="OldWarning"><strong>Cache Issues:</strong></p><ul class="OldWarning"><li>This cache is temporarily unavailable. Read the logs below to read the status for this cache.</li></ul></span>
 _pcre_masks["disabled"] = ("<p class=['\"][^'\"]*OldWarning[^'\"]*['\"][^>]*><strong>Cache Issues:</strong></p><ul[^>]*><li>This cache (has been archived|is temporarily unavailable)[^<]*</li>", re.I)
-# <span id="ctl00_ContentBody_LatLon" style="font-weight:bold;">N 50° 02.173 E 015° 46.386</span>
-_pcre_masks["cache_coords"] = ("<span id=['\"]ctl00_ContentBody_LatLon['\"][^>]*>([NS]) ([0-9]+)° ([0-9.]+) ([WE]) ([0-9]+)° ([0-9.]+)</span>", re.I)
+# <span id="uxLatLon" style="font-weight:bold;">N 49° 06.592 E 016° 27.837</span>
+_pcre_masks["cache_coords"] = ("<span id=['\"]uxLatLon['\"][^>]*>([NS]) ([0-9]+)° ([0-9.]+) ([WE]) ([0-9]+)° ([0-9.]+)</span>", re.I)
 _pcre_masks["cache_shortDesc"] = ("<div class=['\"]UserSuppliedContent['\"]>\s*<span id=['\"]ctl00_ContentBody_ShortDescription['\"]>(.*?)</span>\s+</div>", re.I|re.S)
 _pcre_masks["cache_longDesc"] = ("<div class=['\"]UserSuppliedContent['\"]>\s*<span id=['\"]ctl00_ContentBody_LongDescription['\"]>(.*?)</span>\s*</div>\s*<p>\s+</p>\s+<p>", re.I|re.S)
 """

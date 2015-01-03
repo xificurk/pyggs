@@ -1,3 +1,6 @@
+This package is no longer maintained!
+============================================================================
+
 About
 ============================================================================
 Pyggs is python script for generating geocaching statistics and uploading
@@ -8,10 +11,7 @@ Pyggs is easily extensible via plugin and templating system.
 Example output:
 http://www.geocaching.com/profile/?guid=71db7de9-2edc-4ca1-a255-784057c8973e
 
-Author:
-    Petr Morávek [Xificurk]
-    jabber id: xificurk [at] jabber.cz
-    email: xificurk [at] gmail.com
+Author: Petr Morávek [Xificurk] <petr@pada.cz>
 
 Requirements
 ============================================================================
@@ -26,6 +26,3 @@ and folow the instructions.
 There are more options available, see:
 $ ./pyggs.py --help
 
-FAQ
-============================================================================
-None, at the moment, please write me any comments ;-)
